@@ -113,7 +113,7 @@ InitSNESAndMirror
 	;STZ mSETINI
 	;ONTO THE CPU I/O REGS
 	LDA #$FF00
-	STA $804201
+	STA $804200
 	;STZ mNMITIMEN
 	STZ $804202 ;3
 	STZ $804204 ;5
@@ -298,6 +298,9 @@ _ready						; Safe
 		jsr dmaColumn_xx	; draw it
 _noColumnDMA
 	#A8
+	lda #1					; since we don't have an OAM DMA to stall the start
+-	bit $4212,b				; of the NMI, we have to wait for the joypad registers
+	bne -						; to be valid.
 	lda JoyHi				; read the joypad
 	sta JoyHiOld			; for this example I only care about Left and Right
 	lda $4219,b				; so I only read the upper 8 bits

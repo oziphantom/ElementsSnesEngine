@@ -1,7 +1,7 @@
 
 ; 64tass Turbo Assembler Macro V1.55.2200 listing file
 ; 64tass.exe -a -o horizontal.sfc -b -X --no-caret-diag --dump-labels -l horizontal.tass -L horizontal.list --verbose-list --line-numbers master.asm
-; Sat Mar 26 23:07:47 2022
+; Sun Mar 27 14:01:08 2022
 
 ;Line	;Offset	;PC	;Hex		;Monitor	;Source
 
@@ -101,23 +101,23 @@
 
 85							.section s65816Vectors
 86							.block; scope this so we don't get name clashes
-87	>7fe4	80ffe4	dd 81				vCOP   .word <>Bank80.justRTI ; COP is a assembly mnemonic so add v
-88	>7fe6	80ffe6	dd 81				vBRK   .word <>Bank80.justRTI ; BRK is a assembly mnemonic so add v
-89	>7fe8	80ffe8	dd 81				ABORT  .word <>Bank80.justRTI
+87	>7fe4	80ffe4	e4 81				vCOP   .word <>Bank80.justRTI ; COP is a assembly mnemonic so add v
+88	>7fe6	80ffe6	e4 81				vBRK   .word <>Bank80.justRTI ; BRK is a assembly mnemonic so add v
+89	>7fe8	80ffe8	e4 81				ABORT  .word <>Bank80.justRTI
 90	>7fea	80ffea	8f 81				NMI    .word <>Bank80.NMI
-91	>7fec	80ffec	dd 81				RESET  .word <>Bank80.justRTI
-92	>7fee	80ffee	dd 81				IRQ    .word <>Bank80.justRTI
+91	>7fec	80ffec	e4 81				RESET  .word <>Bank80.justRTI
+92	>7fee	80ffee	e4 81				IRQ    .word <>Bank80.justRTI
 93							.bend
 94							.send ; s65816Vectors
 
 96							.section s6502Vectors
 97							.block; scope this so we don't get name clashes
-98	>7ff4	80fff4	dd 81				vCOP   .word <>Bank80.justRTI  ; COP is a assembly mnemonic so add v
-99	>7ff6	80fff6	dd 81				vBRK   .word <>Bank80.justRTI  ; BRK is a assembly mnemonic so add v
-100	>7ff8	80fff8	dd 81				ABORT  .word <>Bank80.justRTI
-101	>7ffa	80fffa	dd 81				NMI    .word <>Bank80.justRTI
+98	>7ff4	80fff4	e4 81				vCOP   .word <>Bank80.justRTI  ; COP is a assembly mnemonic so add v
+99	>7ff6	80fff6	e4 81				vBRK   .word <>Bank80.justRTI  ; BRK is a assembly mnemonic so add v
+100	>7ff8	80fff8	e4 81				ABORT  .word <>Bank80.justRTI
+101	>7ffa	80fffa	e4 81				NMI    .word <>Bank80.justRTI
 102	>7ffc	80fffc	00 80				RESET  .word <>Bank80.RESET
-103	>7ffe	80fffe	dd 81				IRQ    .word <>Bank80.justRTI
+103	>7ffe	80fffe	e4 81				IRQ    .word <>Bank80.justRTI
 104							.bend
 105							.send ; s65816Vectors
 
@@ -245,7 +245,7 @@
 113								;STZ mSETINI
 114								;ONTO THE CPU I/O REGS
 115	.00a3	8080a3	a9 00 ff	lda #$ff00		LDA #$FF00
-116	.00a6	8080a6	8d 01 42	sta $804201		STA $804201
+116	.00a6	8080a6	8d 00 42	sta $804200		STA $804200
 117								;STZ mNMITIMEN
 118	.00a9	8080a9	9c 02 42	stz $804202		STZ $804202 ;3
 119	.00ac	8080ac	9c 04 42	stz $804204		STZ $804204 ;5
@@ -278,18 +278,18 @@
 146	.00f4	8080f4	8d 0b 42	sta $80420b		STA $80420B		; FIRE DMA
 147	.00f7	8080f7	64 06		stz $06			STZ NMIReadyNF
 148	.00f9	8080f9	58		cli			CLI
-149	.00fa	8080fa	20 de 81	jsr $8081de		jsr dmaPalletes_xx		; install the game pallete
-150	.00fd	8080fd	20 04 82	jsr $808204		jsr dmaLevelChars_xx		; install the char set
+149	.00fa	8080fa	20 e5 81	jsr $8081e5		jsr dmaPalletes_xx		; install the game pallete
+150	.00fd	8080fd	20 0b 82	jsr $80820b		jsr dmaLevelChars_xx		; install the char set
 46:4	.0100	808100	e2 20		sep #$20		SEP #$20
 152:3	.0102	808102	a9 81		lda #$81		lda #`DataBankStart
 153	.0104	808104	48		pha			pha
 154	.0105	808105	ab		plb			plb								; set the data bank to the common bank
 155							.databank `DataBankStart		; tell the assembler as well
-156	.0106	808106	20 32 82	jsr $808232		jsr map_InitEmptyScreen_xx	; reset the map pointers
+156	.0106	808106	20 39 82	jsr $808239		jsr map_InitEmptyScreen_xx	; reset the map pointers
 157	.0109	808109					_loop
-158	.0109	808109	20 75 82	jsr $808275		jsr map_fillColumnBufferRightEdge_xx	; draw the right edge to the buffer
-159	.010c	80810c	20 27 85	jsr $808527		jsr dmaColumn_xx								; put it the screen
-160	.010f	80810f	20 5c 85	jsr $80855c		jsr map_advancePointersRightEdge_ra8	; move the right over, just the right
+158	.0109	808109	20 7c 82	jsr $80827c		jsr map_fillColumnBufferRightEdge_xx	; draw the right edge to the buffer
+159	.010c	80810c	20 2e 85	jsr $80852e		jsr dmaColumn_xx								; put it the screen
+160	.010f	80810f	20 63 85	jsr $808563		jsr map_advancePointersRightEdge_ra8	; move the right over, just the right
 161	.0112	808112	a5 11		lda $11			lda MapVRAMRight								; have we done the screen + 1
 162	.0114	808114	c9 21		cmp #$21		cmp #33
 163	.0116	808116	90 f1		bcc $808109		bcc _loop										; no, go again
@@ -328,9 +328,9 @@
 196	.0154	808154	29 f8 ff	and #$fff8			and #$FFF8			; I only want to know if we have crossed over 8 pixels, i.e the
 46:4	.0157	808157	e2 20		sep #$20		SEP #$20
 198:3	.0159	808159	f0 2f		beq $80818a			beq _noHold			; same, not crossed char boundary
-199	.015b	80815b	20 75 82	jsr $808275				jsr map_fillColumnBufferRightEdge_xx	; draw current next edge
-200	.015e	80815e	20 5c 85	jsr $80855c				jsr map_advancePointersRightEdge_ra8	; move right edge
-201	.0161	808161	20 77 85	jsr $808577				jsr map_advancePointersLeftEdge_ra8		; move left edge
+199	.015b	80815b	20 7c 82	jsr $80827c				jsr map_fillColumnBufferRightEdge_xx	; draw current next edge
+200	.015e	80815e	20 63 85	jsr $808563				jsr map_advancePointersRightEdge_ra8	; move right edge
+201	.0161	808161	20 7e 85	jsr $80857e				jsr map_advancePointersLeftEdge_ra8		; move left edge
 202										;#A8
 203	.0164	808164	80 24		bra $80818a				bra _noHold
 204	.0166	808166					_noRight
@@ -346,9 +346,9 @@
 214	.0178	808178	29 f8 ff	and #$fff8			and #$FFF8			; have we gone over 8 barrier?
 46:4	.017b	80817b	e2 20		sep #$20		SEP #$20
 216:3	.017d	80817d	f0 0b		beq $80818a			beq _noHold
-217	.017f	80817f	20 52 82	jsr $808252				jsr map_fillColumnBufferLeftEdge_xx		; draw current next edge
-218	.0182	808182	20 92 85	jsr $808592				jsr map_retreatPointersRightEdge_ra8	; move right edge
-219	.0185	808185	20 ad 85	jsr $8085ad				jsr map_retreatPointersLeftEdge_ra8		; move left edge
+217	.017f	80817f	20 59 82	jsr $808259				jsr map_fillColumnBufferLeftEdge_xx		; draw current next edge
+218	.0182	808182	20 99 85	jsr $808599				jsr map_retreatPointersRightEdge_ra8	; move right edge
+219	.0185	808185	20 b4 85	jsr $8085b4				jsr map_retreatPointersLeftEdge_ra8		; move left edge
 220										;#A8
 221	.0188	808188	80 00		bra $80818a				bra _noHold
 222	.018a	80818a					_noLeft
@@ -475,60 +475,63 @@
 295	.01ad	8081ad	5b		tcd			TCD						; set DP to known value
 296	.01ae	8081ae	a5 17		lda $17			lda MapBufferTarget	; do we have something in the Map Column Buffer
 297	.01b0	8081b0	30 03		bmi $8081b5		bmi _noColumnDMA
-298	.01b2	8081b2	20 27 85	jsr $808527			jsr dmaColumn_xx	; draw it
+298	.01b2	8081b2	20 2e 85	jsr $80852e			jsr dmaColumn_xx	; draw it
 299	.01b5	8081b5					_noColumnDMA
 46:4	.01b5	8081b5	e2 20		sep #$20		SEP #$20
-301:3	.01b7	8081b7	a5 07		lda $07			lda JoyHi				; read the joypad
-302	.01b9	8081b9	85 08		sta $08			sta JoyHiOld			; for this example I only care about Left and Right
-303	.01bb	8081bb	ad 19 42	lda $814219		lda $4219,b				; so I only read the upper 8 bits
-304	.01be	8081be	85 07		sta $07			sta JoyHi
-305	.01c0	8081c0	25 08		and $08			and JoyHiOld
-306	.01c2	8081c2	45 07		eor $07			eor JoyHi
-307	.01c4	8081c4	85 09		sta $09			sta JoyHiEvent			; generate down event, this was handy for testing
-308	.01c6	8081c6	a5 15		lda $15			lda ScreenXOffset.lo ; update current X Scroll Offset
-309	.01c8	8081c8	8d 0d 21	sta $81210d		sta $210d,b
-310	.01cb	8081cb	a5 16		lda $16			lda ScreenXOffset.hi
-311	.01cd	8081cd	8d 0d 21	sta $81210d		sta $210d,b
-312	.01d0	8081d0	e2 20		sep #$20		SEP	#$20				; A8
-313	.01d2	8081d2	a9 ff		lda #$ff		LDA	#$FF				; Doing this is slightly faster than DEC, but 2 more bytes
-314	.01d4	8081d4	85 06		sta $06			STA	NMIReadyNF		; set NMI Done Flag
-315	.01d6	8081d6	c2 30		rep #$30		REP	#$30				; A16 XY16
-316	.01d8	8081d8	2b		pld			PLD						; restore DP page
-317	.01d9	8081d9	7a		ply			PLY
-318	.01da	8081da	fa		plx			PLX
-319	.01db	8081db	68		pla			PLA						; Restore A,X,Y
-320	.01dc	8081dc	ab		plb			PLB						; Restore Data Bank
-321	.01dd	8081dd					justRTI
-322	.01dd	8081dd	40		rti			RTI						; Exit
-323							; ----- @DMA functions@ -----
+301:3	.01b7	8081b7	a9 01		lda #$01		lda #1					; since we don't have an OAM DMA to stall the start
+302	.01b9	8081b9	2c 12 42	bit $814212	-	bit $4212,b				; of the NMI, we have to wait for the joypad registers
+303	.01bc	8081bc	d0 fb		bne $8081b9		bne -						; to be valid.
+304	.01be	8081be	a5 07		lda $07			lda JoyHi				; read the joypad
+305	.01c0	8081c0	85 08		sta $08			sta JoyHiOld			; for this example I only care about Left and Right
+306	.01c2	8081c2	ad 19 42	lda $814219		lda $4219,b				; so I only read the upper 8 bits
+307	.01c5	8081c5	85 07		sta $07			sta JoyHi
+308	.01c7	8081c7	25 08		and $08			and JoyHiOld
+309	.01c9	8081c9	45 07		eor $07			eor JoyHi
+310	.01cb	8081cb	85 09		sta $09			sta JoyHiEvent			; generate down event, this was handy for testing
+311	.01cd	8081cd	a5 15		lda $15			lda ScreenXOffset.lo ; update current X Scroll Offset
+312	.01cf	8081cf	8d 0d 21	sta $81210d		sta $210d,b
+313	.01d2	8081d2	a5 16		lda $16			lda ScreenXOffset.hi
+314	.01d4	8081d4	8d 0d 21	sta $81210d		sta $210d,b
+315	.01d7	8081d7	e2 20		sep #$20		SEP	#$20				; A8
+316	.01d9	8081d9	a9 ff		lda #$ff		LDA	#$FF				; Doing this is slightly faster than DEC, but 2 more bytes
+317	.01db	8081db	85 06		sta $06			STA	NMIReadyNF		; set NMI Done Flag
+318	.01dd	8081dd	c2 30		rep #$30		REP	#$30				; A16 XY16
+319	.01df	8081df	2b		pld			PLD						; restore DP page
+320	.01e0	8081e0	7a		ply			PLY
+321	.01e1	8081e1	fa		plx			PLX
+322	.01e2	8081e2	68		pla			PLA						; Restore A,X,Y
+323	.01e3	8081e3	ab		plb			PLB						; Restore Data Bank
+324	.01e4	8081e4					justRTI
+325	.01e4	8081e4	40		rti			RTI						; Exit
+326							; ----- @DMA functions@ -----
 
-325							.section sDataBank
-326	>8000	818000	00 00 c6 18 4c 01 e9 54		SpottyPal .binary "spotty.pal"		; this will be in bank 81
+328							.section sDataBank
+329	>8000	818000	00 00 c6 18 4c 01 e9 54		SpottyPal .binary "spotty.pal"		; this will be in bank 81
 	>8008	818008	ce 26 52 59 f0 6d 18 3e 7a 3f 10 67 ff 7f 00 00
 	>8018	818018	00 00 00 00 00 00 00 00
-327							.send ;sDataBank
+330							.send ;sDataBank
 
-329	.01de	8081de					dmaPalletes_xx
-330	.01de	8081de					_ASSERT_JSR
-331	.01de	8081de	08		php			php
-46:4	.01df	8081df	e2 20		sep #$20		SEP #$20
-62	.01e1	8081e1	c2 10		rep #$10		REP #$10
-334:3	.01e3	8081e3	a2 00 80	ldx #$8000			ldx #<>SpottyPal
-335	.01e6	8081e6	8e 02 43	stx $814302			stx $4302,b
-336	.01e9	8081e9	a9 81		lda #$81			lda #`SpottyPal
-337	.01eb	8081eb	8d 04 43	sta $814304			sta $4304,b
-338	.01ee	8081ee	a2 20 00	ldx #$0020			ldx #32
-339	.01f1	8081f1	8e 05 43	stx $814305			stx $4305,b
-340	.01f4	8081f4	a2 02 22	ldx #$2202			ldx #%00000010 | $2200			; A->B, Inc, Write 2 Bytes, $2122
-341	.01f7	8081f7	8e 00 43	stx $814300			stx $4300,b
-342	.01fa	8081fa	9c 21 21	stz $812121			stz $2121,b							; start of Pallete
-343	.01fd	8081fd	a9 01		lda #$01			lda #1
-344	.01ff	8081ff	8d 0b 42	sta $81420b			sta $420B,b
-345	.0202	808202	28		plp			plp
-346	.0203	808203	60		rts			rts
+332	.01e5	8081e5					dmaPalletes_xx
+333	.01e5	8081e5					_ASSERT_JSR
+334	.01e5	8081e5	08		php			php
+46:4	.01e6	8081e6	e2 20		sep #$20		SEP #$20
+62	.01e8	8081e8	c2 10		rep #$10		REP #$10
+337:3	.01ea	8081ea	a2 00 80	ldx #$8000			ldx #<>SpottyPal
+338	.01ed	8081ed	8e 02 43	stx $814302			stx $4302,b
+339	.01f0	8081f0	a9 81		lda #$81			lda #`SpottyPal
+340	.01f2	8081f2	8d 04 43	sta $814304			sta $4304,b
+341	.01f5	8081f5	a2 20 00	ldx #$0020			ldx #32
+342	.01f8	8081f8	8e 05 43	stx $814305			stx $4305,b
+343	.01fb	8081fb	a2 02 22	ldx #$2202			ldx #%00000010 | $2200			; A->B, Inc, Write 2 Bytes, $2122
+344	.01fe	8081fe	8e 00 43	stx $814300			stx $4300,b
+345	.0201	808201	9c 21 21	stz $812121			stz $2121,b							; start of Pallete
+346	.0204	808204	a9 01		lda #$01			lda #1
+347	.0206	808206	8d 0b 42	sta $81420b			sta $420B,b
+348	.0209	808209	28		plp			plp
+349	.020a	80820a	60		rts			rts
 
-348							.section sDataBank
-349	>8020	818020	00 ff 00 ff 00 ff 00 ff		SpottyChars .binary "spotty.chr"		; this will be in bank 81
+351							.section sDataBank
+352	>8020	818020	00 ff 00 ff 00 ff 00 ff		SpottyChars .binary "spotty.chr"		; this will be in bank 81
 	>8028	818028	00 ff 00 ff 00 ff 00 ff ff 00 ff 00 ff 00 ff 00
 	>8038	818038	ff 00 ff 00 ff 00 ff 00 00 ff 00 fe 00 fe 00 fc
 	>8048	818048	00 fc 00 80 00 c6 00 e6 ff 00 fe 01 fe 01 fc 03
@@ -1041,84 +1044,84 @@
 	>9ff8	819ff8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 	>a008	81a008	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 	>a018	81a018	00 00 00 00 00 00 00 00
-350							.send ;sDataBank
+353							.send ;sDataBank
 
-352	.0204	808204					dmaLevelChars_xx
-353	.0204	808204					_ASSERT_JSR
-354	.0204	808204	08		php			php
-70:4	.0205	808205	c2 30		rep #$30		REP #$30
-356:3	.0207	808207	a9 20 80	lda #$8020			lda #<>SpottyChars
-357	.020a	80820a	8d 02 43	sta $814302			sta $4302,b
-46:4	.020d	80820d	e2 20		sep #$20		SEP #$20
-359:3	.020f	80820f	a9 81		lda #$81			lda #`SpottyChars
-360	.0211	808211	8d 04 43	sta $814304			sta $4304,b
-361	.0214	808214	a2 00 20	ldx #$2000			ldx #size(SpottyChars)
-362	.0217	808217	8e 05 43	stx $814305			stx $4305,b
-363	.021a	80821a	a2 01 18	ldx #$1801			ldx #%00000001 | $1800			; A->B, Inc, Write WORD, $2118
-364	.021d	80821d	8e 00 43	stx $814300			stx $4300,b
-365	.0220	808220	a2 00 10	ldx #$1000			ldx #kVRAM.gameChars
-366	.0223	808223	8e 16 21	stx $812116			stx $2116,b
-367	.0226	808226	a9 80		lda #$80			lda #$80
-368	.0228	808228	8d 15 21	sta $812115			sta $2115,b							; inc VRAM port address
-369	.022b	80822b	a9 01		lda #$01			lda #1
-370	.022d	80822d	8d 0b 42	sta $81420b			sta $420B,b
-371	.0230	808230	28		plp			plp
-372	.0231	808231	60		rts			rts
+355	.020b	80820b					dmaLevelChars_xx
+356	.020b	80820b					_ASSERT_JSR
+357	.020b	80820b	08		php			php
+70:4	.020c	80820c	c2 30		rep #$30		REP #$30
+359:3	.020e	80820e	a9 20 80	lda #$8020			lda #<>SpottyChars
+360	.0211	808211	8d 02 43	sta $814302			sta $4302,b
+46:4	.0214	808214	e2 20		sep #$20		SEP #$20
+362:3	.0216	808216	a9 81		lda #$81			lda #`SpottyChars
+363	.0218	808218	8d 04 43	sta $814304			sta $4304,b
+364	.021b	80821b	a2 00 20	ldx #$2000			ldx #size(SpottyChars)
+365	.021e	80821e	8e 05 43	stx $814305			stx $4305,b
+366	.0221	808221	a2 01 18	ldx #$1801			ldx #%00000001 | $1800			; A->B, Inc, Write WORD, $2118
+367	.0224	808224	8e 00 43	stx $814300			stx $4300,b
+368	.0227	808227	a2 00 10	ldx #$1000			ldx #kVRAM.gameChars
+369	.022a	80822a	8e 16 21	stx $812116			stx $2116,b
+370	.022d	80822d	a9 80		lda #$80			lda #$80
+371	.022f	80822f	8d 15 21	sta $812115			sta $2115,b							; inc VRAM port address
+372	.0232	808232	a9 01		lda #$01			lda #1
+373	.0234	808234	8d 0b 42	sta $81420b			sta $420B,b
+374	.0237	808237	28		plp			plp
+375	.0238	808238	60		rts			rts
 
-374							; ----- @Map Functions@ -----
-375							.section sDP
-376	>000b						MapBlockIndexLeft		.byte ?				; the left edge block index
-377	>000c						MapBlockIndexRight	.byte ?				; for the right
-378	>000d						MapSubCharLeft			.byte ?				; which char in the block, pre multiplied by 2
-379	>000e						MapSubCharRight		.byte ?
-380	.000f						MapVRAMLeft				.DUNION HLWORD		; the top char memory location in VRAM
+377							; ----- @Map Functions@ -----
+378							.section sDP
+379	>000b						MapBlockIndexLeft		.byte ?				; the left edge block index
+380	>000c						MapBlockIndexRight	.byte ?				; for the right
+381	>000d						MapSubCharLeft			.byte ?				; which char in the block, pre multiplied by 2
+382	>000e						MapSubCharRight		.byte ?
+383	.000f						MapVRAMLeft				.DUNION HLWORD		; the top char memory location in VRAM
 120:1	>000f						    .word ?
 121							    .struct
 122	>000f						        lo .byte ?
 123	>0010						        hi .byte ?
 124							    .ends
 125							.endu
-381:3	.0011						MapVRAMRight			.DUNION HLWORD
+384:3	.0011						MapVRAMRight			.DUNION HLWORD
 120:1	>0011						    .word ?
 121							    .struct
 122	>0011						        lo .byte ?
 123	>0012						        hi .byte ?
 124							    .ends
 125							.endu
-382:3	.0013						MapTempWord				.DUNION HLWORD		; used to hold data for the map functions
+385:3	.0013						MapTempWord				.DUNION HLWORD		; used to hold data for the map functions
 120:1	>0013						    .word ?
 121							    .struct
 122	>0013						        lo .byte ?
 123	>0014						        hi .byte ?
 124							    .ends
 125							.endu
-383:3	.0015						ScreenXOffset			.DUNION HLWORD		; current screen X scroll
+386:3	.0015						ScreenXOffset			.DUNION HLWORD		; current screen X scroll
 120:1	>0015						    .word ?
 121							    .struct
 122	>0015						        lo .byte ?
 123	>0016						        hi .byte ?
 124							    .ends
 125							.endu
-384:3	.0017						MapBufferTarget		.DUNION HLWORD		; where we want NMI to dma the buffer to
+387:3	.0017						MapBufferTarget		.DUNION HLWORD		; where we want NMI to dma the buffer to
 120:1	>0017						    .word ?
 121							    .struct
 122	>0017						        lo .byte ?
 123	>0018						        hi .byte ?
 124							    .ends
 125							.endu
-385:3							.send ;sDP
+388:3							.send ;sDP
 
-387							.section sSharedWRAM
-388	>80005d						MapColumnBuffer .fill 32*2					; buffer of 32 chars to be DMA'd in the NMI
-389	=$80009c					MapColumnBufferEnd = * - 1					; stack pushes then decs so we point to the last element
-390	>80009d						MapStackStore .word ?						; Temp store to hold the stack value for restoration
-391							.send ; sSharedWRAM
+390							.section sSharedWRAM
+391	>80005d						MapColumnBuffer .fill 32*2					; buffer of 32 chars to be DMA'd in the NMI
+392	=$80009c					MapColumnBufferEnd = * - 1					; stack pushes then decs so we point to the last element
+393	>80009d						MapStackStore .word ?						; Temp store to hold the stack value for restoration
+394							.send ; sSharedWRAM
 
-393							.section sDataBank							; bank 81
-394	.a020	81a020					MapData .block
-395	=243							kRowLen = 243
-396								.union
-397	>a020	81a020	46 46 2f 01 01 01 01 01			.binary "spotty.map"						; splice the map data by rows
+396							.section sDataBank							; bank 81
+397	.a020	81a020					MapData .block
+398	=243							kRowLen = 243
+399								.union
+400	>a020	81a020	46 46 2f 01 01 01 01 01			.binary "spotty.map"						; splice the map data by rows
 	>a028	81a028	01 01 01 28 29 2a 6b 01 01 01 00 00 59 5b 1a 1a
 	>a038	81a038	01 0b 0c 0d 45 00 59 5a 75 71 51 52 53 56 5c 5b
 	>a048	81a048	6b 00 01 5f 5f 01 01 01 6b 28 29 2a 6b 1a 1a 1a
@@ -1210,18 +1213,18 @@
 	>a5a8	81a5a8	6a 2e 46 46 46 46 2f 1f 35 36 1b 1c 4a 4a 4a 81
 	>a5b8	81a5b8	4a 4a 4a 4a 81 4a 4a 1b 44 1c 2e 46 2f 43 62 1a
 	>a5c8	81a5c8	1a 1a 1a 1a 1a 1a 1a 1b 44 44
-398								.struct
-399	>a020	81a020							Row1 .fill kRowLen
-400	>a113	81a113							Row2 .fill kRowLen
-401	>a206	81a206							Row3 .fill kRowLen
-402	>a2f9	81a2f9							Row4 .fill kRowLen
-403	>a3ec	81a3ec							Row5 .fill kRowLen
-404	>a4df	81a4df							Row6 .fill kRowLen
-405								.ends
-406								.endu
-407							.bend
-408	.a5d2	81a5d2					BlockData .block
-409	>a5d2	81a5d2	00 00 00 00 00 00 00 00			col1 .binary "spotty_col1.blk"
+401								.struct
+402	>a020	81a020							Row1 .fill kRowLen
+403	>a113	81a113							Row2 .fill kRowLen
+404	>a206	81a206							Row3 .fill kRowLen
+405	>a2f9	81a2f9							Row4 .fill kRowLen
+406	>a3ec	81a3ec							Row5 .fill kRowLen
+407	>a4df	81a4df							Row6 .fill kRowLen
+408								.ends
+409								.endu
+410							.bend
+411	.a5d2	81a5d2					BlockData .block
+412	>a5d2	81a5d2	00 00 00 00 00 00 00 00			col1 .binary "spotty_col1.blk"
 	>a5da	81a5da	00 00 00 00 00 00 00 00 00 05 00 09 00 0d 00 11
 	>a5ea	81a5ea	00 15 00 17 00 19 00 1b 00 1d 00 21 00 25 00 28
 	>a5fa	81a5fa	00 29 00 2b 00 2d 00 28 00 1f 00 23 00 26 00 28
@@ -1290,7 +1293,7 @@
 	>a9ea	81a9ea	00 05 00 09 00 0d 00 11 00 5b 00 48 00 5c 00 a2
 	>a9fa	81a9fa	00 94 00 9c 00 9c 00 7e 00 5b 00 48 00 5c 00 5f
 	>aa0a	81aa0a	00 45 00 45 00 3e 00 45
-410	>aa12	81aa12	00 00 00 00 00 00 00 00			col2 .binary "spotty_col2.blk"
+413	>aa12	81aa12	00 00 00 00 00 00 00 00			col2 .binary "spotty_col2.blk"
 	>aa1a	81aa1a	00 00 00 01 00 03 00 00 00 06 00 0a 00 0e 00 12
 	>aa2a	81aa2a	00 16 00 18 00 1a 00 1c 00 1e 00 22 00 25 00 28
 	>aa3a	81aa3a	00 2a 00 2c 00 25 00 28 00 20 00 24 00 27 00 28
@@ -1359,7 +1362,7 @@
 	>ae2a	81ae2a	00 06 00 0a 00 0e 00 12 00 45 00 48 00 a1 00 d5
 	>ae3a	81ae3a	00 9c 00 94 00 94 00 7f 00 45 00 5b 00 54 00 5f
 	>ae4a	81ae4a	00 3e 00 45 00 5b 00 45
-411	>ae52	81ae52	00 00 00 00 00 00 00 00			col3 .binary "spotty_col3.blk"
+414	>ae52	81ae52	00 00 00 00 00 00 00 00			col3 .binary "spotty_col3.blk"
 	>ae5a	81ae5a	00 00 00 02 00 04 00 00 00 07 00 0b 00 0f 00 13
 	>ae6a	81ae6a	00 05 00 09 00 0d 00 11 00 1f 00 23 00 26 00 28
 	>ae7a	81ae7a	00 1d 00 21 00 25 00 28 00 29 00 2b 00 2d 00 28
@@ -1428,7 +1431,7 @@
 	>b26a	81b26a	00 07 00 0b 00 0f 00 13 00 45 00 48 00 a1 00 ae
 	>b27a	81b27a	00 9c 00 94 00 94 00 7e 00 45 00 48 00 54 00 5f
 	>b28a	81b28a	00 45 00 3e 00 45 00 5b
-412	>b292	81b292	00 00 00 00 00 00 00 00			col4 .binary "spotty_col4.blk"
+415	>b292	81b292	00 00 00 00 00 00 00 00			col4 .binary "spotty_col4.blk"
 	>b29a	81b29a	00 00 00 00 00 00 00 00 00 08 00 0c 00 10 00 14
 	>b2aa	81b2aa	00 06 00 0a 00 0e 00 12 00 20 00 24 00 27 00 28
 	>b2ba	81b2ba	00 1e 00 22 00 25 00 28 00 2a 00 2c 00 25 00 28
@@ -1497,532 +1500,532 @@
 	>b6aa	81b6aa	00 08 00 0c 00 f4 00 61 00 5b 00 48 00 5c 00 4b
 	>b6ba	81b6ba	00 94 00 9c 00 9c 00 7f 00 5b 00 48 00 5c 00 5f
 	>b6ca	81b6ca	00 51 00 45 00 5b 00 45
-413							.bend
-414							.send ; sDataBank
+416							.bend
+417							.send ; sDataBank
 
-416							.databank `DataBankStart				; make sure we are back into the DataBank err Bank
+419							.databank `DataBankStart				; make sure we are back into the DataBank err Bank
 
-418	.0232	808232					map_InitEmptyScreen_xx
-419	.0232	808232					_ASSERT_JSR
-420	.0232	808232	08		php			php
-66:4	.0233	808233	e2 30		sep #$30		SEP #$30
-422:3	.0235	808235	a9 ff		lda #$ff		lda #255
-423	.0237	808237	85 0b		sta $0b			sta MapBlockIndexLeft		; left starts at the last map position, -1
-424	.0239	808239	64 0c		stz $0c			stz MapBlockIndexRight		; right starts at 0 so we can use the system
-425	.023b	80823b	a9 06		lda #$06		lda #6							; to draw the screen by looping it
-426	.023d	80823d	85 0d		sta $0d			sta MapSubCharLeft
-427	.023f	80823f	64 0e		stz $0e			stz MapSubCharRight			; left  = block 255, subChar 6, VRAM column 63
-70:4	.0241	808241	c2 30		rep #$30		REP #$30
-429:3	.0243	808243	a9 3f 00	lda #$003f		lda #63
-430	.0246	808246	85 0f		sta $0f			sta MapVRAMLeft
-431	.0248	808248	64 11		stz $11			stz MapVRAMRight
-432	.024a	80824a	64 15		stz $15			stz ScreenXOffset
-433	.024c	80824c	64 17		stz $17			stz MapBufferTarget			; we want this to be negative, so set 0
-434	.024e	80824e	c6 17		dec $17			dec MapBufferTarget			; dec 1 to be -1
-435	.0250	808250	28		plp			plp
-436	.0251	808251	60		rts			rts
+421	.0239	808239					map_InitEmptyScreen_xx
+422	.0239	808239					_ASSERT_JSR
+423	.0239	808239	08		php			php
+66:4	.023a	80823a	e2 30		sep #$30		SEP #$30
+425:3	.023c	80823c	a9 ff		lda #$ff		lda #255
+426	.023e	80823e	85 0b		sta $0b			sta MapBlockIndexLeft		; left starts at the last map position, -1
+427	.0240	808240	64 0c		stz $0c			stz MapBlockIndexRight		; right starts at 0 so we can use the system
+428	.0242	808242	a9 06		lda #$06		lda #6							; to draw the screen by looping it
+429	.0244	808244	85 0d		sta $0d			sta MapSubCharLeft
+430	.0246	808246	64 0e		stz $0e			stz MapSubCharRight			; left  = block 255, subChar 6, VRAM column 63
+70:4	.0248	808248	c2 30		rep #$30		REP #$30
+432:3	.024a	80824a	a9 3f 00	lda #$003f		lda #63
+433	.024d	80824d	85 0f		sta $0f			sta MapVRAMLeft
+434	.024f	80824f	64 11		stz $11			stz MapVRAMRight
+435	.0251	808251	64 15		stz $15			stz ScreenXOffset
+436	.0253	808253	64 17		stz $17			stz MapBufferTarget			; we want this to be negative, so set 0
+437	.0255	808255	c6 17		dec $17			dec MapBufferTarget			; dec 1 to be -1
+438	.0257	808257	28		plp			plp
+439	.0258	808258	60		rts			rts
 
-438	.0252	808252					map_fillColumnBufferLeftEdge_xx
-439	.0252	808252					_ASSERT_JSR
-440	.0252	808252	08		php			php
-70:4	.0253	808253	c2 30		rep #$30		REP #$30
-442:3	.0255	808255	a5 0f		lda $0f			lda MapVRAMLeft			; which column do we need to write it to
-443	.0257	808257	c9 20 00	cmp #$0020		cmp #32						; 0-31 are $000 and then 32-63 are $400w plus
-444	.025a	80825a	90 06		bcc $808262		bcc _justStore
-445	.025c	80825c	29 1f 00	and #$001f			and #31
-446	.025f	80825f	69 ff 03	adc #$03ff			adc #$3ff 				; C is set as per CMP so this add $400
-447	.0262	808262					_justStore						; if the vram was not at $0000 you would add the base here
-448	.0262	808262	85 17		sta $17			sta MapBufferTarget
-449	.0264	808264	ba		tsx			tsx
-450	.0265	808265	86 9d		stx $9d			stx <MapStackStore,d			; save the stack
-451	.0267	808267	a2 9c 00	ldx #$009c		ldx #<>MapColumnBufferEnd
-452	.026a	80826a	9a		txs			txs								; set the stack to the buffer
-453	.026b	80826b	a5 0b		lda $0b			lda MapBlockIndexLeft		; which block do we want
-454	.026d	80826d	29 ff 00	and #$00ff		and #$ff							; convert word to byte
-455	.0270	808270	a8		tay			tay
-456	.0271	808271	a5 0d		lda $0d			lda MapSubCharLeft
-457	.0273	808273	80 21		bra $808296		bra map_FillColumBufferEdgeCommon
+441	.0259	808259					map_fillColumnBufferLeftEdge_xx
+442	.0259	808259					_ASSERT_JSR
+443	.0259	808259	08		php			php
+70:4	.025a	80825a	c2 30		rep #$30		REP #$30
+445:3	.025c	80825c	a5 0f		lda $0f			lda MapVRAMLeft			; which column do we need to write it to
+446	.025e	80825e	c9 20 00	cmp #$0020		cmp #32						; 0-31 are $000 and then 32-63 are $400w plus
+447	.0261	808261	90 06		bcc $808269		bcc _justStore
+448	.0263	808263	29 1f 00	and #$001f			and #31
+449	.0266	808266	69 ff 03	adc #$03ff			adc #$3ff 				; C is set as per CMP so this add $400
+450	.0269	808269					_justStore						; if the vram was not at $0000 you would add the base here
+451	.0269	808269	85 17		sta $17			sta MapBufferTarget
+452	.026b	80826b	ba		tsx			tsx
+453	.026c	80826c	86 9d		stx $9d			stx <MapStackStore,d			; save the stack
+454	.026e	80826e	a2 9c 00	ldx #$009c		ldx #<>MapColumnBufferEnd
+455	.0271	808271	9a		txs			txs								; set the stack to the buffer
+456	.0272	808272	a5 0b		lda $0b			lda MapBlockIndexLeft		; which block do we want
+457	.0274	808274	29 ff 00	and #$00ff		and #$ff							; convert word to byte
+458	.0277	808277	a8		tay			tay
+459	.0278	808278	a5 0d		lda $0d			lda MapSubCharLeft
+460	.027a	80827a	80 21		bra $80829d		bra map_FillColumBufferEdgeCommon
 
-459	.0275	808275					map_fillColumnBufferRightEdge_xx
-460	.0275	808275					_ASSERT_JSR
-461	.0275	808275	08		php			php
-70:4	.0276	808276	c2 30		rep #$30		REP #$30
-463:3	.0278	808278	a5 11		lda $11			lda MapVRAMRight			; which column do we need to write it to
-464	.027a	80827a	c9 20 00	cmp #$0020		cmp #32						; 0-31 are $000 and then 32-63 are $400w plus
-465	.027d	80827d	90 06		bcc $808285		bcc _justStore
-466	.027f	80827f	29 1f 00	and #$001f			and #31
-467	.0282	808282	69 ff 03	adc #$03ff			adc #$3ff 				; C is set as per CMP so this add $400
-468	.0285	808285					_justStore						; if the vram was not at $0000 you would add the base here
-469	.0285	808285	85 17		sta $17			sta MapBufferTarget
-470	.0287	808287	ba		tsx			tsx
-471	.0288	808288	86 9d		stx $9d			stx <MapStackStore,d			; save the stack
-472	.028a	80828a	a2 9c 00	ldx #$009c		ldx #<>MapColumnBufferEnd
-473	.028d	80828d	9a		txs			txs								; set the stack to the buffer
-474	.028e	80828e	a5 0c		lda $0c			lda MapBlockIndexRight		; which block do we want
-475	.0290	808290	29 ff 00	and #$00ff		and #$ff							; convert word to byte
-476	.0293	808293	a8		tay			tay
-477	.0294	808294	a5 0e		lda $0e			lda MapSubCharRight
-478	.0296	808296					map_FillColumBufferEdgeCommon
-479	.0296	808296	29 ff 00	and #$00ff		and #$ff
-480	.0299	808299	aa		tax			tax
-481	.029a	80829a	7c 9d 82	jmp ($80829d,x)		jmp (+,x)
-482	>029d	80829d	a5 82 45 83 e5 83 85 84		+ .word <>(_col1,_col2,_col3,_col4)
-483	.02a5	8082a5					_col1
-484	.02a5	8082a5	bb		tyx			tyx
-485	.02a6	8082a6	bd 20 a0	lda $81a020,x		lda MapData.Row1,x			; get the block index
-573	.02a9	8082a9	29 ff 00	and #$00ff		and #$ff
-574	.02ac	8082ac	0a		asl a			asl a								; convert to word index
-575	.02ad	8082ad	0a		asl a			asl a
-576	.02ae	8082ae	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.02af	8082af	a8		tay			tay
-578	.02b0	8082b0	b9 d2 a5	lda $81a5d2,y		lda BlockData.col1+0,y		; push col1 data
-579	.02b3	8082b3	48		pha			pha
-580	.02b4	8082b4	b9 d4 a5	lda $81a5d4,y		lda BlockData.col1+2,y
-581	.02b7	8082b7	48		pha			pha
-582	.02b8	8082b8	b9 d6 a5	lda $81a5d6,y		lda BlockData.col1+4,y
-583	.02bb	8082bb	48		pha			pha
-584	.02bc	8082bc	b9 d8 a5	lda $81a5d8,y		lda BlockData.col1+6,y
-585	.02bf	8082bf	48		pha			pha
-487	.02c0	8082c0	bd 13 a1	lda $81a113,x		lda MapData.Row2,x			; and row 2
-573	.02c3	8082c3	29 ff 00	and #$00ff		and #$ff
-574	.02c6	8082c6	0a		asl a			asl a								; convert to word index
-575	.02c7	8082c7	0a		asl a			asl a
-576	.02c8	8082c8	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.02c9	8082c9	a8		tay			tay
-578	.02ca	8082ca	b9 d2 a5	lda $81a5d2,y		lda BlockData.col1+0,y		; push col1 data
-579	.02cd	8082cd	48		pha			pha
-580	.02ce	8082ce	b9 d4 a5	lda $81a5d4,y		lda BlockData.col1+2,y
-581	.02d1	8082d1	48		pha			pha
-582	.02d2	8082d2	b9 d6 a5	lda $81a5d6,y		lda BlockData.col1+4,y
-583	.02d5	8082d5	48		pha			pha
-584	.02d6	8082d6	b9 d8 a5	lda $81a5d8,y		lda BlockData.col1+6,y
-585	.02d9	8082d9	48		pha			pha
-489	.02da	8082da	bd 06 a2	lda $81a206,x		lda MapData.Row3,x			; and row 3
-573	.02dd	8082dd	29 ff 00	and #$00ff		and #$ff
-574	.02e0	8082e0	0a		asl a			asl a								; convert to word index
-575	.02e1	8082e1	0a		asl a			asl a
-576	.02e2	8082e2	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.02e3	8082e3	a8		tay			tay
-578	.02e4	8082e4	b9 d2 a5	lda $81a5d2,y		lda BlockData.col1+0,y		; push col1 data
-579	.02e7	8082e7	48		pha			pha
-580	.02e8	8082e8	b9 d4 a5	lda $81a5d4,y		lda BlockData.col1+2,y
-581	.02eb	8082eb	48		pha			pha
-582	.02ec	8082ec	b9 d6 a5	lda $81a5d6,y		lda BlockData.col1+4,y
-583	.02ef	8082ef	48		pha			pha
-584	.02f0	8082f0	b9 d8 a5	lda $81a5d8,y		lda BlockData.col1+6,y
-585	.02f3	8082f3	48		pha			pha
-491	.02f4	8082f4	bd f9 a2	lda $81a2f9,x		lda MapData.Row4,x			; and row 4
-573	.02f7	8082f7	29 ff 00	and #$00ff		and #$ff
-574	.02fa	8082fa	0a		asl a			asl a								; convert to word index
-575	.02fb	8082fb	0a		asl a			asl a
-576	.02fc	8082fc	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.02fd	8082fd	a8		tay			tay
-578	.02fe	8082fe	b9 d2 a5	lda $81a5d2,y		lda BlockData.col1+0,y		; push col1 data
-579	.0301	808301	48		pha			pha
-580	.0302	808302	b9 d4 a5	lda $81a5d4,y		lda BlockData.col1+2,y
-581	.0305	808305	48		pha			pha
-582	.0306	808306	b9 d6 a5	lda $81a5d6,y		lda BlockData.col1+4,y
-583	.0309	808309	48		pha			pha
-584	.030a	80830a	b9 d8 a5	lda $81a5d8,y		lda BlockData.col1+6,y
-585	.030d	80830d	48		pha			pha
-493	.030e	80830e	bd ec a3	lda $81a3ec,x		lda MapData.Row5,x			; and row 5
-573	.0311	808311	29 ff 00	and #$00ff		and #$ff
-574	.0314	808314	0a		asl a			asl a								; convert to word index
-575	.0315	808315	0a		asl a			asl a
-576	.0316	808316	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.0317	808317	a8		tay			tay
-578	.0318	808318	b9 d2 a5	lda $81a5d2,y		lda BlockData.col1+0,y		; push col1 data
-579	.031b	80831b	48		pha			pha
-580	.031c	80831c	b9 d4 a5	lda $81a5d4,y		lda BlockData.col1+2,y
-581	.031f	80831f	48		pha			pha
-582	.0320	808320	b9 d6 a5	lda $81a5d6,y		lda BlockData.col1+4,y
-583	.0323	808323	48		pha			pha
-584	.0324	808324	b9 d8 a5	lda $81a5d8,y		lda BlockData.col1+6,y
-585	.0327	808327	48		pha			pha
-495	.0328	808328	bd df a4	lda $81a4df,x		lda MapData.Row6,x			; and row 6
-573	.032b	80832b	29 ff 00	and #$00ff		and #$ff
-574	.032e	80832e	0a		asl a			asl a								; convert to word index
-575	.032f	80832f	0a		asl a			asl a
-576	.0330	808330	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.0331	808331	a8		tay			tay
-578	.0332	808332	b9 d2 a5	lda $81a5d2,y		lda BlockData.col1+0,y		; push col1 data
-579	.0335	808335	48		pha			pha
-580	.0336	808336	b9 d4 a5	lda $81a5d4,y		lda BlockData.col1+2,y
-581	.0339	808339	48		pha			pha
-582	.033a	80833a	b9 d6 a5	lda $81a5d6,y		lda BlockData.col1+4,y
-583	.033d	80833d	48		pha			pha
-584	.033e	80833e	b9 d8 a5	lda $81a5d8,y		lda BlockData.col1+6,y
-585	.0341	808341	48		pha			pha
-497	.0342	808342	4c 22 85	jmp $808522		jmp _exit
-498	.0345	808345					_col2
-499	.0345	808345	bb		tyx			tyx
-500	.0346	808346	bd 20 a0	lda $81a020,x		lda MapData.Row1,x			; get the block index
-573	.0349	808349	29 ff 00	and #$00ff		and #$ff
-574	.034c	80834c	0a		asl a			asl a								; convert to word index
-575	.034d	80834d	0a		asl a			asl a
-576	.034e	80834e	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.034f	80834f	a8		tay			tay
-578	.0350	808350	b9 12 aa	lda $81aa12,y		lda BlockData.col2+0,y		; push col1 data
-579	.0353	808353	48		pha			pha
-580	.0354	808354	b9 14 aa	lda $81aa14,y		lda BlockData.col2+2,y
-581	.0357	808357	48		pha			pha
-582	.0358	808358	b9 16 aa	lda $81aa16,y		lda BlockData.col2+4,y
-583	.035b	80835b	48		pha			pha
-584	.035c	80835c	b9 18 aa	lda $81aa18,y		lda BlockData.col2+6,y
-585	.035f	80835f	48		pha			pha
-502	.0360	808360	bd 13 a1	lda $81a113,x		lda MapData.Row2,x			; and row 2
-573	.0363	808363	29 ff 00	and #$00ff		and #$ff
-574	.0366	808366	0a		asl a			asl a								; convert to word index
-575	.0367	808367	0a		asl a			asl a
-576	.0368	808368	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.0369	808369	a8		tay			tay
-578	.036a	80836a	b9 12 aa	lda $81aa12,y		lda BlockData.col2+0,y		; push col1 data
-579	.036d	80836d	48		pha			pha
-580	.036e	80836e	b9 14 aa	lda $81aa14,y		lda BlockData.col2+2,y
-581	.0371	808371	48		pha			pha
-582	.0372	808372	b9 16 aa	lda $81aa16,y		lda BlockData.col2+4,y
-583	.0375	808375	48		pha			pha
-584	.0376	808376	b9 18 aa	lda $81aa18,y		lda BlockData.col2+6,y
-585	.0379	808379	48		pha			pha
-504	.037a	80837a	bd 06 a2	lda $81a206,x		lda MapData.Row3,x			; and row 3
-573	.037d	80837d	29 ff 00	and #$00ff		and #$ff
-574	.0380	808380	0a		asl a			asl a								; convert to word index
-575	.0381	808381	0a		asl a			asl a
-576	.0382	808382	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.0383	808383	a8		tay			tay
-578	.0384	808384	b9 12 aa	lda $81aa12,y		lda BlockData.col2+0,y		; push col1 data
-579	.0387	808387	48		pha			pha
-580	.0388	808388	b9 14 aa	lda $81aa14,y		lda BlockData.col2+2,y
-581	.038b	80838b	48		pha			pha
-582	.038c	80838c	b9 16 aa	lda $81aa16,y		lda BlockData.col2+4,y
-583	.038f	80838f	48		pha			pha
-584	.0390	808390	b9 18 aa	lda $81aa18,y		lda BlockData.col2+6,y
-585	.0393	808393	48		pha			pha
-506	.0394	808394	bd f9 a2	lda $81a2f9,x		lda MapData.Row4,x			; and row 4
-573	.0397	808397	29 ff 00	and #$00ff		and #$ff
-574	.039a	80839a	0a		asl a			asl a								; convert to word index
-575	.039b	80839b	0a		asl a			asl a
-576	.039c	80839c	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.039d	80839d	a8		tay			tay
-578	.039e	80839e	b9 12 aa	lda $81aa12,y		lda BlockData.col2+0,y		; push col1 data
-579	.03a1	8083a1	48		pha			pha
-580	.03a2	8083a2	b9 14 aa	lda $81aa14,y		lda BlockData.col2+2,y
-581	.03a5	8083a5	48		pha			pha
-582	.03a6	8083a6	b9 16 aa	lda $81aa16,y		lda BlockData.col2+4,y
-583	.03a9	8083a9	48		pha			pha
-584	.03aa	8083aa	b9 18 aa	lda $81aa18,y		lda BlockData.col2+6,y
-585	.03ad	8083ad	48		pha			pha
-508	.03ae	8083ae	bd ec a3	lda $81a3ec,x		lda MapData.Row5,x			; and row 5
-573	.03b1	8083b1	29 ff 00	and #$00ff		and #$ff
-574	.03b4	8083b4	0a		asl a			asl a								; convert to word index
-575	.03b5	8083b5	0a		asl a			asl a
-576	.03b6	8083b6	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.03b7	8083b7	a8		tay			tay
-578	.03b8	8083b8	b9 12 aa	lda $81aa12,y		lda BlockData.col2+0,y		; push col1 data
-579	.03bb	8083bb	48		pha			pha
-580	.03bc	8083bc	b9 14 aa	lda $81aa14,y		lda BlockData.col2+2,y
-581	.03bf	8083bf	48		pha			pha
-582	.03c0	8083c0	b9 16 aa	lda $81aa16,y		lda BlockData.col2+4,y
-583	.03c3	8083c3	48		pha			pha
-584	.03c4	8083c4	b9 18 aa	lda $81aa18,y		lda BlockData.col2+6,y
-585	.03c7	8083c7	48		pha			pha
-510	.03c8	8083c8	bd df a4	lda $81a4df,x		lda MapData.Row6,x			; and row 6
-573	.03cb	8083cb	29 ff 00	and #$00ff		and #$ff
-574	.03ce	8083ce	0a		asl a			asl a								; convert to word index
-575	.03cf	8083cf	0a		asl a			asl a
-576	.03d0	8083d0	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.03d1	8083d1	a8		tay			tay
-578	.03d2	8083d2	b9 12 aa	lda $81aa12,y		lda BlockData.col2+0,y		; push col1 data
-579	.03d5	8083d5	48		pha			pha
-580	.03d6	8083d6	b9 14 aa	lda $81aa14,y		lda BlockData.col2+2,y
-581	.03d9	8083d9	48		pha			pha
-582	.03da	8083da	b9 16 aa	lda $81aa16,y		lda BlockData.col2+4,y
-583	.03dd	8083dd	48		pha			pha
-584	.03de	8083de	b9 18 aa	lda $81aa18,y		lda BlockData.col2+6,y
-585	.03e1	8083e1	48		pha			pha
-512	.03e2	8083e2	4c 22 85	jmp $808522		jmp _exit
-513	.03e5	8083e5					_col3
-514	.03e5	8083e5	bb		tyx			tyx
-515	.03e6	8083e6	bd 20 a0	lda $81a020,x		lda MapData.Row1,x			; get the block index
-573	.03e9	8083e9	29 ff 00	and #$00ff		and #$ff
-574	.03ec	8083ec	0a		asl a			asl a								; convert to word index
-575	.03ed	8083ed	0a		asl a			asl a
-576	.03ee	8083ee	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.03ef	8083ef	a8		tay			tay
-578	.03f0	8083f0	b9 52 ae	lda $81ae52,y		lda BlockData.col3+0,y		; push col1 data
-579	.03f3	8083f3	48		pha			pha
-580	.03f4	8083f4	b9 54 ae	lda $81ae54,y		lda BlockData.col3+2,y
-581	.03f7	8083f7	48		pha			pha
-582	.03f8	8083f8	b9 56 ae	lda $81ae56,y		lda BlockData.col3+4,y
-583	.03fb	8083fb	48		pha			pha
-584	.03fc	8083fc	b9 58 ae	lda $81ae58,y		lda BlockData.col3+6,y
-585	.03ff	8083ff	48		pha			pha
-517	.0400	808400	bd 13 a1	lda $81a113,x		lda MapData.Row2,x			; and row 2
-573	.0403	808403	29 ff 00	and #$00ff		and #$ff
-574	.0406	808406	0a		asl a			asl a								; convert to word index
-575	.0407	808407	0a		asl a			asl a
-576	.0408	808408	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.0409	808409	a8		tay			tay
-578	.040a	80840a	b9 52 ae	lda $81ae52,y		lda BlockData.col3+0,y		; push col1 data
-579	.040d	80840d	48		pha			pha
-580	.040e	80840e	b9 54 ae	lda $81ae54,y		lda BlockData.col3+2,y
-581	.0411	808411	48		pha			pha
-582	.0412	808412	b9 56 ae	lda $81ae56,y		lda BlockData.col3+4,y
-583	.0415	808415	48		pha			pha
-584	.0416	808416	b9 58 ae	lda $81ae58,y		lda BlockData.col3+6,y
-585	.0419	808419	48		pha			pha
-519	.041a	80841a	bd 06 a2	lda $81a206,x		lda MapData.Row3,x			; and row 3
-573	.041d	80841d	29 ff 00	and #$00ff		and #$ff
-574	.0420	808420	0a		asl a			asl a								; convert to word index
-575	.0421	808421	0a		asl a			asl a
-576	.0422	808422	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.0423	808423	a8		tay			tay
-578	.0424	808424	b9 52 ae	lda $81ae52,y		lda BlockData.col3+0,y		; push col1 data
-579	.0427	808427	48		pha			pha
-580	.0428	808428	b9 54 ae	lda $81ae54,y		lda BlockData.col3+2,y
-581	.042b	80842b	48		pha			pha
-582	.042c	80842c	b9 56 ae	lda $81ae56,y		lda BlockData.col3+4,y
-583	.042f	80842f	48		pha			pha
-584	.0430	808430	b9 58 ae	lda $81ae58,y		lda BlockData.col3+6,y
-585	.0433	808433	48		pha			pha
-521	.0434	808434	bd f9 a2	lda $81a2f9,x		lda MapData.Row4,x			; and row 4
-573	.0437	808437	29 ff 00	and #$00ff		and #$ff
-574	.043a	80843a	0a		asl a			asl a								; convert to word index
-575	.043b	80843b	0a		asl a			asl a
-576	.043c	80843c	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.043d	80843d	a8		tay			tay
-578	.043e	80843e	b9 52 ae	lda $81ae52,y		lda BlockData.col3+0,y		; push col1 data
-579	.0441	808441	48		pha			pha
-580	.0442	808442	b9 54 ae	lda $81ae54,y		lda BlockData.col3+2,y
-581	.0445	808445	48		pha			pha
-582	.0446	808446	b9 56 ae	lda $81ae56,y		lda BlockData.col3+4,y
-583	.0449	808449	48		pha			pha
-584	.044a	80844a	b9 58 ae	lda $81ae58,y		lda BlockData.col3+6,y
-585	.044d	80844d	48		pha			pha
-523	.044e	80844e	bd ec a3	lda $81a3ec,x		lda MapData.Row5,x			; and row 5
-573	.0451	808451	29 ff 00	and #$00ff		and #$ff
-574	.0454	808454	0a		asl a			asl a								; convert to word index
-575	.0455	808455	0a		asl a			asl a
-576	.0456	808456	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.0457	808457	a8		tay			tay
-578	.0458	808458	b9 52 ae	lda $81ae52,y		lda BlockData.col3+0,y		; push col1 data
-579	.045b	80845b	48		pha			pha
-580	.045c	80845c	b9 54 ae	lda $81ae54,y		lda BlockData.col3+2,y
-581	.045f	80845f	48		pha			pha
-582	.0460	808460	b9 56 ae	lda $81ae56,y		lda BlockData.col3+4,y
-583	.0463	808463	48		pha			pha
-584	.0464	808464	b9 58 ae	lda $81ae58,y		lda BlockData.col3+6,y
-585	.0467	808467	48		pha			pha
-525	.0468	808468	bd df a4	lda $81a4df,x		lda MapData.Row6,x			; and row 6
-573	.046b	80846b	29 ff 00	and #$00ff		and #$ff
-574	.046e	80846e	0a		asl a			asl a								; convert to word index
-575	.046f	80846f	0a		asl a			asl a
-576	.0470	808470	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.0471	808471	a8		tay			tay
-578	.0472	808472	b9 52 ae	lda $81ae52,y		lda BlockData.col3+0,y		; push col1 data
-579	.0475	808475	48		pha			pha
-580	.0476	808476	b9 54 ae	lda $81ae54,y		lda BlockData.col3+2,y
-581	.0479	808479	48		pha			pha
-582	.047a	80847a	b9 56 ae	lda $81ae56,y		lda BlockData.col3+4,y
-583	.047d	80847d	48		pha			pha
-584	.047e	80847e	b9 58 ae	lda $81ae58,y		lda BlockData.col3+6,y
-585	.0481	808481	48		pha			pha
-527	.0482	808482	4c 22 85	jmp $808522		jmp _exit
-528	.0485	808485					_col4
-529	.0485	808485	bb		tyx			tyx
-530	.0486	808486	bd 20 a0	lda $81a020,x		lda MapData.Row1,x			; get the block index
-573	.0489	808489	29 ff 00	and #$00ff		and #$ff
-574	.048c	80848c	0a		asl a			asl a								; convert to word index
-575	.048d	80848d	0a		asl a			asl a
-576	.048e	80848e	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.048f	80848f	a8		tay			tay
-578	.0490	808490	b9 92 b2	lda $81b292,y		lda BlockData.col4+0,y		; push col1 data
-579	.0493	808493	48		pha			pha
-580	.0494	808494	b9 94 b2	lda $81b294,y		lda BlockData.col4+2,y
-581	.0497	808497	48		pha			pha
-582	.0498	808498	b9 96 b2	lda $81b296,y		lda BlockData.col4+4,y
-583	.049b	80849b	48		pha			pha
-584	.049c	80849c	b9 98 b2	lda $81b298,y		lda BlockData.col4+6,y
-585	.049f	80849f	48		pha			pha
-532	.04a0	8084a0	bd 13 a1	lda $81a113,x		lda MapData.Row2,x			; and row 2
-573	.04a3	8084a3	29 ff 00	and #$00ff		and #$ff
-574	.04a6	8084a6	0a		asl a			asl a								; convert to word index
-575	.04a7	8084a7	0a		asl a			asl a
-576	.04a8	8084a8	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.04a9	8084a9	a8		tay			tay
-578	.04aa	8084aa	b9 92 b2	lda $81b292,y		lda BlockData.col4+0,y		; push col1 data
-579	.04ad	8084ad	48		pha			pha
-580	.04ae	8084ae	b9 94 b2	lda $81b294,y		lda BlockData.col4+2,y
-581	.04b1	8084b1	48		pha			pha
-582	.04b2	8084b2	b9 96 b2	lda $81b296,y		lda BlockData.col4+4,y
-583	.04b5	8084b5	48		pha			pha
-584	.04b6	8084b6	b9 98 b2	lda $81b298,y		lda BlockData.col4+6,y
-585	.04b9	8084b9	48		pha			pha
-534	.04ba	8084ba	bd 06 a2	lda $81a206,x		lda MapData.Row3,x			; and row 3
-573	.04bd	8084bd	29 ff 00	and #$00ff		and #$ff
-574	.04c0	8084c0	0a		asl a			asl a								; convert to word index
-575	.04c1	8084c1	0a		asl a			asl a
-576	.04c2	8084c2	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.04c3	8084c3	a8		tay			tay
-578	.04c4	8084c4	b9 92 b2	lda $81b292,y		lda BlockData.col4+0,y		; push col1 data
-579	.04c7	8084c7	48		pha			pha
-580	.04c8	8084c8	b9 94 b2	lda $81b294,y		lda BlockData.col4+2,y
-581	.04cb	8084cb	48		pha			pha
-582	.04cc	8084cc	b9 96 b2	lda $81b296,y		lda BlockData.col4+4,y
-583	.04cf	8084cf	48		pha			pha
-584	.04d0	8084d0	b9 98 b2	lda $81b298,y		lda BlockData.col4+6,y
-585	.04d3	8084d3	48		pha			pha
-536	.04d4	8084d4	bd f9 a2	lda $81a2f9,x		lda MapData.Row4,x			; and row 4
-573	.04d7	8084d7	29 ff 00	and #$00ff		and #$ff
-574	.04da	8084da	0a		asl a			asl a								; convert to word index
-575	.04db	8084db	0a		asl a			asl a
-576	.04dc	8084dc	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.04dd	8084dd	a8		tay			tay
-578	.04de	8084de	b9 92 b2	lda $81b292,y		lda BlockData.col4+0,y		; push col1 data
-579	.04e1	8084e1	48		pha			pha
-580	.04e2	8084e2	b9 94 b2	lda $81b294,y		lda BlockData.col4+2,y
-581	.04e5	8084e5	48		pha			pha
-582	.04e6	8084e6	b9 96 b2	lda $81b296,y		lda BlockData.col4+4,y
-583	.04e9	8084e9	48		pha			pha
-584	.04ea	8084ea	b9 98 b2	lda $81b298,y		lda BlockData.col4+6,y
-585	.04ed	8084ed	48		pha			pha
-538	.04ee	8084ee	bd ec a3	lda $81a3ec,x		lda MapData.Row5,x			; and row 5
-573	.04f1	8084f1	29 ff 00	and #$00ff		and #$ff
-574	.04f4	8084f4	0a		asl a			asl a								; convert to word index
-575	.04f5	8084f5	0a		asl a			asl a
-576	.04f6	8084f6	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.04f7	8084f7	a8		tay			tay
-578	.04f8	8084f8	b9 92 b2	lda $81b292,y		lda BlockData.col4+0,y		; push col1 data
-579	.04fb	8084fb	48		pha			pha
-580	.04fc	8084fc	b9 94 b2	lda $81b294,y		lda BlockData.col4+2,y
-581	.04ff	8084ff	48		pha			pha
-582	.0500	808500	b9 96 b2	lda $81b296,y		lda BlockData.col4+4,y
-583	.0503	808503	48		pha			pha
-584	.0504	808504	b9 98 b2	lda $81b298,y		lda BlockData.col4+6,y
-585	.0507	808507	48		pha			pha
-540	.0508	808508	bd df a4	lda $81a4df,x		lda MapData.Row6,x			; and row 6
-573	.050b	80850b	29 ff 00	and #$00ff		and #$ff
-574	.050e	80850e	0a		asl a			asl a								; convert to word index
-575	.050f	80850f	0a		asl a			asl a
-576	.0510	808510	0a		asl a			asl a								; x4 as each block is 4x4 words
-577	.0511	808511	a8		tay			tay
-578	.0512	808512	b9 92 b2	lda $81b292,y		lda BlockData.col4+0,y		; push col1 data
-579	.0515	808515	48		pha			pha
-580	.0516	808516	b9 94 b2	lda $81b294,y		lda BlockData.col4+2,y
-581	.0519	808519	48		pha			pha
-582	.051a	80851a	b9 96 b2	lda $81b296,y		lda BlockData.col4+4,y
-583	.051d	80851d	48		pha			pha
-584	.051e	80851e	b9 98 b2	lda $81b298,y		lda BlockData.col4+6,y
-585	.0521	808521	48		pha			pha
-542	.0522	808522					_exit
-543	.0522	808522	a6 9d		ldx $9d			ldx <MapStackStore
-544	.0524	808524	9a		txs			txs							; restore stack
-545	.0525	808525	28		plp			plp
-546	.0526	808526	60		rts			rts
+462	.027c	80827c					map_fillColumnBufferRightEdge_xx
+463	.027c	80827c					_ASSERT_JSR
+464	.027c	80827c	08		php			php
+70:4	.027d	80827d	c2 30		rep #$30		REP #$30
+466:3	.027f	80827f	a5 11		lda $11			lda MapVRAMRight			; which column do we need to write it to
+467	.0281	808281	c9 20 00	cmp #$0020		cmp #32						; 0-31 are $000 and then 32-63 are $400w plus
+468	.0284	808284	90 06		bcc $80828c		bcc _justStore
+469	.0286	808286	29 1f 00	and #$001f			and #31
+470	.0289	808289	69 ff 03	adc #$03ff			adc #$3ff 				; C is set as per CMP so this add $400
+471	.028c	80828c					_justStore						; if the vram was not at $0000 you would add the base here
+472	.028c	80828c	85 17		sta $17			sta MapBufferTarget
+473	.028e	80828e	ba		tsx			tsx
+474	.028f	80828f	86 9d		stx $9d			stx <MapStackStore,d			; save the stack
+475	.0291	808291	a2 9c 00	ldx #$009c		ldx #<>MapColumnBufferEnd
+476	.0294	808294	9a		txs			txs								; set the stack to the buffer
+477	.0295	808295	a5 0c		lda $0c			lda MapBlockIndexRight		; which block do we want
+478	.0297	808297	29 ff 00	and #$00ff		and #$ff							; convert word to byte
+479	.029a	80829a	a8		tay			tay
+480	.029b	80829b	a5 0e		lda $0e			lda MapSubCharRight
+481	.029d	80829d					map_FillColumBufferEdgeCommon
+482	.029d	80829d	29 ff 00	and #$00ff		and #$ff
+483	.02a0	8082a0	aa		tax			tax
+484	.02a1	8082a1	7c a4 82	jmp ($8082a4,x)		jmp (+,x)
+485	>02a4	8082a4	ac 82 4c 83 ec 83 8c 84		+ .word <>(_col1,_col2,_col3,_col4)
+486	.02ac	8082ac					_col1
+487	.02ac	8082ac	bb		tyx			tyx
+488	.02ad	8082ad	bd 20 a0	lda $81a020,x		lda MapData.Row1,x			; get the block index
+576	.02b0	8082b0	29 ff 00	and #$00ff		and #$ff
+577	.02b3	8082b3	0a		asl a			asl a								; convert to word index
+578	.02b4	8082b4	0a		asl a			asl a
+579	.02b5	8082b5	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.02b6	8082b6	a8		tay			tay
+581	.02b7	8082b7	b9 d2 a5	lda $81a5d2,y		lda BlockData.col1+0,y		; push col1 data
+582	.02ba	8082ba	48		pha			pha
+583	.02bb	8082bb	b9 d4 a5	lda $81a5d4,y		lda BlockData.col1+2,y
+584	.02be	8082be	48		pha			pha
+585	.02bf	8082bf	b9 d6 a5	lda $81a5d6,y		lda BlockData.col1+4,y
+586	.02c2	8082c2	48		pha			pha
+587	.02c3	8082c3	b9 d8 a5	lda $81a5d8,y		lda BlockData.col1+6,y
+588	.02c6	8082c6	48		pha			pha
+490	.02c7	8082c7	bd 13 a1	lda $81a113,x		lda MapData.Row2,x			; and row 2
+576	.02ca	8082ca	29 ff 00	and #$00ff		and #$ff
+577	.02cd	8082cd	0a		asl a			asl a								; convert to word index
+578	.02ce	8082ce	0a		asl a			asl a
+579	.02cf	8082cf	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.02d0	8082d0	a8		tay			tay
+581	.02d1	8082d1	b9 d2 a5	lda $81a5d2,y		lda BlockData.col1+0,y		; push col1 data
+582	.02d4	8082d4	48		pha			pha
+583	.02d5	8082d5	b9 d4 a5	lda $81a5d4,y		lda BlockData.col1+2,y
+584	.02d8	8082d8	48		pha			pha
+585	.02d9	8082d9	b9 d6 a5	lda $81a5d6,y		lda BlockData.col1+4,y
+586	.02dc	8082dc	48		pha			pha
+587	.02dd	8082dd	b9 d8 a5	lda $81a5d8,y		lda BlockData.col1+6,y
+588	.02e0	8082e0	48		pha			pha
+492	.02e1	8082e1	bd 06 a2	lda $81a206,x		lda MapData.Row3,x			; and row 3
+576	.02e4	8082e4	29 ff 00	and #$00ff		and #$ff
+577	.02e7	8082e7	0a		asl a			asl a								; convert to word index
+578	.02e8	8082e8	0a		asl a			asl a
+579	.02e9	8082e9	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.02ea	8082ea	a8		tay			tay
+581	.02eb	8082eb	b9 d2 a5	lda $81a5d2,y		lda BlockData.col1+0,y		; push col1 data
+582	.02ee	8082ee	48		pha			pha
+583	.02ef	8082ef	b9 d4 a5	lda $81a5d4,y		lda BlockData.col1+2,y
+584	.02f2	8082f2	48		pha			pha
+585	.02f3	8082f3	b9 d6 a5	lda $81a5d6,y		lda BlockData.col1+4,y
+586	.02f6	8082f6	48		pha			pha
+587	.02f7	8082f7	b9 d8 a5	lda $81a5d8,y		lda BlockData.col1+6,y
+588	.02fa	8082fa	48		pha			pha
+494	.02fb	8082fb	bd f9 a2	lda $81a2f9,x		lda MapData.Row4,x			; and row 4
+576	.02fe	8082fe	29 ff 00	and #$00ff		and #$ff
+577	.0301	808301	0a		asl a			asl a								; convert to word index
+578	.0302	808302	0a		asl a			asl a
+579	.0303	808303	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.0304	808304	a8		tay			tay
+581	.0305	808305	b9 d2 a5	lda $81a5d2,y		lda BlockData.col1+0,y		; push col1 data
+582	.0308	808308	48		pha			pha
+583	.0309	808309	b9 d4 a5	lda $81a5d4,y		lda BlockData.col1+2,y
+584	.030c	80830c	48		pha			pha
+585	.030d	80830d	b9 d6 a5	lda $81a5d6,y		lda BlockData.col1+4,y
+586	.0310	808310	48		pha			pha
+587	.0311	808311	b9 d8 a5	lda $81a5d8,y		lda BlockData.col1+6,y
+588	.0314	808314	48		pha			pha
+496	.0315	808315	bd ec a3	lda $81a3ec,x		lda MapData.Row5,x			; and row 5
+576	.0318	808318	29 ff 00	and #$00ff		and #$ff
+577	.031b	80831b	0a		asl a			asl a								; convert to word index
+578	.031c	80831c	0a		asl a			asl a
+579	.031d	80831d	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.031e	80831e	a8		tay			tay
+581	.031f	80831f	b9 d2 a5	lda $81a5d2,y		lda BlockData.col1+0,y		; push col1 data
+582	.0322	808322	48		pha			pha
+583	.0323	808323	b9 d4 a5	lda $81a5d4,y		lda BlockData.col1+2,y
+584	.0326	808326	48		pha			pha
+585	.0327	808327	b9 d6 a5	lda $81a5d6,y		lda BlockData.col1+4,y
+586	.032a	80832a	48		pha			pha
+587	.032b	80832b	b9 d8 a5	lda $81a5d8,y		lda BlockData.col1+6,y
+588	.032e	80832e	48		pha			pha
+498	.032f	80832f	bd df a4	lda $81a4df,x		lda MapData.Row6,x			; and row 6
+576	.0332	808332	29 ff 00	and #$00ff		and #$ff
+577	.0335	808335	0a		asl a			asl a								; convert to word index
+578	.0336	808336	0a		asl a			asl a
+579	.0337	808337	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.0338	808338	a8		tay			tay
+581	.0339	808339	b9 d2 a5	lda $81a5d2,y		lda BlockData.col1+0,y		; push col1 data
+582	.033c	80833c	48		pha			pha
+583	.033d	80833d	b9 d4 a5	lda $81a5d4,y		lda BlockData.col1+2,y
+584	.0340	808340	48		pha			pha
+585	.0341	808341	b9 d6 a5	lda $81a5d6,y		lda BlockData.col1+4,y
+586	.0344	808344	48		pha			pha
+587	.0345	808345	b9 d8 a5	lda $81a5d8,y		lda BlockData.col1+6,y
+588	.0348	808348	48		pha			pha
+500	.0349	808349	4c 29 85	jmp $808529		jmp _exit
+501	.034c	80834c					_col2
+502	.034c	80834c	bb		tyx			tyx
+503	.034d	80834d	bd 20 a0	lda $81a020,x		lda MapData.Row1,x			; get the block index
+576	.0350	808350	29 ff 00	and #$00ff		and #$ff
+577	.0353	808353	0a		asl a			asl a								; convert to word index
+578	.0354	808354	0a		asl a			asl a
+579	.0355	808355	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.0356	808356	a8		tay			tay
+581	.0357	808357	b9 12 aa	lda $81aa12,y		lda BlockData.col2+0,y		; push col1 data
+582	.035a	80835a	48		pha			pha
+583	.035b	80835b	b9 14 aa	lda $81aa14,y		lda BlockData.col2+2,y
+584	.035e	80835e	48		pha			pha
+585	.035f	80835f	b9 16 aa	lda $81aa16,y		lda BlockData.col2+4,y
+586	.0362	808362	48		pha			pha
+587	.0363	808363	b9 18 aa	lda $81aa18,y		lda BlockData.col2+6,y
+588	.0366	808366	48		pha			pha
+505	.0367	808367	bd 13 a1	lda $81a113,x		lda MapData.Row2,x			; and row 2
+576	.036a	80836a	29 ff 00	and #$00ff		and #$ff
+577	.036d	80836d	0a		asl a			asl a								; convert to word index
+578	.036e	80836e	0a		asl a			asl a
+579	.036f	80836f	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.0370	808370	a8		tay			tay
+581	.0371	808371	b9 12 aa	lda $81aa12,y		lda BlockData.col2+0,y		; push col1 data
+582	.0374	808374	48		pha			pha
+583	.0375	808375	b9 14 aa	lda $81aa14,y		lda BlockData.col2+2,y
+584	.0378	808378	48		pha			pha
+585	.0379	808379	b9 16 aa	lda $81aa16,y		lda BlockData.col2+4,y
+586	.037c	80837c	48		pha			pha
+587	.037d	80837d	b9 18 aa	lda $81aa18,y		lda BlockData.col2+6,y
+588	.0380	808380	48		pha			pha
+507	.0381	808381	bd 06 a2	lda $81a206,x		lda MapData.Row3,x			; and row 3
+576	.0384	808384	29 ff 00	and #$00ff		and #$ff
+577	.0387	808387	0a		asl a			asl a								; convert to word index
+578	.0388	808388	0a		asl a			asl a
+579	.0389	808389	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.038a	80838a	a8		tay			tay
+581	.038b	80838b	b9 12 aa	lda $81aa12,y		lda BlockData.col2+0,y		; push col1 data
+582	.038e	80838e	48		pha			pha
+583	.038f	80838f	b9 14 aa	lda $81aa14,y		lda BlockData.col2+2,y
+584	.0392	808392	48		pha			pha
+585	.0393	808393	b9 16 aa	lda $81aa16,y		lda BlockData.col2+4,y
+586	.0396	808396	48		pha			pha
+587	.0397	808397	b9 18 aa	lda $81aa18,y		lda BlockData.col2+6,y
+588	.039a	80839a	48		pha			pha
+509	.039b	80839b	bd f9 a2	lda $81a2f9,x		lda MapData.Row4,x			; and row 4
+576	.039e	80839e	29 ff 00	and #$00ff		and #$ff
+577	.03a1	8083a1	0a		asl a			asl a								; convert to word index
+578	.03a2	8083a2	0a		asl a			asl a
+579	.03a3	8083a3	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.03a4	8083a4	a8		tay			tay
+581	.03a5	8083a5	b9 12 aa	lda $81aa12,y		lda BlockData.col2+0,y		; push col1 data
+582	.03a8	8083a8	48		pha			pha
+583	.03a9	8083a9	b9 14 aa	lda $81aa14,y		lda BlockData.col2+2,y
+584	.03ac	8083ac	48		pha			pha
+585	.03ad	8083ad	b9 16 aa	lda $81aa16,y		lda BlockData.col2+4,y
+586	.03b0	8083b0	48		pha			pha
+587	.03b1	8083b1	b9 18 aa	lda $81aa18,y		lda BlockData.col2+6,y
+588	.03b4	8083b4	48		pha			pha
+511	.03b5	8083b5	bd ec a3	lda $81a3ec,x		lda MapData.Row5,x			; and row 5
+576	.03b8	8083b8	29 ff 00	and #$00ff		and #$ff
+577	.03bb	8083bb	0a		asl a			asl a								; convert to word index
+578	.03bc	8083bc	0a		asl a			asl a
+579	.03bd	8083bd	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.03be	8083be	a8		tay			tay
+581	.03bf	8083bf	b9 12 aa	lda $81aa12,y		lda BlockData.col2+0,y		; push col1 data
+582	.03c2	8083c2	48		pha			pha
+583	.03c3	8083c3	b9 14 aa	lda $81aa14,y		lda BlockData.col2+2,y
+584	.03c6	8083c6	48		pha			pha
+585	.03c7	8083c7	b9 16 aa	lda $81aa16,y		lda BlockData.col2+4,y
+586	.03ca	8083ca	48		pha			pha
+587	.03cb	8083cb	b9 18 aa	lda $81aa18,y		lda BlockData.col2+6,y
+588	.03ce	8083ce	48		pha			pha
+513	.03cf	8083cf	bd df a4	lda $81a4df,x		lda MapData.Row6,x			; and row 6
+576	.03d2	8083d2	29 ff 00	and #$00ff		and #$ff
+577	.03d5	8083d5	0a		asl a			asl a								; convert to word index
+578	.03d6	8083d6	0a		asl a			asl a
+579	.03d7	8083d7	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.03d8	8083d8	a8		tay			tay
+581	.03d9	8083d9	b9 12 aa	lda $81aa12,y		lda BlockData.col2+0,y		; push col1 data
+582	.03dc	8083dc	48		pha			pha
+583	.03dd	8083dd	b9 14 aa	lda $81aa14,y		lda BlockData.col2+2,y
+584	.03e0	8083e0	48		pha			pha
+585	.03e1	8083e1	b9 16 aa	lda $81aa16,y		lda BlockData.col2+4,y
+586	.03e4	8083e4	48		pha			pha
+587	.03e5	8083e5	b9 18 aa	lda $81aa18,y		lda BlockData.col2+6,y
+588	.03e8	8083e8	48		pha			pha
+515	.03e9	8083e9	4c 29 85	jmp $808529		jmp _exit
+516	.03ec	8083ec					_col3
+517	.03ec	8083ec	bb		tyx			tyx
+518	.03ed	8083ed	bd 20 a0	lda $81a020,x		lda MapData.Row1,x			; get the block index
+576	.03f0	8083f0	29 ff 00	and #$00ff		and #$ff
+577	.03f3	8083f3	0a		asl a			asl a								; convert to word index
+578	.03f4	8083f4	0a		asl a			asl a
+579	.03f5	8083f5	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.03f6	8083f6	a8		tay			tay
+581	.03f7	8083f7	b9 52 ae	lda $81ae52,y		lda BlockData.col3+0,y		; push col1 data
+582	.03fa	8083fa	48		pha			pha
+583	.03fb	8083fb	b9 54 ae	lda $81ae54,y		lda BlockData.col3+2,y
+584	.03fe	8083fe	48		pha			pha
+585	.03ff	8083ff	b9 56 ae	lda $81ae56,y		lda BlockData.col3+4,y
+586	.0402	808402	48		pha			pha
+587	.0403	808403	b9 58 ae	lda $81ae58,y		lda BlockData.col3+6,y
+588	.0406	808406	48		pha			pha
+520	.0407	808407	bd 13 a1	lda $81a113,x		lda MapData.Row2,x			; and row 2
+576	.040a	80840a	29 ff 00	and #$00ff		and #$ff
+577	.040d	80840d	0a		asl a			asl a								; convert to word index
+578	.040e	80840e	0a		asl a			asl a
+579	.040f	80840f	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.0410	808410	a8		tay			tay
+581	.0411	808411	b9 52 ae	lda $81ae52,y		lda BlockData.col3+0,y		; push col1 data
+582	.0414	808414	48		pha			pha
+583	.0415	808415	b9 54 ae	lda $81ae54,y		lda BlockData.col3+2,y
+584	.0418	808418	48		pha			pha
+585	.0419	808419	b9 56 ae	lda $81ae56,y		lda BlockData.col3+4,y
+586	.041c	80841c	48		pha			pha
+587	.041d	80841d	b9 58 ae	lda $81ae58,y		lda BlockData.col3+6,y
+588	.0420	808420	48		pha			pha
+522	.0421	808421	bd 06 a2	lda $81a206,x		lda MapData.Row3,x			; and row 3
+576	.0424	808424	29 ff 00	and #$00ff		and #$ff
+577	.0427	808427	0a		asl a			asl a								; convert to word index
+578	.0428	808428	0a		asl a			asl a
+579	.0429	808429	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.042a	80842a	a8		tay			tay
+581	.042b	80842b	b9 52 ae	lda $81ae52,y		lda BlockData.col3+0,y		; push col1 data
+582	.042e	80842e	48		pha			pha
+583	.042f	80842f	b9 54 ae	lda $81ae54,y		lda BlockData.col3+2,y
+584	.0432	808432	48		pha			pha
+585	.0433	808433	b9 56 ae	lda $81ae56,y		lda BlockData.col3+4,y
+586	.0436	808436	48		pha			pha
+587	.0437	808437	b9 58 ae	lda $81ae58,y		lda BlockData.col3+6,y
+588	.043a	80843a	48		pha			pha
+524	.043b	80843b	bd f9 a2	lda $81a2f9,x		lda MapData.Row4,x			; and row 4
+576	.043e	80843e	29 ff 00	and #$00ff		and #$ff
+577	.0441	808441	0a		asl a			asl a								; convert to word index
+578	.0442	808442	0a		asl a			asl a
+579	.0443	808443	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.0444	808444	a8		tay			tay
+581	.0445	808445	b9 52 ae	lda $81ae52,y		lda BlockData.col3+0,y		; push col1 data
+582	.0448	808448	48		pha			pha
+583	.0449	808449	b9 54 ae	lda $81ae54,y		lda BlockData.col3+2,y
+584	.044c	80844c	48		pha			pha
+585	.044d	80844d	b9 56 ae	lda $81ae56,y		lda BlockData.col3+4,y
+586	.0450	808450	48		pha			pha
+587	.0451	808451	b9 58 ae	lda $81ae58,y		lda BlockData.col3+6,y
+588	.0454	808454	48		pha			pha
+526	.0455	808455	bd ec a3	lda $81a3ec,x		lda MapData.Row5,x			; and row 5
+576	.0458	808458	29 ff 00	and #$00ff		and #$ff
+577	.045b	80845b	0a		asl a			asl a								; convert to word index
+578	.045c	80845c	0a		asl a			asl a
+579	.045d	80845d	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.045e	80845e	a8		tay			tay
+581	.045f	80845f	b9 52 ae	lda $81ae52,y		lda BlockData.col3+0,y		; push col1 data
+582	.0462	808462	48		pha			pha
+583	.0463	808463	b9 54 ae	lda $81ae54,y		lda BlockData.col3+2,y
+584	.0466	808466	48		pha			pha
+585	.0467	808467	b9 56 ae	lda $81ae56,y		lda BlockData.col3+4,y
+586	.046a	80846a	48		pha			pha
+587	.046b	80846b	b9 58 ae	lda $81ae58,y		lda BlockData.col3+6,y
+588	.046e	80846e	48		pha			pha
+528	.046f	80846f	bd df a4	lda $81a4df,x		lda MapData.Row6,x			; and row 6
+576	.0472	808472	29 ff 00	and #$00ff		and #$ff
+577	.0475	808475	0a		asl a			asl a								; convert to word index
+578	.0476	808476	0a		asl a			asl a
+579	.0477	808477	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.0478	808478	a8		tay			tay
+581	.0479	808479	b9 52 ae	lda $81ae52,y		lda BlockData.col3+0,y		; push col1 data
+582	.047c	80847c	48		pha			pha
+583	.047d	80847d	b9 54 ae	lda $81ae54,y		lda BlockData.col3+2,y
+584	.0480	808480	48		pha			pha
+585	.0481	808481	b9 56 ae	lda $81ae56,y		lda BlockData.col3+4,y
+586	.0484	808484	48		pha			pha
+587	.0485	808485	b9 58 ae	lda $81ae58,y		lda BlockData.col3+6,y
+588	.0488	808488	48		pha			pha
+530	.0489	808489	4c 29 85	jmp $808529		jmp _exit
+531	.048c	80848c					_col4
+532	.048c	80848c	bb		tyx			tyx
+533	.048d	80848d	bd 20 a0	lda $81a020,x		lda MapData.Row1,x			; get the block index
+576	.0490	808490	29 ff 00	and #$00ff		and #$ff
+577	.0493	808493	0a		asl a			asl a								; convert to word index
+578	.0494	808494	0a		asl a			asl a
+579	.0495	808495	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.0496	808496	a8		tay			tay
+581	.0497	808497	b9 92 b2	lda $81b292,y		lda BlockData.col4+0,y		; push col1 data
+582	.049a	80849a	48		pha			pha
+583	.049b	80849b	b9 94 b2	lda $81b294,y		lda BlockData.col4+2,y
+584	.049e	80849e	48		pha			pha
+585	.049f	80849f	b9 96 b2	lda $81b296,y		lda BlockData.col4+4,y
+586	.04a2	8084a2	48		pha			pha
+587	.04a3	8084a3	b9 98 b2	lda $81b298,y		lda BlockData.col4+6,y
+588	.04a6	8084a6	48		pha			pha
+535	.04a7	8084a7	bd 13 a1	lda $81a113,x		lda MapData.Row2,x			; and row 2
+576	.04aa	8084aa	29 ff 00	and #$00ff		and #$ff
+577	.04ad	8084ad	0a		asl a			asl a								; convert to word index
+578	.04ae	8084ae	0a		asl a			asl a
+579	.04af	8084af	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.04b0	8084b0	a8		tay			tay
+581	.04b1	8084b1	b9 92 b2	lda $81b292,y		lda BlockData.col4+0,y		; push col1 data
+582	.04b4	8084b4	48		pha			pha
+583	.04b5	8084b5	b9 94 b2	lda $81b294,y		lda BlockData.col4+2,y
+584	.04b8	8084b8	48		pha			pha
+585	.04b9	8084b9	b9 96 b2	lda $81b296,y		lda BlockData.col4+4,y
+586	.04bc	8084bc	48		pha			pha
+587	.04bd	8084bd	b9 98 b2	lda $81b298,y		lda BlockData.col4+6,y
+588	.04c0	8084c0	48		pha			pha
+537	.04c1	8084c1	bd 06 a2	lda $81a206,x		lda MapData.Row3,x			; and row 3
+576	.04c4	8084c4	29 ff 00	and #$00ff		and #$ff
+577	.04c7	8084c7	0a		asl a			asl a								; convert to word index
+578	.04c8	8084c8	0a		asl a			asl a
+579	.04c9	8084c9	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.04ca	8084ca	a8		tay			tay
+581	.04cb	8084cb	b9 92 b2	lda $81b292,y		lda BlockData.col4+0,y		; push col1 data
+582	.04ce	8084ce	48		pha			pha
+583	.04cf	8084cf	b9 94 b2	lda $81b294,y		lda BlockData.col4+2,y
+584	.04d2	8084d2	48		pha			pha
+585	.04d3	8084d3	b9 96 b2	lda $81b296,y		lda BlockData.col4+4,y
+586	.04d6	8084d6	48		pha			pha
+587	.04d7	8084d7	b9 98 b2	lda $81b298,y		lda BlockData.col4+6,y
+588	.04da	8084da	48		pha			pha
+539	.04db	8084db	bd f9 a2	lda $81a2f9,x		lda MapData.Row4,x			; and row 4
+576	.04de	8084de	29 ff 00	and #$00ff		and #$ff
+577	.04e1	8084e1	0a		asl a			asl a								; convert to word index
+578	.04e2	8084e2	0a		asl a			asl a
+579	.04e3	8084e3	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.04e4	8084e4	a8		tay			tay
+581	.04e5	8084e5	b9 92 b2	lda $81b292,y		lda BlockData.col4+0,y		; push col1 data
+582	.04e8	8084e8	48		pha			pha
+583	.04e9	8084e9	b9 94 b2	lda $81b294,y		lda BlockData.col4+2,y
+584	.04ec	8084ec	48		pha			pha
+585	.04ed	8084ed	b9 96 b2	lda $81b296,y		lda BlockData.col4+4,y
+586	.04f0	8084f0	48		pha			pha
+587	.04f1	8084f1	b9 98 b2	lda $81b298,y		lda BlockData.col4+6,y
+588	.04f4	8084f4	48		pha			pha
+541	.04f5	8084f5	bd ec a3	lda $81a3ec,x		lda MapData.Row5,x			; and row 5
+576	.04f8	8084f8	29 ff 00	and #$00ff		and #$ff
+577	.04fb	8084fb	0a		asl a			asl a								; convert to word index
+578	.04fc	8084fc	0a		asl a			asl a
+579	.04fd	8084fd	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.04fe	8084fe	a8		tay			tay
+581	.04ff	8084ff	b9 92 b2	lda $81b292,y		lda BlockData.col4+0,y		; push col1 data
+582	.0502	808502	48		pha			pha
+583	.0503	808503	b9 94 b2	lda $81b294,y		lda BlockData.col4+2,y
+584	.0506	808506	48		pha			pha
+585	.0507	808507	b9 96 b2	lda $81b296,y		lda BlockData.col4+4,y
+586	.050a	80850a	48		pha			pha
+587	.050b	80850b	b9 98 b2	lda $81b298,y		lda BlockData.col4+6,y
+588	.050e	80850e	48		pha			pha
+543	.050f	80850f	bd df a4	lda $81a4df,x		lda MapData.Row6,x			; and row 6
+576	.0512	808512	29 ff 00	and #$00ff		and #$ff
+577	.0515	808515	0a		asl a			asl a								; convert to word index
+578	.0516	808516	0a		asl a			asl a
+579	.0517	808517	0a		asl a			asl a								; x4 as each block is 4x4 words
+580	.0518	808518	a8		tay			tay
+581	.0519	808519	b9 92 b2	lda $81b292,y		lda BlockData.col4+0,y		; push col1 data
+582	.051c	80851c	48		pha			pha
+583	.051d	80851d	b9 94 b2	lda $81b294,y		lda BlockData.col4+2,y
+584	.0520	808520	48		pha			pha
+585	.0521	808521	b9 96 b2	lda $81b296,y		lda BlockData.col4+4,y
+586	.0524	808524	48		pha			pha
+587	.0525	808525	b9 98 b2	lda $81b298,y		lda BlockData.col4+6,y
+588	.0528	808528	48		pha			pha
+545	.0529	808529					_exit
+546	.0529	808529	a6 9d		ldx $9d			ldx <MapStackStore
+547	.052b	80852b	9a		txs			txs							; restore stack
+548	.052c	80852c	28		plp			plp
+549	.052d	80852d	60		rts			rts
 
-548	.0527	808527					dmaColumn_xx
-549	.0527	808527	08		php			php
-46:4	.0528	808528	e2 20		sep #$20		SEP #$20
-62	.052a	80852a	c2 10		rep #$10		REP #$10
-552:3	.052c	80852c	a6 17		ldx $17			ldx MapBufferTarget		; set the target VRAM address
-553	.052e	80852e	8e 16 21	stx $812116		stx $2116,b
-554	.0531	808531	a2 ff ff	ldx #$ffff		ldx #$FFFF
-555	.0534	808534	86 17		stx $17			stx MapBufferTarget		; clear the flag
-556	.0536	808536	a2 9c 00	ldx #$009c		ldx #<>MapColumnBufferEnd
-557	.0539	808539	8e 02 43	stx $814302		stx $4302,b					; set the source as the last pos in the buffer
-46:4	.053c	80853c	e2 20		sep #$20		SEP #$20
-559:3	.053e	80853e	a9 80		lda #$80		lda #`MapColumnBufferEnd
-560	.0540	808540	8f 04 43 80	sta $804304		sta $804304
-561	.0544	808544	a2 40 00	ldx #$0040		ldx #64						; 32 words
-562	.0547	808547	8e 05 43	stx $814305		stx $4305,b
-563	.054a	80854a	a2 11 18	ldx #$1811		ldx #%00010001 | $1800	; A->B, Dec, Write WORD, $2118
-564	.054d	80854d	8e 00 43	stx $814300		stx $4300,b
-565	.0550	808550	a9 81		lda #$81		lda #$81
-566	.0552	808552	8d 15 21	sta $812115		sta $2115,b					; inc VRAM port address by 32
-567	.0555	808555	a9 01		lda #$01		lda #1
-568	.0557	808557	8d 0b 42	sta $81420b		sta $420B,b
-569	.055a	80855a	28		plp			plp
-570	.055b	80855b	60		rts			rts
+551	.052e	80852e					dmaColumn_xx
+552	.052e	80852e	08		php			php
+46:4	.052f	80852f	e2 20		sep #$20		SEP #$20
+62	.0531	808531	c2 10		rep #$10		REP #$10
+555:3	.0533	808533	a6 17		ldx $17			ldx MapBufferTarget		; set the target VRAM address
+556	.0535	808535	8e 16 21	stx $812116		stx $2116,b
+557	.0538	808538	a2 ff ff	ldx #$ffff		ldx #$FFFF
+558	.053b	80853b	86 17		stx $17			stx MapBufferTarget		; clear the flag
+559	.053d	80853d	a2 9c 00	ldx #$009c		ldx #<>MapColumnBufferEnd
+560	.0540	808540	8e 02 43	stx $814302		stx $4302,b					; set the source as the last pos in the buffer
+46:4	.0543	808543	e2 20		sep #$20		SEP #$20
+562:3	.0545	808545	a9 80		lda #$80		lda #`MapColumnBufferEnd
+563	.0547	808547	8f 04 43 80	sta $804304		sta $804304
+564	.054b	80854b	a2 40 00	ldx #$0040		ldx #64						; 32 words
+565	.054e	80854e	8e 05 43	stx $814305		stx $4305,b
+566	.0551	808551	a2 11 18	ldx #$1811		ldx #%00010001 | $1800	; A->B, Dec, Write WORD, $2118
+567	.0554	808554	8e 00 43	stx $814300		stx $4300,b
+568	.0557	808557	a9 81		lda #$81		lda #$81
+569	.0559	808559	8d 15 21	sta $812115		sta $2115,b					; inc VRAM port address by 32
+570	.055c	80855c	a9 01		lda #$01		lda #1
+571	.055e	80855e	8d 0b 42	sta $81420b		sta $420B,b
+572	.0561	808561	28		plp			plp
+573	.0562	808562	60		rts			rts
 
-572							mMap_PushCol .macro col
-586							.endm
+575							mMap_PushCol .macro col
+589							.endm
 
 
-589	.055c	80855c					map_advancePointersRightEdge_ra8
-590	.055c	80855c					_ASSERT_JSR
-46:4	.055c	80855c	e2 20		sep #$20		SEP #$20
-592:3	.055e	80855e	a5 0e		lda $0e			lda MapSubCharRight				; we shift the char by 2 as it stored as words
-593	.0560	808560	18		clc			clc
-594	.0561	808561	69 02		adc #$02		adc #2
-595	.0563	808563	85 0e		sta $0e			sta MapSubCharRight
-596	.0565	808565	c9 08		cmp #$08		cmp #8								; done a whole block? 4 chars?
-597	.0567	808567	90 04		bcc $80856d		bcc _next
-598	.0569	808569	e6 0c		inc $0c				inc MapBlockIndexRight		; move to the next block
-599	.056b	80856b	64 0e		stz $0e				stz MapSubCharRight			; first column in it
-600	.056d	80856d						_next
-601	.056d	80856d	a5 11		lda $11			lda MapVRAMRight					; move the VRAM column over one as well
-602	.056f	80856f	18		clc			clc
-603	.0570	808570	69 01		adc #$01		adc #1
-604	.0572	808572	29 3f		and #$3f		and #63								; wrap to the screen
-605	.0574	808574	85 11		sta $11			sta MapVRAMRight
-606	.0576	808576	60		rts			rts
+592	.0563	808563					map_advancePointersRightEdge_ra8
+593	.0563	808563					_ASSERT_JSR
+46:4	.0563	808563	e2 20		sep #$20		SEP #$20
+595:3	.0565	808565	a5 0e		lda $0e			lda MapSubCharRight				; we shift the char by 2 as it stored as words
+596	.0567	808567	18		clc			clc
+597	.0568	808568	69 02		adc #$02		adc #2
+598	.056a	80856a	85 0e		sta $0e			sta MapSubCharRight
+599	.056c	80856c	c9 08		cmp #$08		cmp #8								; done a whole block? 4 chars?
+600	.056e	80856e	90 04		bcc $808574		bcc _next
+601	.0570	808570	e6 0c		inc $0c				inc MapBlockIndexRight		; move to the next block
+602	.0572	808572	64 0e		stz $0e				stz MapSubCharRight			; first column in it
+603	.0574	808574						_next
+604	.0574	808574	a5 11		lda $11			lda MapVRAMRight					; move the VRAM column over one as well
+605	.0576	808576	18		clc			clc
+606	.0577	808577	69 01		adc #$01		adc #1
+607	.0579	808579	29 3f		and #$3f		and #63								; wrap to the screen
+608	.057b	80857b	85 11		sta $11			sta MapVRAMRight
+609	.057d	80857d	60		rts			rts
 
-608	.0577	808577					map_advancePointersLeftEdge_ra8
-609	.0577	808577					_ASSERT_JSR
-46:4	.0577	808577	e2 20		sep #$20		SEP #$20
-611:3	.0579	808579	a5 0d		lda $0d			lda MapSubCharLeft				; same as above but for the left edge
-612	.057b	80857b	18		clc			clc
-613	.057c	80857c	69 02		adc #$02		adc #2
-614	.057e	80857e	85 0d		sta $0d			sta MapSubCharLeft
-615	.0580	808580	c9 08		cmp #$08		cmp #8
-616	.0582	808582	90 04		bcc $808588		bcc _next
-617	.0584	808584	e6 0b		inc $0b				inc MapBlockIndexLeft
-618	.0586	808586	64 0d		stz $0d				stz MapSubCharLeft
-619	.0588	808588						_next
-620	.0588	808588	a5 0f		lda $0f			lda MapVRAMLeft
-621	.058a	80858a	18		clc			clc
-622	.058b	80858b	69 01		adc #$01		adc #1
-623	.058d	80858d	29 3f		and #$3f		and #63
-624	.058f	80858f	85 0f		sta $0f			sta MapVRAMLeft
-625	.0591	808591	60		rts			rts
+611	.057e	80857e					map_advancePointersLeftEdge_ra8
+612	.057e	80857e					_ASSERT_JSR
+46:4	.057e	80857e	e2 20		sep #$20		SEP #$20
+614:3	.0580	808580	a5 0d		lda $0d			lda MapSubCharLeft				; same as above but for the left edge
+615	.0582	808582	18		clc			clc
+616	.0583	808583	69 02		adc #$02		adc #2
+617	.0585	808585	85 0d		sta $0d			sta MapSubCharLeft
+618	.0587	808587	c9 08		cmp #$08		cmp #8
+619	.0589	808589	90 04		bcc $80858f		bcc _next
+620	.058b	80858b	e6 0b		inc $0b				inc MapBlockIndexLeft
+621	.058d	80858d	64 0d		stz $0d				stz MapSubCharLeft
+622	.058f	80858f						_next
+623	.058f	80858f	a5 0f		lda $0f			lda MapVRAMLeft
+624	.0591	808591	18		clc			clc
+625	.0592	808592	69 01		adc #$01		adc #1
+626	.0594	808594	29 3f		and #$3f		and #63
+627	.0596	808596	85 0f		sta $0f			sta MapVRAMLeft
+628	.0598	808598	60		rts			rts
 
-627	.0592	808592					map_retreatPointersRightEdge_ra8
-628	.0592	808592					_ASSERT_JSR
-46:4	.0592	808592	e2 20		sep #$20		SEP #$20
-630:3	.0594	808594	a5 0e		lda $0e			lda MapSubCharRight			; sub 2 as we are dealing with words
-631	.0596	808596	38		sec			sec
-632	.0597	808597	e9 02		sbc #$02		sbc #2
-633	.0599	808599	85 0e		sta $0e			sta MapSubCharRight
-634	.059b	80859b	b0 06		bcs $8085a3		bcs _next						; under flowed?
-635	.059d	80859d	c6 0c		dec $0c				dec MapBlockIndexRight	; previous block
-636	.059f	80859f	a9 06		lda #$06			lda #6
-637	.05a1	8085a1	85 0e		sta $0e				sta MapSubCharRight		; last column of it
-638	.05a3	8085a3						_next
-639	.05a3	8085a3	a5 11		lda $11			lda MapVRAMRight				; move VRAM column back 1
-640	.05a5	8085a5	38		sec			sec
-641	.05a6	8085a6	e9 01		sbc #$01		sbc #1
-642	.05a8	8085a8	29 3f		and #$3f		and #63							; wrap to VRAM memory
-643	.05aa	8085aa	85 11		sta $11			sta MapVRAMRight
-644	.05ac	8085ac	60		rts			rts
+630	.0599	808599					map_retreatPointersRightEdge_ra8
+631	.0599	808599					_ASSERT_JSR
+46:4	.0599	808599	e2 20		sep #$20		SEP #$20
+633:3	.059b	80859b	a5 0e		lda $0e			lda MapSubCharRight			; sub 2 as we are dealing with words
+634	.059d	80859d	38		sec			sec
+635	.059e	80859e	e9 02		sbc #$02		sbc #2
+636	.05a0	8085a0	85 0e		sta $0e			sta MapSubCharRight
+637	.05a2	8085a2	b0 06		bcs $8085aa		bcs _next						; under flowed?
+638	.05a4	8085a4	c6 0c		dec $0c				dec MapBlockIndexRight	; previous block
+639	.05a6	8085a6	a9 06		lda #$06			lda #6
+640	.05a8	8085a8	85 0e		sta $0e				sta MapSubCharRight		; last column of it
+641	.05aa	8085aa						_next
+642	.05aa	8085aa	a5 11		lda $11			lda MapVRAMRight				; move VRAM column back 1
+643	.05ac	8085ac	38		sec			sec
+644	.05ad	8085ad	e9 01		sbc #$01		sbc #1
+645	.05af	8085af	29 3f		and #$3f		and #63							; wrap to VRAM memory
+646	.05b1	8085b1	85 11		sta $11			sta MapVRAMRight
+647	.05b3	8085b3	60		rts			rts
 
-646	.05ad	8085ad					map_retreatPointersLeftEdge_ra8
-647	.05ad	8085ad					_ASSERT_JSR
-46:4	.05ad	8085ad	e2 20		sep #$20		SEP #$20
-649:3	.05af	8085af	a5 0d		lda $0d			lda MapSubCharLeft			; same as above but for the left edge
-650	.05b1	8085b1	38		sec			sec
-651	.05b2	8085b2	e9 02		sbc #$02		sbc #2
-652	.05b4	8085b4	85 0d		sta $0d			sta MapSubCharLeft
-653	.05b6	8085b6	b0 06		bcs $8085be		bcs _next
-654	.05b8	8085b8	c6 0b		dec $0b				dec MapBlockIndexLeft
-655	.05ba	8085ba	a9 06		lda #$06			lda #6
-656	.05bc	8085bc	85 0d		sta $0d				sta MapSubCharLeft
-657	.05be	8085be						_next
-658	.05be	8085be	a5 0f		lda $0f			lda MapVRAMLeft
-659	.05c0	8085c0	38		sec			sec
-660	.05c1	8085c1	e9 01		sbc #$01		sbc #1
-661	.05c3	8085c3	29 3f		and #$3f		and #63
-662	.05c5	8085c5	85 0f		sta $0f			sta MapVRAMLeft
-663	.05c7	8085c7	60		rts			rts
+649	.05b4	8085b4					map_retreatPointersLeftEdge_ra8
+650	.05b4	8085b4					_ASSERT_JSR
+46:4	.05b4	8085b4	e2 20		sep #$20		SEP #$20
+652:3	.05b6	8085b6	a5 0d		lda $0d			lda MapSubCharLeft			; same as above but for the left edge
+653	.05b8	8085b8	38		sec			sec
+654	.05b9	8085b9	e9 02		sbc #$02		sbc #2
+655	.05bb	8085bb	85 0d		sta $0d			sta MapSubCharLeft
+656	.05bd	8085bd	b0 06		bcs $8085c5		bcs _next
+657	.05bf	8085bf	c6 0b		dec $0b				dec MapBlockIndexLeft
+658	.05c1	8085c1	a9 06		lda #$06			lda #6
+659	.05c3	8085c3	85 0d		sta $0d				sta MapSubCharLeft
+660	.05c5	8085c5						_next
+661	.05c5	8085c5	a5 0f		lda $0f			lda MapVRAMLeft
+662	.05c7	8085c7	38		sec			sec
+663	.05c8	8085c8	e9 01		sbc #$01		sbc #1
+664	.05ca	8085ca	29 3f		and #$3f		and #63
+665	.05cc	8085cc	85 0f		sta $0f			sta MapVRAMLeft
+666	.05ce	8085ce	60		rts			rts
 
 :1	;******  Return to file: master.asm
 
