@@ -1,7 +1,7 @@
 
 ; 64tass Turbo Assembler Macro V1.55.2200 listing file
 ; 64tass.exe -a -o horizontal.sfc -b -X --no-caret-diag --dump-labels -l horizontal.tass -L horizontal.list --verbose-list --line-numbers master.asm
-; Sun Mar 27 14:01:08 2022
+; Sun Mar 27 19:37:32 2022
 
 ;Line	;Offset	;PC	;Hex		;Monitor	;Source
 
@@ -148,136 +148,136 @@
 16							.dpage $0000		; dpage is 0000
 
 18	.0000	808000					RESET
-19	.0000	808000	18		clc			CLC
-20	.0001	808001	fb		xce			XCE
-21	.0002	808002	a9 01		lda #$01		LDA #$01
-22	.0004	808004	8d 0d 42	sta $420d		STA $420D
-23	.0007	808007	5c 0b 80 80	jmp $80800b		JML RESETHi
+19	.0000	808000	18		clc			clc
+20	.0001	808001	fb		xce			xce
+21	.0002	808002	a9 01		lda #$01		lda #$01
+22	.0004	808004	8d 0d 42	sta $420d		sta $420D
+23	.0007	808007	5c 0b 80 80	jmp $80800b		jml RESETHi
 24	.000b	80800b					RESETHi
-25	.000b	80800b	c2 30		rep #$30		REP #$30			; AXY 16
-26	.000d	80800d	a2 ff 1f	ldx #$1fff		LDX #$1FFF
-27	.0010	808010	9a		txs			TXS
-28	.0011	808011	4b		phk			PHK
-29	.0012	808012	ab		plb			PLB
+25	.000b	80800b	c2 30		rep #$30		rep #$30			; AXY 16
+26	.000d	80800d	a2 ff 1f	ldx #$1fff		ldx #$1FFF
+27	.0010	808010	9a		txs			txs
+28	.0011	808011	4b		phk			phk
+29	.0012	808012	ab		plb			plb
 30							.databank $80
-31	.0013	808013	a9 00 00	lda #$0000		LDA #0000
-32	.0016	808016	5b		tcd			TCD
-33	.0017	808017	a9 8f 00	lda #$008f		LDA #$008F		; FORCE BLANK, SET OBSEL TO 0
-34	.001a	80801a	8d 00 21	sta $802100		STA $802100
+31	.0013	808013	a9 00 00	lda #$0000		lda #0000
+32	.0016	808016	5b		tcd			tcd
+33	.0017	808017	a9 8f 00	lda #$008f		lda #$008F		; FORCE BLANK, SET OBSEL TO 0
+34	.001a	80801a	8d 00 21	sta $802100		sta $802100
 35	.001d	80801d					ClearWRAM
-36	.001d	80801d	a9 08 80	lda #$8008		LDA #$8008		; A -> B, FIXED SOURCE, WRITE BYTE | WRAM
-37	.0020	808020	8d 00 43	sta $804300		STA $804300
-38	.0023	808023	a9 8d 81	lda #$818d		LDA #<>DMAZero	; 64Tass | get low word
-39	.0026	808026	8d 02 43	sta $804302		STA $804302
-40	.0029	808029	a9 80 00	lda #$0080		LDA #`DMAZero	; 64Tass | get bank
-41	.002c	80802c	8d 04 43	sta $804304		STA $804304
-42	.002f	80802f	9c 81 21	stz $802181		STZ $802181
-43	.0032	808032	9c 82 21	stz $802182		STZ $802182		; START AT 7E:0000
-44	.0035	808035	9c 05 43	stz $804305		STZ $804305		; DO 64K
-45	.0038	808038	a9 01 00	lda #$0001		LDA #$0001
-46	.003b	80803b	8d 0b 42	sta $80420b		STA $80420B		; FIRE DMA
-47	.003e	80803e	8d 0b 42	sta $80420b		STA $80420B		; FIRE IT AGAIN, FOR NEXT 64k
+36	.001d	80801d	a9 08 80	lda #$8008		lda #$8008		; A -> B, FIXED SOURCE, WRITE BYTE | WRAM
+37	.0020	808020	8d 00 43	sta $804300		sta $804300
+38	.0023	808023	a9 8d 81	lda #$818d		lda #<>DMAZero	; 64Tass | get low word
+39	.0026	808026	8d 02 43	sta $804302		sta $804302
+40	.0029	808029	a9 80 00	lda #$0080		lda #`DMAZero	; 64Tass | get bank
+41	.002c	80802c	8d 04 43	sta $804304		sta $804304
+42	.002f	80802f	9c 81 21	stz $802181		stz $802181
+43	.0032	808032	9c 82 21	stz $802182		stz $802182		; START AT 7E:0000
+44	.0035	808035	9c 05 43	stz $804305		stz $804305		; DO 64K
+45	.0038	808038	a9 01 00	lda #$0001		lda #$0001
+46	.003b	80803b	8d 0b 42	sta $80420b		sta $80420B		; FIRE DMA
+47	.003e	80803e	8d 0b 42	sta $80420b		sta $80420B		; FIRE IT AGAIN, FOR NEXT 64k
 48	.0041	808041					InitSNESAndMirror
-49	.0041	808041	c2 20		rep #$20		REP #$20			; a16
-50	.0043	808043	a9 8f 00	lda #$008f		LDA #$008F		; FORCE BLANK, SET OBSEL TO 0
-51	.0046	808046	8d 00 21	sta $802100		STA $802100
-52	.0049	808049	8d 19 00	sta $800019		STA mINIDISP
-53								;STZ mOBSEL
-54	.004c	80804c	9c 05 21	stz $802105		STZ $802105 	;6
-55								;STZ mBGMODE
-56								;STZ mMOSIAC
-57	.004f	80804f	9c 07 21	stz $802107		STZ $802107		;8
-58								;STZ mBG1SC
-59								;STZ mBG2SC
-60	.0052	808052	9c 09 21	stz $802109		STZ $802109		;A
-61								;STZ mBG3SC
-62								;STZ mBG4SC
-63	.0055	808055	9c 0b 21	stz $80210b		STZ $80210B		;C
-64								;STZ mBG12NBA
-65								;STZ mBG23NBA
-66	.0058	808058	9c 0d 21	stz $80210d		STZ $80210D		;E
-67	.005b	80805b	9c 0d 21	stz $80210d		STZ $80210D		;E
-68								;STZ mBG1HOFS
-69								;STZ mBG1VOFS
-70	.005e	80805e	9c 0f 21	stz $80210f		STZ $80210F		;10
-71	.0061	808061	9c 0f 21	stz $80210f		STZ $80210F		;10
-72								;STZ mBG2HOFS
-73								;STZ mBG2VOFS
-74	.0064	808064	9c 11 21	stz $802111		STZ $802111		;12
-75	.0067	808067	9c 11 21	stz $802111		STZ $802111		;12
-76								;STZ mBG3HOFS
-77								;STZ mBG3VOFS
-78	.006a	80806a	9c 13 21	stz $802113		STZ $802113		;14
-79	.006d	80806d	9c 13 21	stz $802113		STZ $802113		;14
-80								;STZ mBG4HOFS
-81								;STZ mBG4VOFS
-82	.0070	808070	9c 19 21	stz $802119		STZ $802119 ;1A to get Mode7
-83	.0073	808073	9c 1b 21	stz $80211b		STZ $80211B ;1C these are write twice
-84	.0076	808076	9c 1b 21	stz $80211b		STZ $80211B ;1C regs
-85	.0079	808079	9c 1d 21	stz $80211d		STZ $80211D ;1E
-86	.007c	80807c	9c 1d 21	stz $80211d		STZ $80211D ;1E
-87	.007f	80807f	9c 1f 21	stz $80211f		STZ $80211F ;20
-88	.0082	808082	9c 1f 21	stz $80211f		STZ $80211F ;20
+49	.0041	808041	c2 20		rep #$20		rep #$20			; a16
+50	.0043	808043	a9 8f 00	lda #$008f		lda #$008F		; FORCE BLANK, SET OBSEL TO 0
+51	.0046	808046	8d 00 21	sta $802100		sta $802100
+52	.0049	808049	8d 19 00	sta $800019		sta mINIDISP
+53								;stz mOBSEL
+54	.004c	80804c	9c 05 21	stz $802105		stz $802105 	;6
+55								;stz mBGMODE
+56								;stz mMOSIAC
+57	.004f	80804f	9c 07 21	stz $802107		stz $802107		;8
+58								;stz mBG1SC
+59								;stz mBG2SC
+60	.0052	808052	9c 09 21	stz $802109		stz $802109		;A
+61								;stz mBG3SC
+62								;stz mBG4SC
+63	.0055	808055	9c 0b 21	stz $80210b		stz $80210B		;C
+64								;stz mBG12NBA
+65								;stz mBG23NBA
+66	.0058	808058	9c 0d 21	stz $80210d		stz $80210D		;E
+67	.005b	80805b	9c 0d 21	stz $80210d		stz $80210D		;E
+68								;stz mBG1HOFS
+69								;stz mBG1VOFS
+70	.005e	80805e	9c 0f 21	stz $80210f		stz $80210F		;10
+71	.0061	808061	9c 0f 21	stz $80210f		stz $80210F		;10
+72								;stz mBG2HOFS
+73								;stz mBG2VOFS
+74	.0064	808064	9c 11 21	stz $802111		stz $802111		;12
+75	.0067	808067	9c 11 21	stz $802111		stz $802111		;12
+76								;stz mBG3HOFS
+77								;stz mBG3VOFS
+78	.006a	80806a	9c 13 21	stz $802113		stz $802113		;14
+79	.006d	80806d	9c 13 21	stz $802113		stz $802113		;14
+80								;stz mBG4HOFS
+81								;stz mBG4VOFS
+82	.0070	808070	9c 19 21	stz $802119		stz $802119 ;1A to get Mode7
+83	.0073	808073	9c 1b 21	stz $80211b		stz $80211B ;1C these are write twice
+84	.0076	808076	9c 1b 21	stz $80211b		stz $80211B ;1C regs
+85	.0079	808079	9c 1d 21	stz $80211d		stz $80211D ;1E
+86	.007c	80807c	9c 1d 21	stz $80211d		stz $80211D ;1E
+87	.007f	80807f	9c 1f 21	stz $80211f		stz $80211F ;20
+88	.0082	808082	9c 1f 21	stz $80211f		stz $80211F ;20
 89								; add mirrors here if you are doing mode7
-90	.0085	808085	9c 23 21	stz $802123		STZ $802123 ;24
-91								;STZ mW12SEL
-92								;STZ mW34SEL
-93	.0088	808088	9c 25 21	stz $802125		STZ $802125 ;26
-94								;STZ mWOBJSEL
-95	.008b	80808b	9c 26 21	stz $802126		STZ $802126 ;27 YES IT DOUBLES OH WELL
-96	.008e	80808e	9c 28 21	stz $802128		STZ $802128 ;29
-97								;STZ mWH0
-98								;STZ mWH1
-99								;STZ mWH2
-100								;STZ mWH3
-101	.0091	808091	9c 2a 21	stz $80212a		STZ $80212A ;2B
-102								;STZ mWBGLOG
-103								;STZ mOBJLOG
-104	.0094	808094	9c 2c 21	stz $80212c		STZ $80212C ;2D
-105	.0097	808097	9c 2e 21	stz $80212e		STZ $80212E ;2F
-106								;STZ mTM
-107								;STZ mTS
-108								;STZ mTMW
-109								;STZ mTSW
-110	.009a	80809a	a9 e0 00	lda #$00e0		LDA #$00E0
-111	.009d	80809d	8d 32 21	sta $802132		STA $802132
-112	.00a0	8080a0	8d 57 00	sta $800057		STA mCOLDATA
-113								;STZ mSETINI
+90	.0085	808085	9c 23 21	stz $802123		stz $802123 ;24
+91								;stz mW12SEL
+92								;stz mW34SEL
+93	.0088	808088	9c 25 21	stz $802125		stz $802125 ;26
+94								;stz mWOBJSEL
+95	.008b	80808b	9c 26 21	stz $802126		stz $802126 ;27 YES IT DOUBLES OH WELL
+96	.008e	80808e	9c 28 21	stz $802128		stz $802128 ;29
+97								;stz mWH0
+98								;stz mWH1
+99								;stz mWH2
+100								;stz mWH3
+101	.0091	808091	9c 2a 21	stz $80212a		stz $80212A ;2B
+102								;stz mWBGLOG
+103								;stz mOBJLOG
+104	.0094	808094	9c 2c 21	stz $80212c		stz $80212C ;2D
+105	.0097	808097	9c 2e 21	stz $80212e		stz $80212E ;2F
+106								;stz mTM
+107								;stz mTS
+108								;stz mTMW
+109								;stz mTSW
+110	.009a	80809a	a9 e0 00	lda #$00e0		lda #$00E0
+111	.009d	80809d	8d 32 21	sta $802132		sta $802132
+112	.00a0	8080a0	8d 57 00	sta $800057		sta mCOLDATA
+113								;stz mSETINI
 114								;ONTO THE CPU I/O REGS
-115	.00a3	8080a3	a9 00 ff	lda #$ff00		LDA #$FF00
-116	.00a6	8080a6	8d 00 42	sta $804200		STA $804200
-117								;STZ mNMITIMEN
-118	.00a9	8080a9	9c 02 42	stz $804202		STZ $804202 ;3
-119	.00ac	8080ac	9c 04 42	stz $804204		STZ $804204 ;5
-120	.00af	8080af	9c 06 42	stz $804206		STZ $804206 ;7
-121	.00b2	8080b2	9c 08 42	stz $804208		STZ $804208 ;9
-122	.00b5	8080b5	9c 0a 42	stz $80420a		STZ $80420A ;B
-123	.00b8	8080b8	9c 0c 42	stz $80420c		STZ $80420C ;D
+115	.00a3	8080a3	a9 00 ff	lda #$ff00		lda #$FF00
+116	.00a6	8080a6	8d 00 42	sta $804200		sta $804200
+117								;stz mNMITIMEN
+118	.00a9	8080a9	9c 02 42	stz $804202		stz $804202 ;3
+119	.00ac	8080ac	9c 04 42	stz $804204		stz $804204 ;5
+120	.00af	8080af	9c 06 42	stz $804206		stz $804206 ;7
+121	.00b2	8080b2	9c 08 42	stz $804208		stz $804208 ;9
+122	.00b5	8080b5	9c 0a 42	stz $80420a		stz $80420A ;B
+123	.00b8	8080b8	9c 0c 42	stz $80420c		stz $80420C ;D
 124								; CLEAR VRAM
-125	.00bb	8080bb	c2 20		rep #$20		REP #$20			; A16
-126	.00bd	8080bd	a9 09 18	lda #$1809		LDA #$1809		; A -> B, FIXED SOURCE, WRITE WORD | VRAM
-127	.00c0	8080c0	8d 00 43	sta $804300		STA $804300
-128	.00c3	8080c3	a9 8d 81	lda #$818d		LDA #<>DMAZero	; THIS GET THE LOW WORD, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
-129	.00c6	8080c6	8d 02 43	sta $804302		STA $804302
-130	.00c9	8080c9	a9 80 00	lda #$0080		LDA #`DMAZero	; THIS GETS THE BANK, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
-131	.00cc	8080cc	8d 04 43	sta $804304		STA $804304		; AND THE UPPER BYTE WILL BE 0
-132	.00cf	8080cf	9c 05 43	stz $804305		STZ $804305		; DO 64K
-133	.00d2	8080d2	a9 80 00	lda #$0080		LDA #$80			; INC ON HI WRITE
-134	.00d5	8080d5	8d 15 21	sta $802115		STA $802115
-135	.00d8	8080d8	9c 16 21	stz $802116		STZ $802116		; START AT 00
-136	.00db	8080db	a9 01 00	lda #$0001		LDA #$01
-137	.00de	8080de	8d 0b 42	sta $80420b		STA $80420B		; FIRE DMA
+125	.00bb	8080bb	c2 20		rep #$20		rep #$20			; A16
+126	.00bd	8080bd	a9 09 18	lda #$1809		lda #$1809		; A -> B, FIXED SOURCE, WRITE WORD | VRAM
+127	.00c0	8080c0	8d 00 43	sta $804300		sta $804300
+128	.00c3	8080c3	a9 8d 81	lda #$818d		lda #<>DMAZero	; THIS GET THE LOW WORD, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
+129	.00c6	8080c6	8d 02 43	sta $804302		sta $804302
+130	.00c9	8080c9	a9 80 00	lda #$0080		lda #`DMAZero	; THIS GETS THE BANK, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
+131	.00cc	8080cc	8d 04 43	sta $804304		sta $804304		; AND THE UPPER BYTE WILL BE 0
+132	.00cf	8080cf	9c 05 43	stz $804305		stz $804305		; DO 64K
+133	.00d2	8080d2	a9 80 00	lda #$0080		lda #$80			; INC ON HI WRITE
+134	.00d5	8080d5	8d 15 21	sta $802115		sta $802115
+135	.00d8	8080d8	9c 16 21	stz $802116		stz $802116		; START AT 00
+136	.00db	8080db	a9 01 00	lda #$0001		lda #$01
+137	.00de	8080de	8d 0b 42	sta $80420b		sta $80420B		; FIRE DMA
 138								; CLEAR CG-RAM
-139	.00e1	8080e1	a9 08 22	lda #$2208		LDA #$2208		; A -> B, FIXED SOURCE, WRITE BYTE | CG-RAM
-140	.00e4	8080e4	8d 00 43	sta $804300		STA $804300
-141	.00e7	8080e7	a9 00 02	lda #$0200		LDA #$200		; 512 BYTES
-142	.00ea	8080ea	8d 05 43	sta $804305		STA $804305
-143	.00ed	8080ed	e2 20		sep #$20		SEP #$20			; A8
-144	.00ef	8080ef	9c 21 21	stz $802121		STZ $802121		; START AT 0
-145	.00f2	8080f2	a9 01		lda #$01		LDA #$01
-146	.00f4	8080f4	8d 0b 42	sta $80420b		STA $80420B		; FIRE DMA
-147	.00f7	8080f7	64 06		stz $06			STZ NMIReadyNF
-148	.00f9	8080f9	58		cli			CLI
+139	.00e1	8080e1	a9 08 22	lda #$2208		lda #$2208		; A -> B, FIXED SOURCE, WRITE BYTE | CG-RAM
+140	.00e4	8080e4	8d 00 43	sta $804300		sta $804300
+141	.00e7	8080e7	a9 00 02	lda #$0200		lda #$200		; 512 BYTES
+142	.00ea	8080ea	8d 05 43	sta $804305		sta $804305
+143	.00ed	8080ed	e2 20		sep #$20		sep #$20			; A8
+144	.00ef	8080ef	9c 21 21	stz $802121		stz $802121		; START AT 0
+145	.00f2	8080f2	a9 01		lda #$01		lda #$01
+146	.00f4	8080f4	8d 0b 42	sta $80420b		sta $80420B		; FIRE DMA
+147	.00f7	8080f7	64 06		stz $06			stz NMIReadyNF
+148	.00f9	8080f9	58		cli			cli
 149	.00fa	8080fa	20 e5 81	jsr $8081e5		jsr dmaPalletes_xx		; install the game pallete
 150	.00fd	8080fd	20 0b 82	jsr $80820b		jsr dmaLevelChars_xx		; install the char set
 46:4	.0100	808100	e2 20		sep #$20		SEP #$20
@@ -353,7 +353,7 @@
 221	.0188	808188	80 00		bra $80818a				bra _noHold
 222	.018a	80818a					_noLeft
 223	.018a	80818a					_noHold
-224	.018a	80818a	4c 38 81	jmp $808138		JMP	MainLoop
+224	.018a	80818a	4c 38 81	jmp $808138		jmp	MainLoop
 
 226							.section sDP
 227	>0006						NMIReadyNF		.byte ?
@@ -452,27 +452,27 @@
 272	>018d	80818d	00 00				DMAZero .word $0000
 
 274	.018f	80818f					NMI
-275	.018f	80818f	5c 93 81 80	jmp $808193		JML NMIFast				; Move To 8X:XXXX for speed
+275	.018f	80818f	5c 93 81 80	jmp $808193		jml NMIFast				; Move To 8X:XXXX for speed
 276	.0193	808193					NMIFast
-277	.0193	808193	8b		phb			PHB						; Save Data Bank
+277	.0193	808193	8b		phb			phb						; Save Data Bank
 278	.0194	808194	a9 81		lda #$81		lda #`DataBankStart
 279	.0196	808196	48		pha			pha
 280	.0197	808197	ab		plb			plb						; Set Data Bank to default databank
 281							.databank `DataBankStart
-282	.0198	808198	e2 20		sep #$20		SEP	#$20				; A8
-283	.019a	80819a	2c 10 42	bit $814210		BIT	$4210,b			 ; Ack NMI
-284	.019d	80819d	2c 06 00	bit $810006		BIT@W NMIReadyNF,b		; Check if this is safe
-285	.01a0	8081a0	10 02		bpl $8081a4		BPL	_ready
-286	.01a2	8081a2	ab		plb				PLB					; No, restore Data Bank
-287	.01a3	8081a3	40		rti				RTI					; Exit
+282	.0198	808198	e2 20		sep #$20		sep	#$20				; A8
+283	.019a	80819a	2c 10 42	bit $814210		bit	$4210,b			 ; Ack NMI
+284	.019d	80819d	2c 06 00	bit $810006		bit@W NMIReadyNF,b		; Check if this is safe
+285	.01a0	8081a0	10 02		bpl $8081a4		bpl	_ready
+286	.01a2	8081a2	ab		plb				plb					; No, restore Data Bank
+287	.01a3	8081a3	40		rti				rti					; Exit
 288	.01a4	8081a4					_ready						; Safe
-289	.01a4	8081a4	c2 30		rep #$30		REP	#$30				; A16 XY16
-290	.01a6	8081a6	48		pha			PHA
-291	.01a7	8081a7	da		phx			PHX
-292	.01a8	8081a8	5a		phy			PHY						; Save A,X,Y
-293	.01a9	8081a9	0b		phd			PHD						; Save the DP register
-294	.01aa	8081aa	a9 00 00	lda #$0000		LDA	#0000				; or where ever you want your NMI DP
-295	.01ad	8081ad	5b		tcd			TCD						; set DP to known value
+289	.01a4	8081a4	c2 30		rep #$30		rep	#$30				; A16 XY16
+290	.01a6	8081a6	48		pha			pha
+291	.01a7	8081a7	da		phx			phx
+292	.01a8	8081a8	5a		phy			phy						; Save A,X,Y
+293	.01a9	8081a9	0b		phd			phd						; Save the DP register
+294	.01aa	8081aa	a9 00 00	lda #$0000		lda	#0000				; or where ever you want your NMI DP
+295	.01ad	8081ad	5b		tcd			tcd						; set DP to known value
 296	.01ae	8081ae	a5 17		lda $17			lda MapBufferTarget	; do we have something in the Map Column Buffer
 297	.01b0	8081b0	30 03		bmi $8081b5		bmi _noColumnDMA
 298	.01b2	8081b2	20 2e 85	jsr $80852e			jsr dmaColumn_xx	; draw it
@@ -492,17 +492,17 @@
 312	.01cf	8081cf	8d 0d 21	sta $81210d		sta $210d,b
 313	.01d2	8081d2	a5 16		lda $16			lda ScreenXOffset.hi
 314	.01d4	8081d4	8d 0d 21	sta $81210d		sta $210d,b
-315	.01d7	8081d7	e2 20		sep #$20		SEP	#$20				; A8
-316	.01d9	8081d9	a9 ff		lda #$ff		LDA	#$FF				; Doing this is slightly faster than DEC, but 2 more bytes
-317	.01db	8081db	85 06		sta $06			STA	NMIReadyNF		; set NMI Done Flag
-318	.01dd	8081dd	c2 30		rep #$30		REP	#$30				; A16 XY16
-319	.01df	8081df	2b		pld			PLD						; restore DP page
-320	.01e0	8081e0	7a		ply			PLY
-321	.01e1	8081e1	fa		plx			PLX
-322	.01e2	8081e2	68		pla			PLA						; Restore A,X,Y
-323	.01e3	8081e3	ab		plb			PLB						; Restore Data Bank
+315	.01d7	8081d7	e2 20		sep #$20		sep	#$20				; A8
+316	.01d9	8081d9	a9 ff		lda #$ff		lda	#$FF				; Doing this is slightly faster than DEC, but 2 more bytes
+317	.01db	8081db	85 06		sta $06			sta	NMIReadyNF		; set NMI Done Flag
+318	.01dd	8081dd	c2 30		rep #$30		rep	#$30				; A16 XY16
+319	.01df	8081df	2b		pld			pld						; restore DP page
+320	.01e0	8081e0	7a		ply			ply
+321	.01e1	8081e1	fa		plx			plx
+322	.01e2	8081e2	68		pla			pla						; Restore A,X,Y
+323	.01e3	8081e3	ab		plb			plb						; Restore Data Bank
 324	.01e4	8081e4					justRTI
-325	.01e4	8081e4	40		rti			RTI						; Exit
+325	.01e4	8081e4	40		rti			rti						; Exit
 326							; ----- @DMA functions@ -----
 
 328							.section sDataBank

@@ -16,136 +16,136 @@ kVRAM .block
 .dpage $0000		; dpage is 0000
 
 RESET
-	CLC
-	XCE
-	LDA #$01
-	STA $420D
-	JML RESETHi
+	clc
+	xce
+	lda #$01
+	sta $420D
+	jml RESETHi
 RESETHi
-	REP #$30			; AXY 16
-	LDX #$1FFF
-	TXS
-	PHK
-	PLB
+	rep #$30			; AXY 16
+	ldx #$1FFF
+	txs
+	phk
+	plb
 .databank $80
-	LDA #0000
-	TCD
-	LDA #$008F		; FORCE BLANK, SET OBSEL TO 0
-	STA $802100
+	lda #0000
+	tcd
+	lda #$008F		; FORCE BLANK, SET OBSEL TO 0
+	sta $802100
 ClearWRAM
-	LDA #$8008		; A -> B, FIXED SOURCE, WRITE BYTE | WRAM
-	STA $804300
-	LDA #<>DMAZero	; 64Tass | get low word
-	STA $804302
-	LDA #`DMAZero	; 64Tass | get bank
-	STA $804304
-	STZ $802181
-	STZ $802182		; START AT 7E:0000
-	STZ $804305		; DO 64K
-	LDA #$0001
-	STA $80420B		; FIRE DMA
-	STA $80420B		; FIRE IT AGAIN, FOR NEXT 64k
+	lda #$8008		; A -> B, FIXED SOURCE, WRITE BYTE | WRAM
+	sta $804300
+	lda #<>DMAZero	; 64Tass | get low word
+	sta $804302
+	lda #`DMAZero	; 64Tass | get bank
+	sta $804304
+	stz $802181
+	stz $802182		; START AT 7E:0000
+	stz $804305		; DO 64K
+	lda #$0001
+	sta $80420B		; FIRE DMA
+	sta $80420B		; FIRE IT AGAIN, FOR NEXT 64k
 InitSNESAndMirror
-	REP #$20			; a16
-	LDA #$008F		; FORCE BLANK, SET OBSEL TO 0
-	STA $802100
-	STA mINIDISP
-	;STZ mOBSEL
-	STZ $802105 	;6
-	;STZ mBGMODE
-	;STZ mMOSIAC
-	STZ $802107		;8
-	;STZ mBG1SC
-	;STZ mBG2SC
-	STZ $802109		;A
-	;STZ mBG3SC
-	;STZ mBG4SC
-	STZ $80210B		;C
-	;STZ mBG12NBA
-	;STZ mBG23NBA
-	STZ $80210D		;E
-	STZ $80210D		;E
-	;STZ mBG1HOFS
-	;STZ mBG1VOFS
-	STZ $80210F		;10
-	STZ $80210F		;10
-	;STZ mBG2HOFS
-	;STZ mBG2VOFS
-	STZ $802111		;12
-	STZ $802111		;12
-	;STZ mBG3HOFS
-	;STZ mBG3VOFS
-	STZ $802113		;14
-	STZ $802113		;14
-	;STZ mBG4HOFS
-	;STZ mBG4VOFS
-	STZ $802119 ;1A to get Mode7
-	STZ $80211B ;1C these are write twice
-	STZ $80211B ;1C regs
-	STZ $80211D ;1E
-	STZ $80211D ;1E
-	STZ $80211F ;20
-	STZ $80211F ;20
+	rep #$20			; a16
+	lda #$008F		; FORCE BLANK, SET OBSEL TO 0
+	sta $802100
+	sta mINIDISP
+	;stz mOBSEL
+	stz $802105 	;6
+	;stz mBGMODE
+	;stz mMOSIAC
+	stz $802107		;8
+	;stz mBG1SC
+	;stz mBG2SC
+	stz $802109		;A
+	;stz mBG3SC
+	;stz mBG4SC
+	stz $80210B		;C
+	;stz mBG12NBA
+	;stz mBG23NBA
+	stz $80210D		;E
+	stz $80210D		;E
+	;stz mBG1HOFS
+	;stz mBG1VOFS
+	stz $80210F		;10
+	stz $80210F		;10
+	;stz mBG2HOFS
+	;stz mBG2VOFS
+	stz $802111		;12
+	stz $802111		;12
+	;stz mBG3HOFS
+	;stz mBG3VOFS
+	stz $802113		;14
+	stz $802113		;14
+	;stz mBG4HOFS
+	;stz mBG4VOFS
+	stz $802119 ;1A to get Mode7
+	stz $80211B ;1C these are write twice
+	stz $80211B ;1C regs
+	stz $80211D ;1E
+	stz $80211D ;1E
+	stz $80211F ;20
+	stz $80211F ;20
 	; add mirrors here if you are doing mode7
-	STZ $802123 ;24
-	;STZ mW12SEL
-	;STZ mW34SEL
-	STZ $802125 ;26
-	;STZ mWOBJSEL
-	STZ $802126 ;27 YES IT DOUBLES OH WELL
-	STZ $802128 ;29
-	;STZ mWH0
-	;STZ mWH1
-	;STZ mWH2
-	;STZ mWH3
-	STZ $80212A ;2B
-	;STZ mWBGLOG
-	;STZ mOBJLOG
-	STZ $80212C ;2D
-	STZ $80212E ;2F
-	;STZ mTM
-	;STZ mTS
-	;STZ mTMW
-	;STZ mTSW
-	LDA #$00E0
-	STA $802132
-	STA mCOLDATA
-	;STZ mSETINI
+	stz $802123 ;24
+	;stz mW12SEL
+	;stz mW34SEL
+	stz $802125 ;26
+	;stz mWOBJSEL
+	stz $802126 ;27 YES IT DOUBLES OH WELL
+	stz $802128 ;29
+	;stz mWH0
+	;stz mWH1
+	;stz mWH2
+	;stz mWH3
+	stz $80212A ;2B
+	;stz mWBGLOG
+	;stz mOBJLOG
+	stz $80212C ;2D
+	stz $80212E ;2F
+	;stz mTM
+	;stz mTS
+	;stz mTMW
+	;stz mTSW
+	lda #$00E0
+	sta $802132
+	sta mCOLDATA
+	;stz mSETINI
 	;ONTO THE CPU I/O REGS
-	LDA #$FF00
-	STA $804200
-	;STZ mNMITIMEN
-	STZ $804202 ;3
-	STZ $804204 ;5
-	STZ $804206 ;7
-	STZ $804208 ;9
-	STZ $80420A ;B
-	STZ $80420C ;D
+	lda #$FF00
+	sta $804200
+	;stz mNMITIMEN
+	stz $804202 ;3
+	stz $804204 ;5
+	stz $804206 ;7
+	stz $804208 ;9
+	stz $80420A ;B
+	stz $80420C ;D
 	; CLEAR VRAM
-	REP #$20			; A16
-	LDA #$1809		; A -> B, FIXED SOURCE, WRITE WORD | VRAM
-	STA $804300
-	LDA #<>DMAZero	; THIS GET THE LOW WORD, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
-	STA $804302
-	LDA #`DMAZero	; THIS GETS THE BANK, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
-	STA $804304		; AND THE UPPER BYTE WILL BE 0
-	STZ $804305		; DO 64K
-	LDA #$80			; INC ON HI WRITE
-	STA $802115
-	STZ $802116		; START AT 00
-	LDA #$01
-	STA $80420B		; FIRE DMA
+	rep #$20			; A16
+	lda #$1809		; A -> B, FIXED SOURCE, WRITE WORD | VRAM
+	sta $804300
+	lda #<>DMAZero	; THIS GET THE LOW WORD, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
+	sta $804302
+	lda #`DMAZero	; THIS GETS THE BANK, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
+	sta $804304		; AND THE UPPER BYTE WILL BE 0
+	stz $804305		; DO 64K
+	lda #$80			; INC ON HI WRITE
+	sta $802115
+	stz $802116		; START AT 00
+	lda #$01
+	sta $80420B		; FIRE DMA
 	; CLEAR CG-RAM
-	LDA #$2208		; A -> B, FIXED SOURCE, WRITE BYTE | CG-RAM
-	STA $804300
-	LDA #$200		; 512 BYTES
-	STA $804305
-	SEP #$20			; A8
-	STZ $802121		; START AT 0
-	LDA #$01
-	STA $80420B		; FIRE DMA
-	STZ NMIReadyNF
-	CLI
+	lda #$2208		; A -> B, FIXED SOURCE, WRITE BYTE | CG-RAM
+	sta $804300
+	lda #$200		; 512 BYTES
+	sta $804305
+	sep #$20			; A8
+	stz $802121		; START AT 0
+	lda #$01
+	sta $80420B		; FIRE DMA
+	stz NMIReadyNF
+	cli
 	jsr dmaPalletes_xx		; install the game pallete
 	jsr dmaLevelChars_xx		; install the char set
 	#A8
@@ -221,7 +221,7 @@ _noRight
 			bra _noHold
 _noLeft  
 _noHold
-	JMP	MainLoop
+	jmp	MainLoop
  
 .section sDP
 NMIReadyNF		.byte ?
@@ -272,27 +272,27 @@ mNMITIMEN .word ?
 DMAZero .word $0000
 
 NMI
-	JML NMIFast				; Move To 8X:XXXX for speed
+	jml NMIFast				; Move To 8X:XXXX for speed
 NMIFast
-	PHB						; Save Data Bank
+	phb						; Save Data Bank
 	lda #`DataBankStart
 	pha
 	plb						; Set Data Bank to default databank
 .databank `DataBankStart
-	SEP	#$20				; A8
-	BIT	$4210,b			 ; Ack NMI
-	BIT@W NMIReadyNF,b		; Check if this is safe
-	BPL	_ready
-		PLB					; No, restore Data Bank
-		RTI					; Exit
+	sep	#$20				; A8
+	bit	$4210,b			 ; Ack NMI
+	bit@W NMIReadyNF,b		; Check if this is safe
+	bpl	_ready
+		plb					; No, restore Data Bank
+		rti					; Exit
 _ready						; Safe
-	REP	#$30				; A16 XY16
-	PHA
-	PHX
-	PHY						; Save A,X,Y
-	PHD						; Save the DP register
-	LDA	#0000				; or where ever you want your NMI DP
-	TCD						; set DP to known value
+	rep	#$30				; A16 XY16
+	pha
+	phx
+	phy						; Save A,X,Y
+	phd						; Save the DP register
+	lda	#0000				; or where ever you want your NMI DP
+	tcd						; set DP to known value
 	lda MapBufferTarget	; do we have something in the Map Column Buffer
 	bmi _noColumnDMA
 		jsr dmaColumn_xx	; draw it
@@ -312,17 +312,17 @@ _noColumnDMA
 	sta $210d,b
 	lda ScreenXOffset.hi
 	sta $210d,b
-	SEP	#$20				; A8
-	LDA	#$FF				; Doing this is slightly faster than DEC, but 2 more bytes
-	STA	NMIReadyNF		; set NMI Done Flag
-	REP	#$30				; A16 XY16
-	PLD						; restore DP page
-	PLY
-	PLX
-	PLA						; Restore A,X,Y
-	PLB						; Restore Data Bank
+	sep	#$20				; A8
+	lda	#$FF				; Doing this is slightly faster than DEC, but 2 more bytes
+	sta	NMIReadyNF		; set NMI Done Flag
+	rep	#$30				; A16 XY16
+	pld						; restore DP page
+	ply
+	plx
+	pla						; Restore A,X,Y
+	plb						; Restore Data Bank
 justRTI
-	RTI						; Exit
+	rti						; Exit
 ; ----- @DMA functions@ -----
 
 .section sDataBank
