@@ -1,0 +1,2636 @@
+
+; 64tass Turbo Assembler Macro V1.55.2200 listing file
+; 64tass.exe -a -o vertical.sfc -b -X --no-caret-diag --dump-labels -l vertical.tass -L vertical.list --verbose-list --line-numbers master.asm
+; Tue Mar 29 19:33:15 2022
+
+;Line	;Offset	;PC	;Hex		;Monitor	;Source
+
+:1	;******  Processing input file: master.asm
+
+1							; LoROM FAST SNES Master
+2							.cpu "65816"
+
+4							; setup the ROM MAP
+5							* = $000000        ; FILE OFFSET
+6							.logical $808000   ; SNES ADDRESS
+7							.dsection sBank80
+8							.cerror * > $80FFB0, "Bank 80 overflow by ", *-$80FFB0
+9							* = $80FFB0
+10							.dsection sHeader
+11							*= $80FFE4
+12							.dsection s65816Vectors
+13							*= $80FFF4
+14							.dsection s6502Vectors
+15							.here              ; back to file
+
+
+18							* = $008000        ; FILE OFFSET
+19							.logical $818000   ; SNES ADDRESS
+20	.8000	818000					DataBankStart
+21							.dsection sDataBank
+22							.include "DataBank.asm"
+
+:2	;******  Processing file: DataBank.asm
+
+
+
+:1	;******  Return to file: master.asm
+
+23							.here
+24							.cerror * > $10000, "Bank 81 overflow by ", *-$10000
+
+26							;* = $010000        ; FILE OFFSET
+27							;.logical $828000   ; SNES ADDRESS
+28							;.dsection sBank82
+29							;.here
+30							;.cerror * > $18000, "Bank 82 overflow by ", *-$18000
+
+32							* = $1FFFF
+33	>01ffff		00				.byte 0 					; force the rom to be 128K
+34							; .. add more banks here ..
+
+
+37							; *** virtual address ***
+38							; these exist to the code but are not part of the output file
+39							*=$0000
+40							.dsection sDP
+41							.cerror * > $100, "Direct Page overflow by ", *-$100
+42	.001b						gSharedRamStart
+43							.dsection sSharedWRAM
+44							.cerror * > $1FC0, "Shared WRAM overflow by ", *-$1FC0
+45							*=$7e2000
+46							.dsection sLoWRAM
+47							.cerror * > $7F0000, "Lo WRAM overflow by ", *-$7F0000
+48							*=$7f0000
+49							.dsection sHiWRAM
+50							.cerror * > $800000, "High WRAM overflow by ", *-$800000
+
+
+53							.section sDP
+54	>0000						    ZPTemp1 .byte ?
+55	>0001						    ZPTemp2 .byte ?
+56	>0002						    ZPTemp3 .byte ?
+57	>0003						    ZPTemp4 .byte ?
+58	>0004						    ZPTemp5 .byte ?
+59	>0005						    ZPTemp6 .byte ?
+60							.send
+
+62							; *** instance headers and vectors
+63							.section sHeader
+64	>7fb0	80ffb0	00 00				    .word 0
+65	>7fb2	80ffb2	d6 c5 d2 d4			    .text "VERT"
+66	>7fb6	80ffb6	00 00 00 00 00 00 00		    .fill 7,0
+67	>7fbd	80ffbd	00				    .byte 0 ; RAM
+68	>7fbe	80ffbe	00				    .byte 0 ; special version
+69	>7fbf	80ffbf	00				    .byte 0 ; cart type
+70							    ;               111111111112
+71							    ;      123456789012345678901
+72	>7fc0	80ffc0	54 48 49 53 20 49 53 20		    .text "this is a dummy name "
+	>7fc8	80ffc8	41 20 44 55 4d 4d 59 20 4e 41 4d 45 20
+73							.cerror * != $80ffd5, "name is too short", *
+74	>7fd5	80ffd5	30				    .byte $30   ; Mapping
+75	>7fd6	80ffd6	00				    .byte $00   ; Rom
+76	>7fd7	80ffd7	07				    .byte $07   ; 128K
+77	>7fd8	80ffd8	00				    .byte $00   ; 0 SRAM
+78	>7fd9	80ffd9	01				    .byte $01   ; NTSC
+79	>7fda	80ffda	33				    .byte $33   ; Version 3
+80	>7fdb	80ffdb	00				    .byte $00   ; rom version 0
+81	>7fdc	80ffdc	00 00				    .word $0000 ; complement
+82	>7fde	80ffde	00 00				    .word $0000 ; CRC
+83							.send ; sHeader
+
+85							.section s65816Vectors
+86							.block; scope this so we don't get name clashes
+87	>7fe4	80ffe4	e9 81				vCOP   .word <>Bank80.justRTI ; COP is a assembly mnemonic so add v
+88	>7fe6	80ffe6	e9 81				vBRK   .word <>Bank80.justRTI ; BRK is a assembly mnemonic so add v
+89	>7fe8	80ffe8	e9 81				ABORT  .word <>Bank80.justRTI
+90	>7fea	80ffea	94 81				NMI    .word <>Bank80.NMI
+91	>7fec	80ffec	e9 81				RESET  .word <>Bank80.justRTI
+92	>7fee	80ffee	e9 81				IRQ    .word <>Bank80.justRTI
+93							.bend
+94							.send ; s65816Vectors
+
+96							.section s6502Vectors
+97							.block; scope this so we don't get name clashes
+98	>7ff4	80fff4	e9 81				vCOP   .word <>Bank80.justRTI  ; COP is a assembly mnemonic so add v
+99	>7ff6	80fff6	e9 81				vBRK   .word <>Bank80.justRTI  ; BRK is a assembly mnemonic so add v
+100	>7ff8	80fff8	e9 81				ABORT  .word <>Bank80.justRTI
+101	>7ffa	80fffa	e9 81				NMI    .word <>Bank80.justRTI
+102	>7ffc	80fffc	00 80				RESET  .word <>Bank80.RESET
+103	>7ffe	80fffe	e9 81				IRQ    .word <>Bank80.justRTI
+104							.bend
+105							.send ; s65816Vectors
+
+107							.comment ; by the way you can use this to comment out a block
+110							.endc
+
+112							; *** instance banks ***
+113							.section sBank80
+114	.0000	808000					Bank80 .binclude "Bank80.asm"
+
+:3	;******  Processing file: Bank80.asm
+
+1							; Bank 80
+2							.virtual $800000+gSharedRamStart
+3							.dsection sSharedWRAM
+4							.endv
+
+6	.0000	808000					kVRAM .block
+7	=0							gameScreen		= $0000/2
+8	=2048							font				= $1000/2
+9	=4096							gameChars		= $2000/2
+10							.bend
+
+12							.as					; Assume A8
+13							.xs					; Assume X8
+14							.autsiz				; Auto size detect
+15							.databank $00	 	; databank is 00
+16							.dpage $0000		; dpage is 0000
+
+18	.0000	808000					RESET
+19	.0000	808000	18		clc			clc
+20	.0001	808001	fb		xce			xce
+21	.0002	808002	a9 01		lda #$01		lda #$01
+22	.0004	808004	8d 0d 42	sta $420d		sta $420D
+23	.0007	808007	5c 0b 80 80	jmp $80800b		jml RESETHi
+24	.000b	80800b					RESETHi
+25	.000b	80800b	c2 30		rep #$30		rep #$30			; AXY 16
+26	.000d	80800d	a2 ff 1f	ldx #$1fff		ldx #$1FFF
+27	.0010	808010	9a		txs			txs
+28	.0011	808011	4b		phk			phk
+29	.0012	808012	ab		plb			plb
+30							.databank $80
+31	.0013	808013	a9 00 00	lda #$0000		lda #0000
+32	.0016	808016	5b		tcd			tcd
+33	.0017	808017	a9 8f 00	lda #$008f		lda #$008F		; FORCE BLANK, SET OBSEL TO 0
+34	.001a	80801a	8d 00 21	sta $802100		sta $802100
+35	.001d	80801d					ClearWRAM
+36	.001d	80801d	a9 08 80	lda #$8008		lda #$8008		; A -> B, FIXED SOURCE, WRITE BYTE | WRAM
+37	.0020	808020	8d 00 43	sta $804300		sta $804300
+38	.0023	808023	a9 92 81	lda #$8192		lda #<>DMAZero	; 64Tass | get low word
+39	.0026	808026	8d 02 43	sta $804302		sta $804302
+40	.0029	808029	a9 80 00	lda #$0080		lda #`DMAZero	; 64Tass | get bank
+41	.002c	80802c	8d 04 43	sta $804304		sta $804304
+42	.002f	80802f	9c 81 21	stz $802181		stz $802181
+43	.0032	808032	9c 82 21	stz $802182		stz $802182		; START AT 7E:0000
+44	.0035	808035	9c 05 43	stz $804305		stz $804305		; DO 64K
+45	.0038	808038	a9 01 00	lda #$0001		lda #$0001
+46	.003b	80803b	8d 0b 42	sta $80420b		sta $80420B		; FIRE DMA
+47	.003e	80803e	8d 0b 42	sta $80420b		sta $80420B		; FIRE IT AGAIN, FOR NEXT 64k
+48	.0041	808041					InitSNESAndMirror
+49	.0041	808041	c2 20		rep #$20		rep #$20			; a16
+50	.0043	808043	a9 8f 00	lda #$008f		lda #$008F		; FORCE BLANK, SET OBSEL TO 0
+51	.0046	808046	8d 00 21	sta $802100		sta $802100
+52	.0049	808049	8d 1b 00	sta $80001b		sta mINIDISP
+53								;stz mOBSEL
+54	.004c	80804c	9c 05 21	stz $802105		stz $802105 	;6
+55								;stz mBGMODE
+56								;stz mMOSIAC
+57	.004f	80804f	9c 07 21	stz $802107		stz $802107		;8
+58								;stz mBG1SC
+59								;stz mBG2SC
+60	.0052	808052	9c 09 21	stz $802109		stz $802109		;A
+61								;stz mBG3SC
+62								;stz mBG4SC
+63	.0055	808055	9c 0b 21	stz $80210b		stz $80210B		;C
+64								;stz mBG12NBA
+65								;stz mBG23NBA
+66	.0058	808058	9c 0d 21	stz $80210d		stz $80210D		;E
+67	.005b	80805b	9c 0d 21	stz $80210d		stz $80210D		;E
+68								;stz mBG1HOFS
+69								;stz mBG1VOFS
+70	.005e	80805e	9c 0f 21	stz $80210f		stz $80210F		;10
+71	.0061	808061	9c 0f 21	stz $80210f		stz $80210F		;10
+72								;stz mBG2HOFS
+73								;stz mBG2VOFS
+74	.0064	808064	9c 11 21	stz $802111		stz $802111		;12
+75	.0067	808067	9c 11 21	stz $802111		stz $802111		;12
+76								;stz mBG3HOFS
+77								;stz mBG3VOFS
+78	.006a	80806a	9c 13 21	stz $802113		stz $802113		;14
+79	.006d	80806d	9c 13 21	stz $802113		stz $802113		;14
+80								;stz mBG4HOFS
+81								;stz mBG4VOFS
+82	.0070	808070	9c 19 21	stz $802119		stz $802119 ;1A to get Mode7
+83	.0073	808073	9c 1b 21	stz $80211b		stz $80211B ;1C these are write twice
+84	.0076	808076	9c 1b 21	stz $80211b		stz $80211B ;1C regs
+85	.0079	808079	9c 1d 21	stz $80211d		stz $80211D ;1E
+86	.007c	80807c	9c 1d 21	stz $80211d		stz $80211D ;1E
+87	.007f	80807f	9c 1f 21	stz $80211f		stz $80211F ;20
+88	.0082	808082	9c 1f 21	stz $80211f		stz $80211F ;20
+89								; add mirrors here if you are doing mode7
+90	.0085	808085	9c 23 21	stz $802123		stz $802123 ;24
+91								;stz mW12SEL
+92								;stz mW34SEL
+93	.0088	808088	9c 25 21	stz $802125		stz $802125 ;26
+94								;stz mWOBJSEL
+95	.008b	80808b	9c 26 21	stz $802126		stz $802126 ;27 YES IT DOUBLES OH WELL
+96	.008e	80808e	9c 28 21	stz $802128		stz $802128 ;29
+97								;stz mWH0
+98								;stz mWH1
+99								;stz mWH2
+100								;stz mWH3
+101	.0091	808091	9c 2a 21	stz $80212a		stz $80212A ;2B
+102								;stz mWBGLOG
+103								;stz mOBJLOG
+104	.0094	808094	9c 2c 21	stz $80212c		stz $80212C ;2D
+105	.0097	808097	9c 2e 21	stz $80212e		stz $80212E ;2F
+106								;stz mTM
+107								;stz mTS
+108								;stz mTMW
+109								;stz mTSW
+110	.009a	80809a	a9 e0 00	lda #$00e0		lda #$00E0
+111	.009d	80809d	8d 32 21	sta $802132		sta $802132
+112	.00a0	8080a0	8d 59 00	sta $800059		sta mCOLDATA
+113								;stz mSETINI
+114								;ONTO THE CPU I/O REGS
+115	.00a3	8080a3	a9 00 ff	lda #$ff00		lda #$FF00
+116	.00a6	8080a6	8d 00 42	sta $804200		sta $804200
+117								;stz mNMITIMEN
+118	.00a9	8080a9	9c 02 42	stz $804202		stz $804202 ;3
+119	.00ac	8080ac	9c 04 42	stz $804204		stz $804204 ;5
+120	.00af	8080af	9c 06 42	stz $804206		stz $804206 ;7
+121	.00b2	8080b2	9c 08 42	stz $804208		stz $804208 ;9
+122	.00b5	8080b5	9c 0a 42	stz $80420a		stz $80420A ;B
+123	.00b8	8080b8	9c 0c 42	stz $80420c		stz $80420C ;D
+124								; CLEAR VRAM
+125	.00bb	8080bb	c2 20		rep #$20		rep #$20			; A16
+126	.00bd	8080bd	a9 09 18	lda #$1809		lda #$1809		; A -> B, FIXED SOURCE, WRITE WORD | VRAM
+127	.00c0	8080c0	8d 00 43	sta $804300		sta $804300
+128	.00c3	8080c3	a9 92 81	lda #$8192		lda #<>DMAZero	; THIS GET THE LOW WORD, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
+129	.00c6	8080c6	8d 02 43	sta $804302		sta $804302
+130	.00c9	8080c9	a9 80 00	lda #$0080		lda #`DMAZero	; THIS GETS THE BANK, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
+131	.00cc	8080cc	8d 04 43	sta $804304		sta $804304		; AND THE UPPER BYTE WILL BE 0
+132	.00cf	8080cf	9c 05 43	stz $804305		stz $804305		; DO 64K
+133	.00d2	8080d2	a9 80 00	lda #$0080		lda #$80			; INC ON HI WRITE
+134	.00d5	8080d5	8d 15 21	sta $802115		sta $802115
+135	.00d8	8080d8	9c 16 21	stz $802116		stz $802116		; START AT 00
+136	.00db	8080db	a9 01 00	lda #$0001		lda #$01
+137	.00de	8080de	8d 0b 42	sta $80420b		sta $80420B		; FIRE DMA
+138								; CLEAR CG-RAM
+139	.00e1	8080e1	a9 08 22	lda #$2208		lda #$2208		; A -> B, FIXED SOURCE, WRITE BYTE | CG-RAM
+140	.00e4	8080e4	8d 00 43	sta $804300		sta $804300
+141	.00e7	8080e7	a9 00 02	lda #$0200		lda #$200		; 512 BYTES
+142	.00ea	8080ea	8d 05 43	sta $804305		sta $804305
+143	.00ed	8080ed	e2 20		sep #$20		sep #$20			; A8
+144	.00ef	8080ef	9c 21 21	stz $802121		stz $802121		; START AT 0
+145	.00f2	8080f2	a9 01		lda #$01		lda #$01
+146	.00f4	8080f4	8d 0b 42	sta $80420b		sta $80420B		; FIRE DMA
+147	.00f7	8080f7	64 06		stz $06			stz NMIReadyNF
+148	.00f9	8080f9	58		cli			cli
+149	.00fa	8080fa	20 ea 81	jsr $8081ea		jsr dmaPalletes_xx		; install the game pallete
+150	.00fd	8080fd	20 10 82	jsr $808210		jsr dmaLevelChars_xx		; install the char set
+46:4	.0100	808100	e2 20		sep #$20		SEP #$20
+152:3	.0102	808102	a9 81		lda #$81		lda #`DataBankStart
+153	.0104	808104	48		pha			pha
+154	.0105	808105	ab		plb			plb								; set the data bank to the common bank
+155							.databank `DataBankStart		; tell the assembler as well
+156	.0106	808106	20 3e 82	jsr $80823e		jsr map_InitEmptyScreen_xx	; reset the map pointers
+157	.0109	808109					_loop
+158	.0109	808109	20 65 82	jsr $808265		jsr map_fillRowBufferTopEdge_xx		; draw the right edge to the buffer
+159	.010c	80810c	20 01 88	jsr $808801		jsr dmaRow_xx								; put it the screen
+160	.010f	80810f	20 78 88	jsr $808878		jsr map_retreatPointersTopEdge_ra16	; move the right over, just the right
+161								;#A16
+162								.al
+163	.0112	808112	a5 11		lda $11			lda MapVRAMTop								; have we done the screen + 1
+164	.0114	808114	c9 00 04	cmp #$0400		cmp #32*32
+165	.0117	808117	d0 f0		bne $808109		bne _loop									; no, go again
+46:4	.0119	808119	e2 20		sep #$20		SEP #$20
+167:3	.011b	80811b	a9 02		lda #$02		lda #fBGBaseSize(kVRAM.gameScreen,kBaseSize_32x64)
+168	.011d	80811d	8d 07 21	sta $812107		sta $2107,b									; set the BG1 to the Game Screen
+169	.0120	808120	a9 01		lda #$01		lda #fBGCharAddress(kVRAM.gameChars,0,0,0)
+170	.0122	808122	8d 0b 21	sta $81210b		sta $210b,b									; set the chars to the in game set
+171	.0125	808125	a9 01		lda #$01		lda #1
+172	.0127	808127	8d 05 21	sta $812105		sta $2105,b									; mode 1
+173	.012a	80812a	a9 01		lda #$01		lda #%00000001
+174	.012c	80812c	8d 2c 21	sta $81212c		sta $212C,b									; make BG1 on Main Screen
+175	.012f	80812f	a9 81		lda #$81		lda #%10000001
+176	.0131	808131	8d 00 42	sta $814200		sta $4200,b									; enable VBlank NMI and enable auto Joypad reading
+177	.0134	808134	a9 0f		lda #$0f		lda #$0f
+178	.0136	808136	8d 00 21	sta $812100		sta $2100,b									; turn screen on
+
+180							; ----- @Main Loop@ -----
+181	.0139	808139					MainLoop
+46:4	.0139	808139	e2 20		sep #$20		SEP #$20
+183:3	.013b	80813b					MainLoopWait
+184	.013b	80813b	a5 06		lda $06			lda NMIReadyNF
+185	.013d	80813d	10 fc		bpl $80813b		bpl MainLoopWait		; Read Flag
+186	.013f	80813f	64 06		stz $06			stz NMIReadyNF			; Clear Flag
+187	.0141	808141	a5 07		lda $07			lda JoyHi
+188	.0143	808143	89 04		bit #$04		bit #4					; down
+189	.0145	808145	f0 22		beq $808169		beq _noDown
+50:4	.0147	808147	c2 20		rep #$20		REP #$20
+191:3	.0149	808149	a5 17		lda $17				lda ScreenYOffset	; cache current Screen Y offset
+192	.014b	80814b	85 15		sta $15				sta MapTempWord
+193	.014d	80814d	18		clc				clc
+194	.014e	80814e	69 03 00	adc #$0003			adc #3				; Y += 3
+195	.0151	808151	85 17		sta $17				sta ScreenYOffset
+196	.0153	808153	45 15		eor $15				eor MapTempWord	; if the bits are the same this will go to 0, not 0 otherwise
+197	.0155	808155	29 f8 ff	and #$fff8			and #$FFF8			; I only want to know if we have crossed over 8 pixels, i.e the
+46:4	.0158	808158	e2 20		sep #$20		SEP #$20
+199:3	.015a	80815a	f0 33		beq $80818f			beq _noHold			; same, not crossed char boundary
+200	.015c	80815c	20 7d 82	jsr $80827d				jsr map_fillRowBufferBotEdge_xx		; draw current next edge
+201	.015f	80815f	20 36 88	jsr $808836				jsr map_advancePointersTopEdge_ra16	; move top edge
+202	.0162	808162	20 57 88	jsr $808857				jsr map_advancePointersBotEdge_ra16	; move bottom edge
+46:4	.0165	808165	e2 20		sep #$20		SEP #$20
+204:3	.0167	808167	80 26		bra $80818f				bra _noHold
+205	.0169	808169					_noDown
+206	.0169	808169	89 08		bit #$08		bit #8					; up
+207	.016b	80816b	f0 22		beq $80818f		beq _noUp
+50:4	.016d	80816d	c2 20		rep #$20		REP #$20
+209:3	.016f	80816f	a5 17		lda $17				lda ScreenYOffset	; cache current Screen Y offset
+210	.0171	808171	85 15		sta $15				sta MapTempWord
+211	.0173	808173	38		sec				sec
+212	.0174	808174	e9 03 00	sbc #$0003			sbc #3				; Y =- 3
+213	.0177	808177	85 17		sta $17				sta ScreenYOffset
+214	.0179	808179	45 15		eor $15				eor MapTempWord
+215	.017b	80817b	29 f8 ff	and #$fff8			and #$FFF8			; have we gone over 8 barrier?
+46:4	.017e	80817e	e2 20		sep #$20		SEP #$20
+217:3	.0180	808180	f0 0d		beq $80818f			beq _noHold
+218	.0182	808182	20 65 82	jsr $808265				jsr map_fillRowBufferTopEdge_xx		; draw current next edge
+219	.0185	808185	20 78 88	jsr $808878				jsr map_retreatPointersTopEdge_ra16	; move top edge
+220	.0188	808188	20 99 88	jsr $808899				jsr map_retreatPointersBotEdge_ra16	; move bottom edge
+46:4	.018b	80818b	e2 20		sep #$20		SEP #$20
+222:3	.018d	80818d	80 00		bra $80818f				bra _noHold
+223	.018f	80818f					_noUp
+224	.018f	80818f					_noHold
+225	.018f	80818f	4c 39 81	jmp $808139		jmp	MainLoop
+
+227							.section sDP
+228	>0006						NMIReadyNF		.byte ?
+229	>0007						JoyHi				.byte ?
+230	>0008						JoyHiOld			.byte ?
+231	>0009						JoyHiEvent		.byte ?
+232	>000a						JoyHoldCounter .byte ?
+233							.send ; sDP
+
+235							.section sSharedWRAM
+236	>80001b						mINIDISP  .word ?
+237	>80001d						mOBSEL	.word ?
+238	>80001f						mBGMODE	.word ?
+239	>800021						mMOSIAC	.word ?
+240	>800023						mBG1SC	.word ?
+241	>800025						mBG2SC	.word ?
+242	>800027						mBG3SC	.word ?
+243	>800029						mBG4SC	.word ?
+244	>80002b						mBG12NBA  .word ?
+245	>80002d						mBG23NBA  .word ?
+246	.80002f						mBG1HOFS  .dunion HLWord
+120:1	>80002f						    .word ?
+121							    .struct
+122	>80002f						        lo .byte ?
+123	>800030						        hi .byte ?
+124							    .ends
+125							.endu
+247:3	.800031						mBG1VOFS  .dunion HLWord
+120:1	>800031						    .word ?
+121							    .struct
+122	>800031						        lo .byte ?
+123	>800032						        hi .byte ?
+124							    .ends
+125							.endu
+248:3	.800033						mBG2HOFS  .dunion HLWord
+120:1	>800033						    .word ?
+121							    .struct
+122	>800033						        lo .byte ?
+123	>800034						        hi .byte ?
+124							    .ends
+125							.endu
+249:3	.800035						mBG2VOFS  .dunion HLWord
+120:1	>800035						    .word ?
+121							    .struct
+122	>800035						        lo .byte ?
+123	>800036						        hi .byte ?
+124							    .ends
+125							.endu
+250:3	.800037						mBG3HOFS  .dunion HLWord
+120:1	>800037						    .word ?
+121							    .struct
+122	>800037						        lo .byte ?
+123	>800038						        hi .byte ?
+124							    .ends
+125							.endu
+251:3	.800039						mBG3VOFS  .dunion HLWord
+120:1	>800039						    .word ?
+121							    .struct
+122	>800039						        lo .byte ?
+123	>80003a						        hi .byte ?
+124							    .ends
+125							.endu
+252:3	.80003b						mBG4HOFS  .dunion HLWord
+120:1	>80003b						    .word ?
+121							    .struct
+122	>80003b						        lo .byte ?
+123	>80003c						        hi .byte ?
+124							    .ends
+125							.endu
+253:3	.80003d						mBG4VOFS  .dunion HLWord
+120:1	>80003d						    .word ?
+121							    .struct
+122	>80003d						        lo .byte ?
+123	>80003e						        hi .byte ?
+124							    .ends
+125							.endu
+254:3	>80003f						mW12SEL	.word ?
+255	>800041						mW34SEL	.word ?
+256	>800043						mWOBJSEL  .word ?
+257	>800045						mWH0	  .word ?
+258	>800047						mWH1	  .word ?
+259	>800049						mWH2	  .word ?
+260	>80004b						mWH3	  .word ?
+261	>80004d						mWBGLOG	.word ?
+262	>80004f						mOBJLOG	.word ?
+263	>800051						mTM		.word ?
+264	>800053						mTS		.word ?
+265	>800055						mTMW	  .word ?
+266	>800057						mTSW	  .word ?
+267	>800059						mCOLDATA  .word ?
+268	>80005b						mSETINI	.word ?
+269	>80005d						mNMITIMEN .word ?
+270							.send  ; sSharedWRAM
+
+
+273	>0192	808192	00 00				DMAZero .word $0000
+
+275	.0194	808194					NMI
+276	.0194	808194	5c 98 81 80	jmp $808198		jml NMIFast				; Move To 8X:XXXX for speed
+277	.0198	808198					NMIFast
+278	.0198	808198	8b		phb			phb						; Save Data Bank
+279	.0199	808199	a9 81		lda #$81		lda #`DataBankStart
+280	.019b	80819b	48		pha			pha
+281	.019c	80819c	ab		plb			plb						; Set Data Bank to default databank
+282							.databank `DataBankStart
+283	.019d	80819d	e2 20		sep #$20		sep #$20				; A8
+284	.019f	80819f	2c 10 42	bit $814210		bit $4210,b			; Ack NMI
+285	.01a2	8081a2	2c 06 00	bit $810006		bit@W NMIReadyNF,b	; Check if this is safe
+286	.01a5	8081a5	10 02		bpl $8081a9		bpl _ready
+287	.01a7	8081a7	ab		plb				plb					; No, restore Data Bank
+288	.01a8	8081a8	40		rti				rti					; Exit
+289	.01a9	8081a9					_ready						; Safe
+290	.01a9	8081a9	c2 30		rep #$30		rep #$30					; A16 XY16
+291	.01ab	8081ab	48		pha			pha
+292	.01ac	8081ac	da		phx			phx
+293	.01ad	8081ad	5a		phy			phy						; Save A,X,Y
+294	.01ae	8081ae	0b		phd			phd						; Save the DP register
+295	.01af	8081af	a9 00 00	lda #$0000		lda #0000				; or where ever you want your NMI DP
+296	.01b2	8081b2	5b		tcd			tcd						; set DP to known value
+297	.01b3	8081b3	a5 19		lda $19			lda MapBufferTarget	; do we have something in the Map Column Buffer
+298	.01b5	8081b5	30 03		bmi $8081ba		bmi _noColumnDMA
+299	.01b7	8081b7	20 01 88	jsr $808801			jsr dmaRow_xx		; draw it
+300	.01ba	8081ba					_noColumnDMA
+46:4	.01ba	8081ba	e2 20		sep #$20		SEP #$20
+302:3	.01bc	8081bc	a9 01		lda #$01		lda #1					; since we don't have an OAM DMA to stall the start
+303	.01be	8081be	2c 12 42	bit $814212	-	bit $4212,b				; of the NMI, we have to wait for the joypad registers
+304	.01c1	8081c1	d0 fb		bne $8081be		bne -						; to be valid.
+305	.01c3	8081c3	a5 07		lda $07			lda JoyHi				; read the joypad
+306	.01c5	8081c5	85 08		sta $08			sta JoyHiOld			; for this example I only care about Left and Right
+307	.01c7	8081c7	ad 19 42	lda $814219		lda $4219,b				; so I only read the upper 8 bits
+308	.01ca	8081ca	85 07		sta $07			sta JoyHi
+309	.01cc	8081cc	25 08		and $08			and JoyHiOld
+310	.01ce	8081ce	45 07		eor $07			eor JoyHi
+311	.01d0	8081d0	85 09		sta $09			sta JoyHiEvent			; generate down event, this was handy for testing
+312	.01d2	8081d2	a5 17		lda $17			lda ScreenYOffset.lo ; update current Y Scroll Offset
+313	.01d4	8081d4	8d 0e 21	sta $81210e		sta $210e,b
+314	.01d7	8081d7	a5 18		lda $18			lda ScreenYOffset.hi
+315	.01d9	8081d9	8d 0e 21	sta $81210e		sta $210e,b
+316	.01dc	8081dc	e2 20		sep #$20		sep #$20					; A8
+317	.01de	8081de	a9 ff		lda #$ff		lda #$FF					; Doing this is slightly faster than DEC, but 2 more bytes
+318	.01e0	8081e0	85 06		sta $06			sta NMIReadyNF			; set NMI Done Flag
+319	.01e2	8081e2	c2 30		rep #$30		rep #$30					; A16 XY16
+320	.01e4	8081e4	2b		pld			pld						; restore DP page
+321	.01e5	8081e5	7a		ply			ply
+322	.01e6	8081e6	fa		plx			plx
+323	.01e7	8081e7	68		pla			pla						; Restore A,X,Y
+324	.01e8	8081e8	ab		plb			plb						; Restore Data Bank
+325	.01e9	8081e9					justRTI
+326	.01e9	8081e9	40		rti			rti						; Exit
+327							; ----- @DMA functions@ -----
+
+329							.section sDataBank
+330	>8000	818000	4c 01 00 00 ff 7f 32 21		SpottyPal .binary "outlaw.pal"		; this will be in bank 81
+	>8008	818008	7a 3f ce 26 10 67 52 59 00 00 00 00 00 00 00 00
+	>8018	818018	00 00 00 00 00 00 00 00
+331							.send ;sDataBank
+
+333	.01ea	8081ea					dmaPalletes_xx
+334	.01ea	8081ea					_ASSERT_JSR
+335	.01ea	8081ea	08		php			php
+46:4	.01eb	8081eb	e2 20		sep #$20		SEP #$20
+62	.01ed	8081ed	c2 10		rep #$10		REP #$10
+338:3	.01ef	8081ef	a2 00 80	ldx #$8000			ldx #<>SpottyPal
+339	.01f2	8081f2	8e 02 43	stx $814302			stx $4302,b
+340	.01f5	8081f5	a9 81		lda #$81			lda #`SpottyPal
+341	.01f7	8081f7	8d 04 43	sta $814304			sta $4304,b
+342	.01fa	8081fa	a2 20 00	ldx #$0020			ldx #32
+343	.01fd	8081fd	8e 05 43	stx $814305			stx $4305,b
+344	.0200	808200	a2 02 22	ldx #$2202			ldx #%00000010 | $2200			; A->B, Inc, Write 2 Bytes, $2122
+345	.0203	808203	8e 00 43	stx $814300			stx $4300,b
+346	.0206	808206	9c 21 21	stz $812121			stz $2121,b							; start of Pallete
+347	.0209	808209	a9 01		lda #$01			lda #1
+348	.020b	80820b	8d 0b 42	sta $81420b			sta $420B,b
+349	.020e	80820e	28		plp			plp
+350	.020f	80820f	60		rts			rts
+
+352							.section sDataBank
+353	>8020	818020	00 00 00 00 30 00 00 00		SpottyChars .binary "outlaw.chr"		; this will be in bank 81
+	>8028	818028	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8038	818038	00 00 00 00 00 00 00 00 03 00 00 00 00 00 00 00
+	>8048	818048	00 00 30 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8058	818058	00 00 00 00 00 00 00 00 00 00 00 00 03 00 00 00
+	>8068	818068	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8078	818078	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8088	818088	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8098	818098	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>80a8	8180a8	0c 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>80b8	8180b8	00 00 00 00 00 00 00 00 00 00 30 00 00 00 00 00
+	>80c8	8180c8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>80d8	8180d8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 30 00
+	>80e8	8180e8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>80f8	8180f8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8108	818108	00 00 00 00 00 00 03 00 00 00 00 00 00 00 00 00
+	>8118	818118	00 00 03 00 0f 00 fc 00 00 00 00 00 00 00 03 00
+	>8128	818128	0f 00 33 00 f3 00 f0 03 00 00 00 00 03 00 3c 00
+	>8138	818138	f0 00 c0 00 00 00 00 00 00 00 30 00 f0 00 30 00
+	>8148	818148	f0 00 30 00 30 00 30 00 30 00 c0 00 00 00 00 00
+	>8158	818158	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8168	818168	00 00 00 00 0c 00 00 00 00 00 00 00 00 00 00 00
+	>8178	818178	00 00 00 00 00 00 00 00 00 00 00 00 03 00 0f 00
+	>8188	818188	3c 03 30 03 30 0f 30 0f 03 00 0f 00 3c 00 f0 00
+	>8198	818198	c0 00 c0 00 c0 00 c0 00 3f 00 ff 00 f0 03 00 3f
+	>81a8	8181a8	c0 3f c0 3f c0 33 00 33 c0 00 00 00 00 00 00 00
+	>81b8	8181b8	00 00 00 00 00 00 00 00 3f 00 30 03 33 0c 00 33
+	>81c8	8181c8	30 03 33 00 33 00 f3 00 00 00 00 00 00 00 00 00
+	>81d8	8181d8	00 00 00 00 00 00 00 00 30 c0 30 c0 30 c0 30 00
+	>81e8	8181e8	30 00 30 00 c0 00 03 00 00 00 00 00 00 00 00 00
+	>81f8	8181f8	00 00 00 00 00 00 00 00 30 03 30 03 30 03 30 03
+	>8208	818208	30 03 30 0f 33 0c 33 00 c0 00 c0 00 c0 00 c0 00
+	>8218	818218	c0 00 c0 00 c0 00 c0 00 cf 30 cf 30 3f 00 3f c0
+	>8228	818228	3c c0 f0 00 c0 00 00 00 00 00 00 00 00 00 00 00
+	>8238	818238	00 00 00 00 00 00 00 00 3c 00 30 00 c0 00 00 00
+	>8248	818248	30 00 00 00 00 00 00 00 00 00 03 00 03 00 03 00
+	>8258	818258	03 00 03 00 03 00 00 00 c0 00 c0 00 c0 00 c0 00
+	>8268	818268	cc 00 c0 00 c0 00 f3 00 00 00 00 00 00 00 00 00
+	>8278	818278	00 00 00 00 00 00 00 00 3c 00 33 00 03 00 03 00
+	>8288	818288	03 00 03 00 03 00 03 00 c0 00 c0 00 cc 00 0c 00
+	>8298	818298	0c 00 0c 00 0c 00 0c 00 00 00 00 00 30 00 03 00
+	>82a8	8182a8	0f 00 3f 00 ff 00 ff 00 00 00 00 00 00 00 00 00
+	>82b8	8182b8	00 00 00 00 00 00 00 00 3f 00 3f 00 ff 00 ff 00
+	>82c8	8182c8	ff 00 ff 00 ff 00 fc 00 00 00 00 00 00 00 00 00
+	>82d8	8182d8	00 00 00 00 00 00 00 00 c0 00 f0 00 fc 00 fc 00
+	>82e8	8182e8	f0 00 c0 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>82f8	8182f8	00 00 00 00 00 00 00 00 cf 00 ff 00 3f 00 ff 00
+	>8308	818308	3f 00 0f 00 03 00 00 00 00 00 00 00 00 00 00 00
+	>8318	818318	00 00 00 00 00 00 00 00 ff 00 ff 00 ff 00 ff 00
+	>8328	818328	fc 00 f0 00 c0 00 00 00 00 00 00 00 00 00 00 00
+	>8338	818338	00 00 00 00 00 00 00 00 f0 00 c0 00 c0 00 00 00
+	>8348	818348	00 00 00 00 30 00 00 00 00 00 00 00 00 00 00 00
+	>8358	818358	00 00 00 00 00 00 00 00 00 3c 00 ff 00 c0 cc 00
+	>8368	818368	cc 00 00 30 30 c0 00 00 00 00 00 00 3f 00 03 00
+	>8378	818378	33 00 03 00 0f 00 0c 00 00 00 30 00 00 00 0c 00
+	>8388	818388	0c 00 0c 00 0c 00 0c 00 30 00 0c 00 30 00 00 00
+	>8398	818398	00 00 00 00 00 00 00 00 0c 00 0c 00 0c 00 0c 00
+	>83a8	8183a8	0c 00 0f 00 03 00 00 00 00 00 00 00 00 00 00 00
+	>83b8	8183b8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>83c8	8183c8	00 00 00 00 c0 00 f0 00 00 00 00 00 00 00 00 00
+	>83d8	8183d8	00 00 00 00 00 00 00 00 3f 00 0f 00 0f 00 0f 00
+	>83e8	8183e8	03 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>83f8	8183f8	00 00 00 00 00 00 00 00 c0 00 f0 00 fc 00 fc 00
+	>8408	818408	fc 00 fc 00 f0 00 00 00 00 00 00 00 00 00 00 00
+	>8418	818418	00 00 00 00 00 00 00 00 00 00 00 30 00 c0 00 c0
+	>8428	818428	00 c0 00 c0 00 c0 00 0f 00 00 00 00 00 00 00 00
+	>8438	818438	00 00 30 00 30 00 30 00 00 00 00 00 00 0c 00 03
+	>8448	818448	00 03 00 00 00 0c 00 30 00 00 00 00 00 00 00 00
+	>8458	818458	00 00 03 00 03 00 0c 00 00 00 00 00 00 00 00 00
+	>8468	818468	00 03 00 03 00 0c 00 0c 00 00 00 00 00 00 00 00
+	>8478	818478	00 00 00 00 03 00 00 00 00 3c 00 30 00 c3 0c c0
+	>8488	818488	0c 00 0c 00 00 00 00 0c 03 00 0f 00 30 00 30 00
+	>8498	818498	c3 00 c3 00 cf 00 f3 00 00 30 00 00 0c c0 00 f0
+	>84a8	8184a8	00 00 00 00 00 00 0c 00 cc 00 30 00 00 00 00 00
+	>84b8	8184b8	c0 00 f0 00 00 00 00 00 03 30 0c 30 00 00 00 00
+	>84c8	8184c8	03 00 00 00 00 00 00 00 00 00 00 00 03 00 0c 00
+	>84d8	8184d8	00 00 00 00 00 00 00 00 00 30 00 c0 03 00 3f 00
+	>84e8	8184e8	ff 00 0f 00 00 00 00 00 cc 00 30 00 00 00 00 00
+	>84f8	8184f8	00 00 00 00 00 00 00 00 3c 00 3c 00 ff 00 ff 00
+	>8508	818508	ff 00 cf 00 03 00 03 00 00 00 00 00 00 00 00 00
+	>8518	818518	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8528	818528	00 00 00 03 00 00 00 0f 00 00 00 00 03 00 0f 00
+	>8538	818538	0f 00 0f 00 3c 00 3f 00 00 00 00 00 00 30 30 00
+	>8548	818548	c0 00 c3 00 cf 30 c3 00 00 00 00 00 f0 00 0c 00
+	>8558	818558	30 00 00 00 30 00 00 00 00 0c 03 00 00 0c 00 03
+	>8568	818568	00 0c 00 0f 00 30 00 3c 3c 00 30 00 3c 00 33 00
+	>8578	818578	fc 00 ff 00 f0 00 fc 00 33 00 03 c0 0f 30 0f 00
+	>8588	818588	3c 00 0c 00 3c 00 cc 00 00 00 c0 00 30 00 00 00
+	>8598	818598	00 00 00 00 00 00 00 00 00 00 03 00 3f 00 3f 00
+	>85a8	8185a8	0f 00 0f 00 03 00 00 00 c0 00 00 00 00 00 00 00
+	>85b8	8185b8	00 00 00 00 00 00 00 00 3c 00 f0 00 3c 00 fc 00
+	>85c8	8185c8	ff 00 ff 00 ff 00 fc 00 00 00 00 00 00 00 00 00
+	>85d8	8185d8	00 00 00 00 00 00 00 00 c0 c0 f3 f3 00 00 3f 00
+	>85e8	8185e8	c0 c0 3f 3f 00 00 3f 00 00 00 00 00 f3 00 00 00
+	>85f8	8185f8	00 00 c0 00 ff 00 00 00 00 00 ff ff 00 00 ff 00
+	>8608	818608	00 00 f3 f3 00 00 ff 00 00 00 00 00 ff 00 00 00
+	>8618	818618	00 00 00 00 f3 00 00 00 00 00 ff ff 00 00 ff 00
+	>8628	818628	00 00 ff ff 00 00 ff 00 00 00 00 00 ff 00 00 00
+	>8638	818638	00 00 00 00 ff 00 00 00 00 00 f3 f3 00 00 ff 00
+	>8648	818648	00 00 ff ff 00 00 ff 00 00 00 00 00 f3 00 00 00
+	>8658	818658	00 00 00 00 ff 00 00 00 ff 00 f3 00 f3 00 f3 00
+	>8668	818668	cf 00 c3 00 33 30 33 30 00 00 00 00 00 00 00 00
+	>8678	818678	00 00 00 00 00 00 00 00 ff 00 f3 00 f3 00 f3 00
+	>8688	818688	cf 00 33 30 33 30 33 30 00 00 00 00 00 00 00 00
+	>8698	818698	00 00 00 00 00 00 00 00 cc c0 cc c0 cc c0 cc c0
+	>86a8	8186a8	33 03 33 03 33 03 33 03 00 00 00 00 00 00 00 00
+	>86b8	8186b8	00 00 00 00 00 00 00 00 cc 0c cc 0c cc 0c cc 0c
+	>86c8	8186c8	33 30 33 30 33 30 33 30 00 00 00 00 00 00 00 00
+	>86d8	8186d8	00 00 00 00 00 00 00 00 ff 00 ff 00 ff 00 ff 00
+	>86e8	8186e8	ff 00 ff 00 3f 00 0f 00 00 00 00 00 00 00 00 00
+	>86f8	8186f8	00 00 00 00 00 00 00 00 ff 00 ff 00 ff 00 ff 00
+	>8708	818708	ff 00 ff 00 ff 00 ff 00 00 00 00 00 00 00 00 00
+	>8718	818718	00 00 00 00 00 00 00 00 03 00 c0 00 f0 00 fc 00
+	>8728	818728	3f 00 0f 00 03 00 00 00 00 00 00 00 00 00 00 00
+	>8738	818738	00 00 00 00 00 00 00 00 0c 0c 0c 0c 0c 0c 0c 0c
+	>8748	818748	0c 0c 0c 0c 0c 0c 0c 0c 30 00 30 00 30 00 30 00
+	>8758	818758	30 00 30 00 30 00 30 00 0c 0c cc cc cc cc cc cc
+	>8768	818768	cc cc cc cc cc cc cc cc 00 00 00 00 00 00 00 00
+	>8778	818778	00 00 00 00 03 00 03 00 c3 c3 c0 c0 0f 03 0c 00
+	>8788	818788	0c 00 0c 00 30 00 30 00 30 00 33 00 c0 00 c3 00
+	>8798	818798	c0 00 c0 00 0c 00 0c 00 0f 00 f3 00 03 00 03 00
+	>87a8	8187a8	03 00 03 00 03 00 03 00 c0 00 00 00 30 00 30 00
+	>87b8	8187b8	cc 00 cc 00 cc 00 cc 00 00 00 0c 0c 0c 0c 0c 0c
+	>87c8	8187c8	0c 0c 0c 0c 0c 0c 0c 0c 30 00 30 00 30 00 30 00
+	>87d8	8187d8	30 00 30 00 30 00 30 00 c0 c0 cc cc c0 c0 c0 c0
+	>87e8	8187e8	c0 c0 c0 c0 c3 c0 c3 c0 03 00 03 00 0c 00 0c 00
+	>87f8	8187f8	0c 00 0c 00 30 00 30 00 30 00 30 00 c0 00 c0 00
+	>8808	818808	c0 00 c0 00 c0 c0 c0 c0 03 00 03 00 03 00 03 00
+	>8818	818818	0c 00 0c 00 0c 00 0c 00 0c 00 0c 00 0c 00 0c 00
+	>8828	818828	33 03 33 03 33 03 33 03 30 00 30 00 30 00 30 00
+	>8838	818838	c0 00 c0 00 c0 00 c0 00 03 00 c3 c0 0c 00 0c 00
+	>8848	818848	0c 00 cc 00 fc 00 ff c0 30 00 30 00 c0 00 c0 00
+	>8858	818858	c0 00 00 00 00 00 00 00 00 00 c0 c0 c0 c0 c0 c0
+	>8868	818868	c3 c0 c3 c0 c3 c0 cf c0 03 00 03 00 03 00 03 00
+	>8878	818878	0c 00 0c 00 0c 00 00 00 0f 00 03 00 00 00 00 00
+	>8888	818888	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8898	818898	00 00 00 00 00 00 00 00 ff 00 ff 00 03 00 00 00
+	>88a8	8188a8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>88b8	8188b8	00 00 00 00 00 00 00 00 ff 00 ff 00 f0 00 fc 00
+	>88c8	8188c8	3f 00 0f 00 03 00 00 00 00 00 00 00 00 00 00 00
+	>88d8	8188d8	00 00 00 00 00 00 00 00 ff 00 ff 00 3f 00 0f 00
+	>88e8	8188e8	03 00 c0 00 f0 00 fc 00 00 00 00 00 00 00 00 00
+	>88f8	8188f8	00 00 00 00 00 00 00 00 3f 00 0f 00 03 00 00 00
+	>8908	818908	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8918	818918	00 00 00 00 00 00 00 00 cf c0 cf cc cc cc cc cc
+	>8928	818928	cc cc cc cc cc cc cc cc 00 00 00 00 00 00 00 00
+	>8938	818938	00 00 00 00 00 00 00 00 cf 0f fc 00 ff 00 fc c0
+	>8948	818948	c3 c3 c0 c0 c3 c0 c0 c0 00 00 03 00 00 00 00 00
+	>8958	818958	00 00 03 00 00 00 00 00 0f 00 f0 00 0f 0f f0 f0
+	>8968	818968	0f 00 f0 00 0f 0f f0 f0 c0 00 00 00 00 00 0c 00
+	>8978	818978	c0 00 00 00 00 00 0c 00 0c 0c cc cc cc cc cc cc
+	>8988	818988	cc cc cc cc cc cc cc cc 00 00 00 00 00 00 00 00
+	>8998	818998	00 00 00 00 00 00 00 00 0f 0f cc cc cf cc cc cc
+	>89a8	8189a8	c3 c3 c0 c0 c3 c0 c0 c0 00 00 03 00 00 00 00 00
+	>89b8	8189b8	00 00 03 00 00 00 00 00 c0 c0 cc cc cc cc cc cc
+	>89c8	8189c8	cc cc cc cc cc cc cc cc 00 00 00 00 00 00 00 00
+	>89d8	8189d8	00 00 00 00 00 00 00 00 cf cf cc cc cf cc cc cc
+	>89e8	8189e8	c3 c3 c0 c0 c3 c0 c0 c0 00 00 03 00 00 00 00 00
+	>89f8	8189f8	00 00 03 00 00 00 00 00 c3 c3 cc cc c3 c0 c0 c0
+	>8a08	818a08	c3 c3 c0 c0 c3 c0 c0 c0 00 00 03 00 0c 00 0c 00
+	>8a18	818a18	0c 00 0f 00 30 00 30 00 00 00 00 00 00 00 0c 00
+	>8a28	818a28	00 00 00 00 03 00 00 00 00 00 00 00 00 00 00 00
+	>8a38	818a38	00 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8a48	818a48	0f 00 f0 00 0f 0f f0 f0 00 00 00 00 00 00 0c 00
+	>8a58	818a58	c0 00 00 00 00 00 0c 00 03 03 00 00 03 00 00 00
+	>8a68	818a68	33 03 00 00 03 00 00 00 00 00 03 00 00 00 00 00
+	>8a78	818a78	00 00 03 00 00 00 00 00 03 03 00 00 03 00 00 00
+	>8a88	818a88	03 03 00 00 03 00 00 00 00 00 03 00 0c 00 0c 00
+	>8a98	818a98	0c 00 0f 00 30 00 30 00 00 00 00 00 30 00 00 00
+	>8aa8	818aa8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8ab8	818ab8	00 00 00 00 03 00 03 00 03 03 00 00 0f 00 0c 00
+	>8ac8	818ac8	0f 03 0c 00 33 00 30 00 30 00 33 00 c0 00 c0 00
+	>8ad8	818ad8	c0 00 c3 00 00 00 00 00 00 00 00 00 30 00 00 00
+	>8ae8	818ae8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8af8	818af8	00 00 00 00 00 00 3f 00 00 00 00 00 00 00 00 00
+	>8b08	818b08	00 00 00 00 03 00 03 00 03 00 03 00 0c 00 0c 00
+	>8b18	818b18	0c 00 0c 00 30 00 f0 00 30 00 30 00 c3 00 c0 00
+	>8b28	818b28	c3 03 c0 00 03 00 00 00 00 00 03 00 00 00 00 00
+	>8b38	818b38	00 00 03 00 00 00 fc 00 00 00 ff ff 03 03 ff 00
+	>8b48	818b48	00 00 f3 f3 00 00 ff 00 00 00 00 00 fc 00 00 00
+	>8b58	818b58	00 00 00 00 f3 00 00 00 f0 00 0f 00 f0 f0 0f 0f
+	>8b68	818b68	f0 00 0f 00 f0 f0 0f 0f 03 00 00 00 00 00 30 00
+	>8b78	818b78	03 00 00 00 00 00 30 00 ff c0 3c 00 fc 00 3c 00
+	>8b88	818b88	fc c0 3c 00 fc 00 3c 00 00 00 c0 00 00 00 00 00
+	>8b98	818b98	00 00 c0 00 00 00 00 00 cf 00 cc 00 cc 00 cc 00
+	>8ba8	818ba8	cc 00 cc 00 cc 00 cc 00 00 00 00 00 00 00 00 00
+	>8bb8	818bb8	00 00 00 00 00 00 00 00 cf 00 cf 00 cf 00 cf 00
+	>8bc8	818bc8	cf 00 cf 00 cf 00 cf 00 00 00 00 00 00 00 00 00
+	>8bd8	818bd8	00 00 00 00 00 00 00 00 fc c0 3c 00 fc 00 3c 00
+	>8be8	818be8	fc c0 3c 00 fc 00 3c 00 00 00 c0 00 00 00 00 00
+	>8bf8	818bf8	00 00 c0 00 00 00 00 00 fc 00 cc 00 cc 00 cc 00
+	>8c08	818c08	cc 00 cc 00 cc 00 cc 00 00 00 00 00 00 00 00 00
+	>8c18	818c18	00 00 00 00 00 00 00 00 ff 00 cf 00 cf 00 cf 00
+	>8c28	818c28	cf 00 cf 00 cf 00 cf 00 00 00 00 00 00 00 00 00
+	>8c38	818c38	00 00 00 00 00 00 00 00 fc c0 3c 00 fc 00 3c 00
+	>8c48	818c48	ff cc 3f 0c ff 0c 33 00 00 00 c0 00 00 00 00 00
+	>8c58	818c58	00 00 c0 00 00 00 00 00 00 00 00 00 03 00 0f 00
+	>8c68	818c68	30 0f 3c 03 30 0f 30 03 03 00 0f 00 3c 00 f0 00
+	>8c78	818c78	c0 00 c0 00 c0 00 c0 00 33 0c 3c 03 30 0c 3c 03
+	>8c88	818c88	30 0f 30 0f 3c 03 33 00 c0 00 c0 00 c0 00 c0 00
+	>8c98	818c98	c0 00 c0 00 c0 00 c0 00 0f 30 0f 30 ff 00 ff 00
+	>8ca8	818ca8	3c 00 f0 00 c0 00 00 00 00 00 00 00 00 00 00 00
+	>8cb8	818cb8	00 00 00 00 00 00 00 00 00 00 00 00 0c 00 00 00
+	>8cc8	818cc8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8cd8	818cd8	00 00 00 00 03 00 03 00 03 03 0c 0c 0f 0f 3c 3c
+	>8ce8	818ce8	0c 0c 3c 3c 3f 3f c3 c3 3c 00 30 00 f0 00 c0 00
+	>8cf8	818cf8	f0 00 c0 00 c0 00 30 00 fc f0 fc c0 f3 c0 f3 f0
+	>8d08	818d08	f3 f0 f3 f0 cf c0 ff f0 00 00 00 00 00 00 00 00
+	>8d18	818d18	00 00 00 00 00 00 00 00 30 00 00 00 00 00 00 00
+	>8d28	818d28	00 00 00 00 c0 00 c0 00 00 00 00 00 00 00 00 00
+	>8d38	818d38	00 00 00 00 00 00 00 00 00 00 00 00 00 00 c0 00
+	>8d48	818d48	03 03 03 03 03 03 03 03 03 00 03 00 03 00 0f 00
+	>8d58	818d58	0c 00 0c 00 0c 00 0c 00 30 30 33 33 fc fc f0 f0
+	>8d68	818d68	00 00 fc fc f0 f0 cc c0 c3 00 c0 00 03 00 03 00
+	>8d78	818d78	c3 00 03 00 03 00 00 00 fc f0 f3 f0 cc c0 f0 f0
+	>8d88	818d88	f0 f0 f3 f0 cf cc fc fc 00 00 00 00 00 00 00 00
+	>8d98	818d98	00 00 00 00 00 00 00 00 c0 00 cc 00 c0 00 f0 00
+	>8da8	818da8	f0 00 f0 00 f0 00 f0 00 00 00 00 00 00 00 00 00
+	>8db8	818db8	00 00 00 00 00 00 00 00 0c 0c 0f 0f 0f 0f 03 03
+	>8dc8	818dc8	0f 0f 3c 3c 0f 0f 3c 3c 33 00 30 00 30 00 3c 00
+	>8dd8	818dd8	30 00 c0 00 f0 00 c0 00 c0 c0 f3 f0 30 30 cf c0
+	>8de8	818de8	33 30 c3 c0 cf c0 c3 00 00 00 00 00 00 00 00 00
+	>8df8	818df8	00 00 00 00 00 00 00 00 3f 3c 33 30 3c 3c 3c 3c
+	>8e08	818e08	3c 3c 33 33 3f 3f cf 0f c0 00 c0 00 c0 00 c0 00
+	>8e18	818e18	c0 00 c0 00 c0 00 00 00 3c 00 3c 00 3c 00 fc 00
+	>8e28	818e28	cc 00 3f 00 c3 00 cf 00 00 00 00 00 00 00 00 00
+	>8e38	818e38	00 00 00 00 00 00 00 00 33 33 3c 3c 00 00 30 00
+	>8e48	818e48	0f 00 03 00 00 00 00 00 c0 00 c0 00 30 00 00 00
+	>8e58	818e58	00 00 00 00 00 00 00 00 0f 00 ff c0 cf 00 3f 00
+	>8e68	818e68	ff 00 ff 00 ff 00 3f 00 00 00 00 00 00 00 00 00
+	>8e78	818e78	00 00 00 00 00 00 00 00 ff 3c cc 0c f0 00 cf 00
+	>8e88	818e88	ff 00 ff 00 ff 00 ff 00 00 00 30 00 00 00 00 00
+	>8e98	818e98	00 00 00 00 00 00 00 00 0f 00 33 00 cf 00 3f 00
+	>8ea8	818ea8	ff 00 ff 00 ff 00 ff 00 00 00 00 00 00 00 00 00
+	>8eb8	818eb8	00 00 00 00 00 00 00 00 00 00 00 00 c0 00 c0 00
+	>8ec8	818ec8	c0 00 f0 00 f3 00 f0 00 00 00 00 00 00 00 00 00
+	>8ed8	818ed8	00 00 00 00 00 00 00 00 03 00 00 00 03 00 00 00
+	>8ee8	818ee8	00 00 00 00 0c 00 00 00 00 00 00 00 00 00 00 00
+	>8ef8	818ef8	00 00 00 00 00 00 00 00 ff 00 ff 00 0f 00 00 00
+	>8f08	818f08	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8f18	818f18	00 00 00 00 00 00 00 00 ff 00 ff 00 ff 00 ff 00
+	>8f28	818f28	0f 00 00 00 c0 00 00 00 00 00 00 00 00 00 00 00
+	>8f38	818f38	00 00 00 00 00 00 00 00 f0 00 fc 00 fc 00 fc 00
+	>8f48	818f48	fc 00 ff 00 0f 00 0c 00 00 00 00 00 00 00 00 00
+	>8f58	818f58	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8f68	818f68	00 00 03 00 03 00 03 03 00 00 00 00 00 00 00 00
+	>8f78	818f78	0c 00 0c 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>8f88	818f88	00 00 f0 c0 f0 00 c0 00 00 00 00 00 00 00 00 00
+	>8f98	818f98	30 00 00 00 00 00 00 00 00 00 00 00 00 00 03 03
+	>8fa8	818fa8	00 00 03 03 03 03 0f 0f 03 00 0f 00 0f 00 0c 00
+	>8fb8	818fb8	0f 00 0c 00 3c 00 30 00 c0 00 f0 00 30 00 30 00
+	>8fc8	818fc8	f0 c0 f0 c0 3c 00 0c 00 00 00 00 00 00 00 00 00
+	>8fd8	818fd8	00 00 00 00 00 00 00 00 0f 00 33 30 33 30 33 30
+	>8fe8	818fe8	ff f0 00 00 33 30 ff f0 c0 00 c0 00 c0 00 c0 00
+	>8ff8	818ff8	00 00 f0 00 c0 00 00 00 00 00 33 30 ff f0 00 00
+	>9008	819008	33 30 ff f0 00 00 33 30 f0 00 c0 00 00 00 f0 00
+	>9018	819018	c0 00 00 00 f0 00 c0 00 ff f0 00 00 33 30 33 30
+	>9028	819028	33 30 33 30 3f 30 ff 00 00 00 f0 00 c0 00 c0 00
+	>9038	819038	c0 00 c0 00 c0 00 00 00 c0 00 f0 00 fc 00 ff 00
+	>9048	819048	3f 00 0f 00 03 00 03 00 00 00 00 00 00 00 00 00
+	>9058	819058	00 00 00 00 00 00 00 00 00 00 0c 00 00 00 00 00
+	>9068	819068	fc 00 ff 00 ff 00 ff 00 00 00 00 00 00 00 00 00
+	>9078	819078	00 00 00 00 00 00 00 00 ff 00 ff 00 0f 00 03 00
+	>9088	819088	03 00 00 00 30 00 00 00 00 00 00 00 00 00 00 00
+	>9098	819098	00 00 00 00 00 00 00 00 fc 00 fc 00 ff 00 ff 00
+	>90a8	8190a8	ff 00 3c 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>90b8	8190b8	00 00 00 00 00 00 00 00 00 00 00 00 0c 0c 03 00
+	>90c8	8190c8	33 30 0f 00 cc cc 33 30 00 00 3c 00 f3 00 fc 00
+	>90d8	8190d8	c0 00 c0 00 30 00 c0 00 00 00 00 00 00 00 03 03
+	>90e8	8190e8	03 03 03 03 00 00 00 00 03 00 03 00 0f 00 0c 00
+	>90f8	8190f8	0c 00 0c 00 03 00 03 00 cf c0 0f 0c 33 33 f0 f0
+	>9108	819108	33 30 33 33 cc c0 cf cc 00 00 30 00 c0 00 00 00
+	>9118	819118	00 00 c0 00 00 00 30 00 c0 00 c0 00 f0 00 f0 00
+	>9128	819128	f0 00 f0 00 c0 00 c0 00 00 00 00 00 00 00 00 00
+	>9138	819138	00 00 00 00 00 00 00 00 3f 30 3f 00 cc c0 03 00
+	>9148	819148	33 30 ff f0 00 00 33 30 c0 00 c0 00 00 00 f0 00
+	>9158	819158	c0 00 00 00 f0 00 c0 00 00 00 00 00 00 00 03 03
+	>9168	819168	03 03 00 00 00 00 00 00 03 00 03 00 0f 00 0c 00
+	>9178	819178	0c 00 03 00 03 00 00 00 0c 00 cc cc f0 f0 33 30
+	>9188	819188	33 33 f3 f0 ff c0 ff 00 c0 00 30 00 00 00 00 00
+	>9198	819198	c0 00 00 00 00 00 00 00 c0 00 c0 00 f0 00 f0 00
+	>91a8	8191a8	f0 00 c0 00 c0 00 00 00 00 00 00 00 00 00 00 00
+	>91b8	8191b8	00 00 00 00 00 00 00 00 00 00 00 00 03 00 0f 00
+	>91c8	8191c8	33 0c 33 0c 33 0c 33 0c 03 00 0f 00 3c 00 f0 00
+	>91d8	8191d8	c0 00 c0 00 c0 00 c0 00 3c 03 33 0c 3c 03 30 0f
+	>91e8	8191e8	3c 03 33 0c 30 0f 3f 00 c0 00 c0 00 c0 00 c0 00
+	>91f8	8191f8	c0 00 c0 00 c0 00 c0 00 0f 30 0f 30 ff 00 ff 00
+	>9208	819208	fc 00 f0 00 c0 00 00 00 00 00 00 00 00 00 00 00
+	>9218	819218	00 00 00 00 00 00 00 00 30 0f 30 0c c3 0c c0 0c
+	>9228	819228	c0 03 c0 00 03 c0 00 c0 00 00 03 00 00 00 00 00
+	>9238	819238	00 00 03 00 00 00 00 00 00 00 c0 00 00 00 00 00
+	>9248	819248	c0 00 00 00 00 00 0c 00 00 00 00 00 00 00 00 00
+	>9258	819258	00 00 00 00 00 00 00 00 ff 00 cf 00 cf 00 cf 00
+	>9268	819268	f3 00 cc 0c cc 0c cc 0c 00 00 00 00 00 00 00 00
+	>9278	819278	00 00 00 00 00 00 00 00 33 03 33 03 33 03 33 03
+	>9288	819288	cc c0 cc c0 cc c0 cc c0 00 00 00 00 00 00 00 00
+	>9298	819298	00 00 00 00 00 00 00 00 33 30 33 30 33 30 33 30
+	>92a8	8192a8	cc 0c cc 0c cc 0c cc 0c 00 00 00 00 00 00 00 00
+	>92b8	8192b8	00 00 00 00 00 00 00 00 f3 c3 33 03 f3 03 30 00
+	>92c8	8192c8	fc c0 3c 00 fc 00 3c 00 00 00 c0 00 00 00 00 00
+	>92d8	8192d8	00 00 c0 00 00 00 00 00 cf 00 cc 00 cc 00 cc 00
+	>92e8	8192e8	fc c0 fc c0 fc c0 3c 00 00 00 00 00 00 00 00 00
+	>92f8	8192f8	00 00 00 00 00 00 00 00 ff c0 3f 00 ff 00 3f 00
+	>9308	819308	fc c0 3c 00 fc 00 3c 00 00 00 c0 00 00 00 00 00
+	>9318	819318	00 00 c0 00 00 00 00 00 3c 30 3c 30 3c 30 0c 00
+	>9328	819328	cf 0c cf 0c cf 0c c3 00 00 00 00 00 00 00 00 00
+	>9338	819338	00 00 00 00 00 00 00 00 f3 03 f3 03 f3 03 f0 00
+	>9348	819348	cf 00 cf 00 cc 00 cc 00 00 00 00 00 00 00 00 00
+	>9358	819358	00 00 00 00 00 00 00 00 cf 00 cf 00 cf 00 cf 00
+	>9368	819368	ff 00 cf 00 cf 00 cf 00 00 00 00 00 00 00 00 00
+	>9378	819378	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>9388	819388	00 00 0c 00 03 00 03 00 00 00 00 00 0f 00 3f 00
+	>9398	819398	f3 00 c0 00 30 00 f0 00 00 00 00 00 00 00 00 00
+	>93a8	8193a8	00 00 0f 00 ff 00 ff 00 00 00 00 00 00 00 ff 00
+	>93b8	8193b8	30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>93c8	8193c8	03 00 0c 00 ff 00 ff 00 00 00 00 00 00 00 3f 00
+	>93d8	8193d8	f0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>93e8	8193e8	cf 00 ff 00 ff 00 f3 00 00 00 00 00 ff 00 0c 00
+	>93f8	8193f8	00 00 00 00 00 00 00 00 0f 00 0c 00 0c 00 0f 00
+	>9408	819408	33 00 0f 00 03 00 03 00 c0 00 c0 00 f0 00 f0 00
+	>9418	819418	c0 00 c0 00 30 00 30 00 00 3c 03 fc 0f f0 0c 30
+	>9428	819428	0c 30 0c f0 3c c0 33 00 00 00 00 00 00 00 00 00
+	>9438	819438	00 00 00 00 00 00 00 00 00 3c 03 fc 33 cc 33 cc
+	>9448	819448	33 cc 03 fc 0f f0 fc 00 00 00 00 00 00 00 00 00
+	>9458	819458	00 00 00 00 00 00 00 00 c0 3c 03 fc 33 cc 03 fc
+	>9468	819468	0f f0 3c c0 30 c0 3c 00 00 00 00 00 00 00 00 00
+	>9478	819478	00 00 00 00 00 00 00 00 00 3c 03 fc 3f c0 00 fc
+	>9488	819488	33 0c 03 fc 0f f0 3c 00 00 00 00 00 00 00 00 00
+	>9498	819498	00 00 00 00 00 00 00 00 0f 00 00 00 30 00 0c 00
+	>94a8	8194a8	3f 00 0f 00 00 00 00 00 c0 00 c3 00 c3 00 00 00
+	>94b8	8194b8	00 00 00 00 00 00 00 00 3f 00 30 00 00 00 cc 00
+	>94c8	8194c8	ff 00 ff 00 3c 00 0c c0 00 00 cf 00 3c 00 00 00
+	>94d8	8194d8	00 00 00 00 c0 00 00 00 ff 00 ff 00 00 00 00 00
+	>94e8	8194e8	03 00 fc 00 3f 00 00 00 00 00 00 00 ff 00 3c 00
+	>94f8	8194f8	00 00 00 00 00 00 00 00 ff 00 30 00 00 00 cc 00
+	>9508	819508	ff 00 fc 00 00 00 03 00 00 00 cf 00 3c 00 00 00
+	>9518	819518	00 00 00 00 00 00 00 00 ff 00 00 00 00 00 f0 00
+	>9528	819528	ff 00 ff 00 00 00 00 00 00 00 ff 00 03 00 00 00
+	>9538	819538	00 00 00 00 00 00 00 00 0c c0 0c c0 0c c0 0c c0
+	>9548	819548	0c c0 0c c0 cc 00 3f 00 00 00 00 00 00 00 00 00
+	>9558	819558	00 00 00 00 00 00 00 00 0f 00 03 00 ff 00 ff 00
+	>9568	819568	ff 00 3f 00 0f 00 03 00 00 00 00 00 00 00 00 00
+	>9578	819578	00 00 00 00 00 00 00 00 c0 00 f0 00 ff 00 ff 00
+	>9588	819588	ff 00 ff 00 ff 00 f3 00 00 00 00 00 00 00 00 00
+	>9598	819598	00 00 00 00 00 00 00 00 03 00 00 00 fc 00 ff 00
+	>95a8	8195a8	ff 00 ff 00 ff 00 ff 00 00 00 00 00 00 00 00 00
+	>95b8	8195b8	00 00 00 00 00 00 00 00 00 00 00 00 ff 00 ff 00
+	>95c8	8195c8	ff 00 ff 00 ff 00 ff 00 00 00 00 00 00 00 00 00
+	>95d8	8195d8	00 00 00 00 00 00 00 00 00 0c 03 cc 33 cc 33 cc
+	>95e8	8195e8	03 fc 0f f0 0c 30 0c 00 00 00 00 00 00 00 00 00
+	>95f8	8195f8	00 00 00 00 00 00 00 00 c3 3c 0f f0 0c 30 cf 30
+	>9608	819608	cc 30 03 3c 0f f0 f3 00 00 00 00 00 00 00 00 00
+	>9618	819618	00 00 00 00 00 00 00 00 33 00 03 c0 33 c0 33 c0
+	>9628	819628	30 cc 03 fc 0f f0 3c 00 00 00 00 00 00 00 00 00
+	>9638	819638	00 00 00 00 00 00 00 00 00 3c 03 fc 3f c0 0c f0
+	>9648	819648	30 cc 03 fc 0f f0 3f 00 00 00 00 00 00 00 00 00
+	>9658	819658	00 00 00 00 00 00 00 00 00 00 00 00 fc 00 ff 00
+	>9668	819668	ff 00 ff 00 ff 00 3f 00 00 00 00 00 00 00 00 00
+	>9678	819678	00 00 00 00 00 00 00 00 fc 00 cc 00 cc 00 f0 0f
+	>9688	819688	30 0f 33 00 3f 00 fc 00 00 00 00 00 00 00 00 00
+	>9698	819698	00 00 00 00 00 00 00 00 f3 00 33 00 03 f0 0c f0
+	>96a8	8196a8	fc 00 ff 00 33 00 f3 00 00 00 00 00 00 00 00 00
+	>96b8	8196b8	00 00 00 00 00 00 00 00 00 3c 03 fc 33 cc 03 fc
+	>96c8	8196c8	03 fc 33 cc 33 c0 33 00 00 00 00 00 00 00 00 00
+	>96d8	8196d8	00 00 00 00 00 00 00 00 00 3c 03 fc 33 cc 0f f0
+	>96e8	8196e8	00 fc 33 cc 33 c0 3c 00 00 00 00 00 00 00 00 00
+	>96f8	8196f8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>9708	819708	00 00 33 00 cf 00 33 00 00 00 00 00 00 00 3c 00
+	>9718	819718	c0 00 00 00 00 00 00 00 00 3c 03 fc 33 cc 03 3c
+	>9728	819728	0f 30 03 fc 0f f0 3c 00 00 00 00 00 00 00 00 00
+	>9738	819738	00 00 00 00 00 00 00 00 00 0c 03 cc 03 fc 03 fc
+	>9748	819748	03 fc 33 cc 33 c0 33 00 00 00 00 00 00 00 00 00
+	>9758	819758	00 00 00 00 00 00 00 00 0f 00 0c 00 0f 00 0f 00
+	>9768	819768	0f 00 03 00 03 00 03 00 00 00 30 00 30 00 f0 00
+	>9778	819778	c0 00 c0 00 30 00 30 00 cf 00 cf 00 0f 00 33 00
+	>9788	819788	3c 00 fc 00 00 00 00 00 30 00 30 00 c0 00 00 00
+	>9798	819798	00 00 00 00 00 00 00 00 0f 00 03 00 ff 00 ff 00
+	>97a8	8197a8	ff 00 ff 00 ff 00 3f 00 00 00 00 00 00 00 00 00
+	>97b8	8197b8	00 00 00 00 00 00 00 00 00 00 00 00 f0 00 fc 00
+	>97c8	8197c8	ff 00 ff 00 ff 00 ff 00 00 00 00 00 00 00 00 00
+	>97d8	8197d8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>97e8	8197e8	00 00 c0 00 f0 00 f0 00 00 00 00 00 00 00 00 00
+	>97f8	8197f8	00 00 00 00 00 00 00 00 00 00 00 00 0c 00 0f 0c
+	>9808	819808	0f 0c 03 03 03 03 0c 0c 00 00 0c 00 30 00 3c 00
+	>9818	819818	0c 00 0f 00 0f 00 3c 00 00 00 00 00 00 00 00 00
+	>9828	819828	3c 30 0c 00 30 00 c0 00 00 00 00 00 00 00 3c 00
+	>9838	819838	30 00 c0 00 00 00 00 00 30 30 0f 03 30 00 00 00
+	>9848	819848	00 00 00 00 00 00 00 00 f0 00 c3 00 03 00 00 00
+	>9858	819858	00 00 00 00 00 00 00 00 c0 00 c0 00 30 00 f0 c0
+	>9868	819868	30 00 0c 00 3c 30 0c 00 00 00 00 00 00 00 c0 00
+	>9878	819878	c0 00 c0 00 30 00 30 00 03 00 0f 00 0f 00 3f 00
+	>9888	819888	f0 00 00 00 00 00 00 00 30 00 00 00 00 00 00 00
+	>9898	819898	00 00 00 00 00 00 00 00 3c 00 f0 00 c0 00 f0 00
+	>98a8	8198a8	c0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>98b8	8198b8	00 00 00 00 00 00 00 00 ff 00 f3 00 03 00 33 00
+	>98c8	8198c8	0f 00 33 00 03 00 3c 00 00 00 00 00 f0 00 cc 00
+	>98d8	8198d8	f0 00 cc 00 f0 00 00 00 ff 00 f3 00 c3 00 03 00
+	>98e8	8198e8	33 00 03 00 33 00 33 00 00 00 00 00 30 00 fc 00
+	>98f8	8198f8	cc 00 fc 00 cc 00 00 00 ff 00 f3 00 03 00 33 00
+	>9908	819908	03 00 00 00 33 00 ff 0c 00 00 00 00 f0 00 cc 00
+	>9918	819918	f0 00 fc 00 cc 00 00 00 cc c0 cc c0 cf c0 cf c0
+	>9928	819928	30 00 33 03 30 00 33 03 00 00 00 00 00 00 00 00
+	>9938	819938	00 00 00 00 00 00 00 00 c3 c3 ff c3 ff 00 ff 00
+	>9948	819948	3c 00 3c 00 3c 00 3c 00 00 00 00 00 00 00 00 00
+	>9958	819958	00 00 00 00 00 00 00 00 33 03 33 03 f3 03 f3 03
+	>9968	819968	0c 00 0c 00 cc c0 0c 00 00 00 00 00 00 00 00 00
+	>9978	819978	00 00 00 00 00 00 00 00 c0 00 cf 0f c0 00 cf 0f
+	>9988	819988	00 00 00 00 ff 00 ff 00 00 00 00 00 00 00 00 00
+	>9998	819998	00 00 00 00 00 00 00 00 3c 00 3c 00 3c 00 3c 00
+	>99a8	8199a8	3c 00 3c 00 ff 00 ff 00 00 00 00 00 00 00 00 00
+	>99b8	8199b8	00 00 00 00 00 00 00 00 f3 f0 03 00 f3 f0 03 00
+	>99c8	8199c8	fc fc 00 00 ff 00 ff 00 00 00 00 00 00 00 00 00
+	>99d8	8199d8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>99e8	8199e8	0c 00 0c 00 0c 00 0c 00 00 00 00 00 00 00 00 00
+	>99f8	8199f8	00 00 00 00 00 00 00 00 0c 00 0c 00 0c 00 0c 00
+	>9a08	819a08	0c 00 0c 00 0c 00 0c 00 00 00 00 00 00 00 00 00
+	>9a18	819a18	00 00 00 00 00 00 00 00 3c 00 0f 00 03 00 00 00
+	>9a28	819a28	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>9a38	819a38	00 00 00 00 00 00 00 00 c3 c3 00 00 c0 00 00 00
+	>9a48	819a48	c0 c0 00 00 c0 00 00 00 00 00 c3 00 03 00 03 00
+	>9a58	819a58	00 00 c0 00 00 00 3f 00 30 30 30 00 30 00 30 00
+	>9a68	819a68	cc cc 0c 00 0c 00 0c 00 00 00 00 00 00 00 00 00
+	>9a78	819a78	00 00 c0 00 c0 00 c0 00 00 00 00 00 30 00 00 00
+	>9a88	819a88	00 00 00 00 00 00 0c 0c 00 00 00 00 00 00 00 00
+	>9a98	819a98	00 00 00 00 00 00 f0 00 c3 c3 03 03 f3 03 3f 03
+	>9aa8	819aa8	fc c0 3c 00 fc 00 3c 00 00 00 c0 00 00 00 00 00
+	>9ab8	819ab8	00 00 c0 00 00 00 00 00 33 33 03 00 03 00 03 00
+	>9ac8	819ac8	3f 30 f3 30 c3 03 cf 03 00 00 30 00 30 00 30 00
+	>9ad8	819ad8	00 00 00 00 00 00 00 00 33 30 33 30 33 30 33 30
+	>9ae8	819ae8	f3 30 f3 00 ff 00 3f 00 00 00 00 00 00 00 00 00
+	>9af8	819af8	00 00 00 00 00 00 00 00 3f 30 f3 30 c3 00 cf 00
+	>9b08	819b08	cf 00 cf 00 cf 00 cf 00 00 00 00 00 00 00 00 00
+	>9b18	819b18	00 00 00 00 00 00 00 00 c0 00 f0 00 fc 00 3f 00
+	>9b28	819b28	0f 00 ff 00 ff 00 ff 00 00 00 00 00 00 00 00 00
+	>9b38	819b38	00 00 00 00 00 00 00 00 fc 00 fc 00 fc 00 fc 00
+	>9b48	819b48	fc 00 fc 00 fc 00 fc 00 00 00 00 00 00 00 00 00
+	>9b58	819b58	00 00 00 00 00 00 00 00 fc 00 ff 00 fc 00 fc 00
+	>9b68	819b68	fc 00 f0 00 c0 00 00 00 00 00 00 00 00 00 00 00
+	>9b78	819b78	00 00 00 00 00 00 00 00 00 00 00 00 0c 00 3c 00
+	>9b88	819b88	fc 00 fc 00 fc 00 ff 00 00 00 00 00 00 00 00 00
+	>9b98	819b98	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>9ba8	819ba8	f0 00 0f 00 f0 f0 0f 0f 00 00 00 00 00 00 30 00
+	>9bb8	819bb8	03 00 00 00 00 00 30 00 00 00 00 00 00 00 00 00
+	>9bc8	819bc8	00 00 00 00 c0 00 00 00 00 00 00 00 00 00 00 00
+	>9bd8	819bd8	00 00 c0 00 00 00 00 00 cc c0 00 00 c0 00 00 00
+	>9be8	819be8	c0 c0 00 00 c0 00 00 00 00 00 c0 00 00 00 00 00
+	>9bf8	819bf8	00 00 c0 00 00 00 00 00 f0 f0 30 00 f0 00 30 00
+	>9c08	819c08	cc cc 0c 00 cc 00 0c 00 00 00 c0 00 00 00 00 00
+	>9c18	819c18	00 00 c0 00 00 00 00 00 f3 f3 03 00 c3 00 03 00
+	>9c28	819c28	cc cc 00 00 c0 00 00 00 00 00 f0 00 30 00 30 00
+	>9c38	819c38	00 00 cc 00 0c 00 0c 00 00 00 00 00 00 00 00 00
+	>9c48	819c48	c0 c0 c0 00 c0 00 c0 00 00 00 00 00 00 00 00 00
+	>9c58	819c58	00 00 00 00 00 00 00 00 f0 00 3f 00 33 00 33 00
+	>9c68	819c68	cc 00 cc 00 cc 00 cc 00 03 00 00 00 00 00 00 00
+	>9c78	819c78	00 00 00 00 00 00 00 00 f3 c3 33 03 f3 03 30 00
+	>9c88	819c88	fc 00 fc 00 fc 00 fc 00 00 00 c0 00 00 00 00 00
+	>9c98	819c98	00 00 00 00 00 00 00 00 33 00 33 00 33 00 33 00
+	>9ca8	819ca8	cc c0 cc c0 cc c0 cc c0 00 00 00 00 00 00 00 00
+	>9cb8	819cb8	00 00 00 00 00 00 00 00 3f 00 3f 00 3f 00 3f 00
+	>9cc8	819cc8	fc 00 fc 00 fc 00 fc 00 00 00 00 00 00 00 00 00
+	>9cd8	819cd8	00 00 00 00 00 00 00 00 3c 00 3c 00 3c 00 3c 00
+	>9ce8	819ce8	fc 00 fc 00 fc 00 fc 00 00 00 00 00 00 00 00 00
+	>9cf8	819cf8	00 00 00 00 00 00 00 00 ff 00 ff 00 ff 00 ff 00
+	>9d08	819d08	ff 00 ff 00 ff 00 fc 00 00 00 00 00 00 00 00 00
+	>9d18	819d18	00 00 00 00 00 00 00 00 00 0c 03 cc 03 fc 0f f0
+	>9d28	819d28	00 fc 33 cc 33 c0 3c 00 00 00 00 00 00 00 00 00
+	>9d38	819d38	00 00 00 00 00 00 00 00 c0 0c 03 cc 03 fc 0f 30
+	>9d48	819d48	00 fc 33 cc 33 c0 3c 00 00 00 00 00 00 00 00 00
+	>9d58	819d58	00 00 00 00 00 00 00 00 c0 3c 03 fc 0f f0 0f 30
+	>9d68	819d68	cc 30 cc 30 cf 30 cf 00 00 00 00 00 00 00 00 00
+	>9d78	819d78	00 00 00 00 00 00 00 00 c0 0c 03 cc 33 cc 03 fc
+	>9d88	819d88	03 fc 33 cc 33 c0 3f 00 00 00 00 00 00 00 00 00
+	>9d98	819d98	00 00 00 00 00 00 00 00 c0 0c 03 cc 33 cc 33 cc
+	>9da8	819da8	03 fc 03 fc 3f c0 33 00 00 00 00 00 00 00 00 00
+	>9db8	819db8	00 00 00 00 00 00 00 00 c0 0c 03 fc 03 fc 33 cc
+	>9dc8	819dc8	33 cc 33 cc 33 c0 3c 00 00 00 00 00 00 00 00 00
+	>9dd8	819dd8	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>9de8	819de8	00 00 00 00 0c 00 03 00 00 00 00 00 00 00 00 00
+	>9df8	819df8	00 00 cc 00 3f 00 3c 00 0f 00 03 00 03 00 0f 00
+	>9e08	819e08	0f 00 03 00 03 00 03 00 3c 00 3c 00 3c 00 3c 00
+	>9e18	819e18	fc 00 3f 00 3f 00 0f 00 00 00 00 00 0f 00 c3 00
+	>9e28	819e28	cf 00 cf 00 ff 00 fc 00 0c 00 3f 00 3c 00 3c 00
+	>9e38	819e38	3c 00 30 00 00 00 c0 00 00 00 00 00 00 00 00 00
+	>9e48	819e48	c0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	>9e58	819e58	00 00 00 00 00 00 30 00 03 00 00 00 00 00 00 00
+	>9e68	819e68	00 00 00 00 00 00 00 00 0f 00 3f 00 03 00 03 00
+	>9e78	819e78	0c 00 00 00 00 00 00 00 fc 00 fc 00 ff 00 3c 00
+	>9e88	819e88	3f 00 0f 00 0f 00 0f 00 00 00 c0 00 f0 00 f3 00
+	>9e98	819e98	ff 00 fc 00 3f 00 fc 00 00 00 3c 00 3c 00 fc 00
+	>9ea8	819ea8	f3 00 f0 00 f0 00 cc 00 3c 00 fc 00 f0 00 f0 00
+	>9eb8	819eb8	c0 00 c0 00 00 00 00 00 0f 00 0f 00 3f 00 0f 00
+	>9ec8	819ec8	0f 00 3f 00 3f 00 ff 00 3c 00 3c 00 f0 00 3c 00
+	>9ed8	819ed8	fc 00 fc 00 f0 00 fc 00 3f 00 ff 00 3f 00 3f 00
+	>9ee8	819ee8	0f 00 0f 00 03 00 00 00 3c 00 00 00 00 00 00 00
+	>9ef8	819ef8	00 00 00 00 00 00 00 00 3f 00 fc 00 fc 00 ff 00
+	>9f08	819f08	ff 00 f0 00 fc 00 f0 00 00 00 00 00 00 00 00 00
+	>9f18	819f18	00 00 00 00 00 00 00 00
+354							.send ;sDataBank
+
+356	.0210	808210					dmaLevelChars_xx
+357	.0210	808210					_ASSERT_JSR
+358	.0210	808210	08		php			php
+70:4	.0211	808211	c2 30		rep #$30		REP #$30
+360:3	.0213	808213	a9 20 80	lda #$8020			lda #<>SpottyChars
+361	.0216	808216	8d 02 43	sta $814302			sta $4302,b
+46:4	.0219	808219	e2 20		sep #$20		SEP #$20
+363:3	.021b	80821b	a9 81		lda #$81			lda #`SpottyChars
+364	.021d	80821d	8d 04 43	sta $814304			sta $4304,b
+365	.0220	808220	a2 00 1f	ldx #$1f00			ldx #size(SpottyChars)
+366	.0223	808223	8e 05 43	stx $814305			stx $4305,b
+367	.0226	808226	a2 01 18	ldx #$1801			ldx #%00000001 | $1800			; A->B, Inc, Write WORD, $2118
+368	.0229	808229	8e 00 43	stx $814300			stx $4300,b
+369	.022c	80822c	a2 00 10	ldx #$1000			ldx #kVRAM.gameChars
+370	.022f	80822f	8e 16 21	stx $812116			stx $2116,b
+371	.0232	808232	a9 80		lda #$80			lda #$80
+372	.0234	808234	8d 15 21	sta $812115			sta $2115,b							; inc VRAM port address
+373	.0237	808237	a9 01		lda #$01			lda #1
+374	.0239	808239	8d 0b 42	sta $81420b			sta $420B,b
+375	.023c	80823c	28		plp			plp
+376	.023d	80823d	60		rts			rts
+
+378							; ----- @Map Functions@ -----
+379							.section sDP
+380	>000b						MapBlockIndexTop	.word ?				; the left edge block index
+381	>000d						MapBlockIndexBot	.word ?				; for the right
+382	>000f						MapSubRowTop		.byte ?				; which row in the block, pre multiplied by 2
+383	>0010						MapSubRowBot		.byte ?
+384	.0011						MapVRAMTop			.DUNION HLWORD		; the top char memory location in VRAM
+120:1	>0011						    .word ?
+121							    .struct
+122	>0011						        lo .byte ?
+123	>0012						        hi .byte ?
+124							    .ends
+125							.endu
+385:3	.0013						MapVRAMBot			.DUNION HLWORD
+120:1	>0013						    .word ?
+121							    .struct
+122	>0013						        lo .byte ?
+123	>0014						        hi .byte ?
+124							    .ends
+125							.endu
+386:3	.0015						MapTempWord			.DUNION HLWORD		; used to hold data for the map functions
+120:1	>0015						    .word ?
+121							    .struct
+122	>0015						        lo .byte ?
+123	>0016						        hi .byte ?
+124							    .ends
+125							.endu
+387:3	.0017						ScreenYOffset		.DUNION HLWORD		; current screen X scroll
+120:1	>0017						    .word ?
+121							    .struct
+122	>0017						        lo .byte ?
+123	>0018						        hi .byte ?
+124							    .ends
+125							.endu
+388:3	.0019						MapBufferTarget	.DUNION HLWORD		; where we want NMI to dma the buffer to
+120:1	>0019						    .word ?
+121							    .struct
+122	>0019						        lo .byte ?
+123	>001a						        hi .byte ?
+124							    .ends
+125							.endu
+389:3							.send ;sDP
+
+391							.section sSharedWRAM
+392	>80005f						MapColumnBuffer .fill 40*2					; buffer of 32 chars to be DMA'd in the NMI
+393	=$8000ae					MapColumnBufferEnd = * - 1					; stack pushes then decs so we point to the last element
+394	>8000af						MapStackStore .word ?						; Temp store to hold the stack value for restoration
+395							.send ; sSharedWRAM
+
+397							.section sDataBank							; bank 81
+398	.9f20	819f20					MapData .block
+399	=512							kColLen = 512
+400	>9f20	819f20	37 09 02 02 00 00 00 00			col1 .binary "outlaw_col0.map"
+	>9f28	819f28	00 00 00 1c 0d 26 00 00 00 1c 0d 1d 00 04 00 00
+	>9f38	819f38	0b 3d 0d 0d 1d 00 00 04 04 00 00 04 04 2c 2d 1f
+	>9f48	819f48	1f 1f 0f 2f 02 35 32 04 04 02 04 04 04 04 04 04
+	>9f58	819f58	04 25 04 04 04 04 04 04 04 04 04 04 04 04 04 04
+	>9f68	819f68	04 04 3f 02 04 04 02 04 04 04 12 11 04 04 27 04
+	>9f78	819f78	04 04 04 04 02 04 04 04 04 02 04 04 12 11 04 04
+	>9f88	819f88	04 04 03 04 04 12 11 04 04 04 02 32 04 15 04 05
+	>9f98	819f98	04 04 15 04 15 04 3f 06 04 06 15 15 02 15 04 25
+	>9fa8	819fa8	04 03 04 03 04 04 04 3f 04 04 04 04 04 14 13 03
+	>9fb8	819fb8	12 11 04 04 12 11 12 11 04 04 04 04 04 01 04 04
+	>9fc8	819fc8	3f 04 03 04 04 05 04 03 03 04 04 03 03 04 04 04
+	>9fd8	819fd8	1c 0d 0d 0d 1d 04 04 04 04 04 04 2c 28 2f 03 0d
+	>9fe8	819fe8	0d 1d 2c 2d 1f 1f 0f 2f 04 04 04 1c 0d 26 04 04
+	>9ff8	819ff8	04 04 3f 04 04 04 04 04 3f 04 04 04 04 04 04 04
+	>a008	81a008	25 25 04 04 04 04 04 04 3f 04 04 03 03 03 04 04
+	>a018	81a018	04 04 04 3f 04 04 3f 04 04 04 04 04 3f 04 04 04
+	>a028	81a028	04 04 04 04 3f 04 04 04 04 04 04 04 04 04 04 12
+	>a038	81a038	11 04 12 11 04 04 04 04 04 04 04 04 04 04 04 04
+	>a048	81a048	3f 04 04 04 3f 03 03 04 04 04 04 04 04 04 04 04
+	>a058	81a058	04 04 15 06 03 03 15 15 15 06 15 15 15 15 02 06
+	>a068	81a068	15 15 04 15 04 04 04 04 04 16 03 03 04 04 04 04
+	>a078	81a078	04 04 04 1c 0d 1d 04 04 04 1c 0d 0d 0d 1d 04 04
+	>a088	81a088	04 04 04 04 04 04 1c 0d 0d 0d 0d 1d 2e 0e 0e 1d
+	>a098	81a098	04 04 2e 0e 0e 0e 0e 1d 04 04 04 04 04 05 00 04
+	>a0a8	81a0a8	00 04 04 3f 04 00 04 04 03 03 03 03 03 03 03 00
+	>a0b8	81a0b8	03 03 03 03 03 03 04 04 00 00 00 04 25 3f 00 04
+	>a0c8	81a0c8	00 00 00 04 04 3f 00 00 00 00 00 00 04 00 04 00
+	>a0d8	81a0d8	00 04 00 04 00 00 04 06 00 03 00 04 00 25 00 00
+	>a0e8	81a0e8	00 04 04 04 04 00 04 00 00 00 00 04 00 12 11 00
+	>a0f8	81a0f8	00 3f 00 04 00 00 00 03 04 00 04 00 3f 00 00 00
+	>a108	81a108	00 00 00 00 04 04 00 3f 00 04 00 00 04 00 04 04
+	>a118	81a118	00 00 03 00 00 01 00 00
+401	>a120	81a120	0d 08 02 02 02 02 00 00			col2 .binary "outlaw_col1.map"
+	>a128	81a128	04 00 00 1c 0d 1d 0b 3d 09 1c 0d 1d 04 25 04 04
+	>a138	81a138	19 07 0d 0d 1d 0b 0c 18 0a 09 00 00 00 00 2a 2b
+	>a148	81a148	2b 2b 2b 29 04 34 33 00 02 00 00 00 00 00 3f 00
+	>a158	81a158	04 00 00 00 3f 00 04 04 00 04 3f 00 00 04 00 00
+	>a168	81a168	00 04 04 00 32 12 11 00 00 04 04 00 04 12 11 04
+	>a178	81a178	00 3f 00 41 40 00 00 00 12 11 00 00 04 04 04 3f
+	>a188	81a188	00 16 04 02 00 04 00 00 00 3f 03 33 32 00 00 15
+	>a198	81a198	06 03 03 04 00 00 06 00 00 00 00 3f 15 15 00 10
+	>a1a8	81a1a8	03 3f 00 00 03 00 00 00 00 00 00 00 00 03 00 12
+	>a1b8	81a1b8	11 12 11 12 11 00 00 14 13 3f 00 00 00 00 00 00
+	>a1c8	81a1c8	00 00 00 00 00 00 00 03 3f 03 03 03 00 03 02 00
+	>a1d8	81a1d8	2e 0e 0e 0e 1d 00 0b 0c 18 0a 09 03 2a 29 03 0d
+	>a1e8	81a1e8	0d 1d 00 2a 2b 2b 2b 29 00 00 00 2c 28 2f 00 00
+	>a1f8	81a1f8	04 04 00 00 00 00 00 00 03 03 00 00 00 12 11 00
+	>a208	81a208	00 25 25 00 03 03 00 00 00 00 00 03 00 04 3f 04
+	>a218	81a218	04 00 00 00 00 3f 00 00 3f 00 00 00 00 00 00 3f
+	>a228	81a228	00 00 25 03 00 00 00 00 00 3f 03 00 00 16 00 00
+	>a238	81a238	12 11 02 03 12 11 04 00 00 00 00 03 3f 00 00 00
+	>a248	81a248	00 00 00 03 00 00 06 3f 00 00 00 17 00 00 00 00
+	>a258	81a258	06 04 04 03 06 15 03 25 15 03 03 03 06 06 15 06
+	>a268	81a268	06 15 06 15 06 00 00 00 00 03 3f 00 03 00 00 00
+	>a278	81a278	00 00 00 2c 28 2f 00 00 00 2e 0e 0e 0e 1d 00 00
+	>a288	81a288	00 03 03 03 00 00 1c 0d 0d 0d 0d 1d 2c 2d 0f 2f
+	>a298	81a298	00 00 2c 2d 1f 1f 0f 2f 00 00 00 00 00 30 04 00
+	>a2a8	81a2a8	00 3f 00 00 00 00 3f 00 00 00 00 00 00 00 00 00
+	>a2b8	81a2b8	3f 00 00 00 00 3f 00 00 00 00 00 00 06 00 00 00
+	>a2c8	81a2c8	06 04 00 12 11 12 11 00 04 04 12 11 00 00 04 04
+	>a2d8	81a2d8	00 00 3f 00 25 15 06 25 00 16 00 04 00 06 00 00
+	>a2e8	81a2e8	00 3f 04 04 04 00 00 04 00 3f 00 00 04 04 00 00
+	>a2f8	81a2f8	04 00 12 11 04 00 00 10 00 00 04 00 04 00 3f 00
+	>a308	81a308	04 00 04 04 00 00 04 00 04 00 3f 04 04 00 00 00
+	>a318	81a318	3f 04 00 3f 00 00 00 3f
+402	>a320	81a320	0d 26 03 03 02 02 02 02			col3 .binary "outlaw_col2.map"
+	>a328	81a328	00 00 04 2e 0e 1d 3b 0d 08 1c 0d 1d 00 04 04 04
+	>a338	81a338	2e 0e 0e 0e 1d 2e 3c 0e 0d 08 00 00 00 04 04 04
+	>a348	81a348	04 00 00 00 04 3e 05 02 04 04 04 04 04 04 04 00
+	>a358	81a358	04 00 00 00 00 00 00 00 04 04 04 00 04 00 04 04
+	>a368	81a368	00 04 04 17 33 00 04 04 04 04 04 04 04 04 04 04
+	>a378	81a378	00 04 04 00 04 04 04 04 00 00 00 04 00 04 04 04
+	>a388	81a388	04 04 12 11 04 03 04 03 02 03 04 04 33 04 04 00
+	>a398	81a398	04 04 06 15 04 15 15 00 15 15 06 06 15 15 04 00
+	>a3a8	81a3a8	04 04 04 00 04 04 04 04 00 04 04 3f 04 03 14 13
+	>a3b8	81a3b8	12 11 41 40 04 12 11 04 04 03 03 04 04 03 03 04
+	>a3c8	81a3c8	04 04 04 3f 04 04 04 03 04 04 04 0b 0c 37 09 03
+	>a3d8	81a3d8	2c 2d 1e 0f 2f 04 3b 3c 3c 07 08 04 0b 0c 18 0d
+	>a3e8	81a3e8	0d 1d 04 04 04 04 0b 0c 18 1a 0a 09 2a 29 04 04
+	>a3f8	81a3f8	03 20 03 04 04 04 3f 03 04 04 03 04 04 04 04 12
+	>a408	81a408	11 04 04 25 04 3f 03 04 04 04 04 3f 04 04 04 17
+	>a418	81a418	04 3f 03 03 03 04 04 04 04 04 04 04 04 04 03 03
+	>a428	81a428	04 03 15 04 03 04 04 04 04 03 03 03 04 04 04 04
+	>a438	81a438	04 32 03 27 02 04 04 04 3f 04 04 03 03 03 03 04
+	>a448	81a448	04 04 04 3f 04 04 04 03 03 3f 03 04 04 03 15 06
+	>a458	81a458	04 04 06 15 15 15 06 03 06 15 15 15 02 06 03 02
+	>a468	81a468	15 06 15 03 04 3f 04 04 03 04 04 04 04 03 3f 03
+	>a478	81a478	04 04 03 03 2a 29 04 04 04 2c 2d 1e 0f 2f 03 03
+	>a488	81a488	03 0b 0c 18 0a 09 2e 0e 0e 0e 0e 1d 03 04 03 04
+	>a498	81a498	04 04 04 2a 2b 2b 2b 29 00 04 04 04 04 21 04 04
+	>a4a8	81a4a8	00 04 04 00 00 00 04 00 04 04 00 04 25 04 04 00
+	>a4b8	81a4b8	00 04 04 04 04 04 04 04 00 00 00 17 00 00 00 04
+	>a4c8	81a4c8	00 04 12 11 04 02 12 11 04 00 00 04 04 3f 00 04
+	>a4d8	81a4d8	00 04 00 00 06 25 06 00 00 00 04 04 00 00 00 05
+	>a4e8	81a4e8	04 04 04 04 04 00 00 00 00 00 04 00 00 00 12 11
+	>a4f8	81a4f8	00 04 00 04 00 04 04 00 00 04 00 04 00 00 00 04
+	>a508	81a508	00 04 00 00 00 04 04 04 04 04 04 04 00 04 3f 04
+	>a518	81a518	00 03 04 00 03 00 3f 00
+403	>a520	81a520	0d 26 04 03 03 03 02 02			col4 .binary "outlaw_col3.map"
+	>a528	81a528	02 02 04 2c 28 2f 1c 0d 1b 1c 0d 1d 04 0b 3d 09
+	>a538	81a538	2c 2d 1f 0f 2f 2c 2d 1f 0d 1b 04 0b 0c 18 0a 09
+	>a548	81a548	00 04 00 00 00 31 02 04 00 04 04 00 04 04 04 04
+	>a558	81a558	00 00 05 04 04 00 04 00 04 04 04 04 00 3f 04 04
+	>a568	81a568	04 00 04 04 02 04 04 04 04 04 04 04 04 04 04 04
+	>a578	81a578	02 04 04 04 00 04 27 04 04 04 04 02 03 00 04 00
+	>a588	81a588	04 02 04 04 04 03 04 12 11 03 03 04 04 32 00 03
+	>a598	81a598	00 00 15 15 06 04 04 06 15 02 03 06 15 06 03 04
+	>a5a8	81a5a8	04 04 04 04 04 04 03 04 04 04 04 04 04 04 04 04
+	>a5b8	81a5b8	04 12 11 03 12 11 14 13 03 04 27 03 25 03 03 03
+	>a5c8	81a5c8	04 04 04 04 03 03 04 03 04 04 04 3b 3c 3c 38 04
+	>a5d8	81a5d8	04 2a 2b 2b 29 04 2c 2d 1f 0d 26 04 19 07 07 0d
+	>a5e8	81a5e8	0d 1d 03 0b 3d 09 19 07 07 07 07 08 03 04 03 03
+	>a5f8	81a5f8	04 21 04 03 04 04 04 03 04 04 04 3f 04 04 12 11
+	>a608	81a608	04 04 04 25 25 03 04 03 04 04 03 04 04 04 04 03
+	>a618	81a618	03 04 03 12 11 04 04 04 04 04 04 3f 04 03 04 03
+	>a628	81a628	04 03 04 04 04 03 3f 04 04 04 04 03 04 04 04 12
+	>a638	81a638	11 33 14 13 02 02 04 04 04 04 03 04 04 04 04 3f
+	>a648	81a648	03 03 04 03 04 04 04 04 04 04 03 04 25 04 25 02
+	>a658	81a658	32 06 25 15 15 02 03 15 06 06 03 15 15 03 06 25
+	>a668	81a668	04 06 15 15 03 03 03 03 03 03 03 03 03 03 03 03
+	>a678	81a678	03 03 03 03 03 03 03 03 03 03 2a 2b 2b 29 03 03
+	>a688	81a688	03 19 07 07 07 08 2c 2d 1f 1f 0f 2f 03 04 04 04
+	>a698	81a698	04 04 04 04 04 04 04 04 00 00 04 04 04 22 3f 04
+	>a6a8	81a6a8	00 04 00 04 00 04 04 04 00 04 00 04 05 04 00 00
+	>a6b8	81a6b8	00 04 04 04 04 04 04 04 00 00 00 00 00 00 06 00
+	>a6c8	81a6c8	04 04 12 11 14 13 00 04 04 04 04 04 04 04 00 04
+	>a6d8	81a6d8	00 04 06 03 00 04 00 04 00 00 00 15 00 00 00 00
+	>a6e8	81a6e8	00 00 04 00 04 04 3f 04 00 04 00 00 12 11 00 12
+	>a6f8	81a6f8	11 00 00 00 04 00 00 04 3f 00 00 00 00 00 04 04
+	>a708	81a708	00 00 04 04 3f 00 04 00 04 04 04 04 04 04 04 00
+	>a718	81a718	04 00 04 00 04 00 00 00
+404	>a720	81a720	0d 26 04 04 00 00 00 03			col5 .binary "outlaw_col4.map"
+	>a728	81a728	04 04 04 04 04 04 1c 0d 1b 1c 0d 1d 04 19 0d 38
+	>a738	81a738	00 04 04 00 04 04 04 04 0d 1b 04 1c 3c 3c 3c 38
+	>a748	81a748	04 04 04 03 04 21 03 04 04 00 3f 04 04 04 00 00
+	>a758	81a758	04 04 04 04 04 25 04 04 04 04 04 04 04 04 04 00
+	>a768	81a768	04 04 00 04 02 32 04 04 3f 04 04 00 00 02 00 12
+	>a778	81a778	11 04 04 04 04 12 11 00 03 04 12 11 00 00 03 04
+	>a788	81a788	12 11 04 04 04 3f 03 04 03 04 04 04 04 33 04 15
+	>a798	81a798	04 15 06 04 02 06 04 15 15 06 15 04 04 06 04 04
+	>a7a8	81a7a8	04 04 04 04 04 04 15 04 03 04 03 00 04 03 03 03
+	>a7b8	81a7b8	14 13 12 11 03 14 13 03 03 03 27 03 27 04 03 03
+	>a7c8	81a7c8	03 03 03 03 03 03 03 03 03 04 03 2c 2d 0f 2f 03
+	>a7d8	81a7d8	03 03 03 03 03 03 0b 39 3a 0d 26 03 2e 0e 0e 0e
+	>a7e8	81a7e8	0e 1d 03 19 07 08 1c 0d 0d 0d 0d 26 04 04 04 03
+	>a7f8	81a7f8	04 22 03 03 03 04 04 03 03 04 04 04 03 03 03 14
+	>a808	81a808	13 12 11 03 25 25 03 04 03 03 03 03 03 03 03 3f
+	>a818	81a818	04 03 03 03 03 03 3f 04 04 04 03 04 03 03 03 03
+	>a828	81a828	03 03 04 03 03 03 03 03 03 03 03 03 3f 03 03 03
+	>a838	81a838	12 11 02 02 12 11 03 03 03 03 03 03 03 03 03 03
+	>a848	81a848	03 03 03 03 03 03 3f 03 03 03 06 03 03 03 06 32
+	>a858	81a858	33 15 15 15 25 02 03 15 02 03 03 06 03 03 15 15
+	>a868	81a868	06 25 03 03 03 03 06 03 03 03 03 03 03 03 03 03
+	>a878	81a878	03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03
+	>a888	81a888	03 1c 0d 0d 0d 26 03 2a 2b 2b 2b 29 03 03 03 00
+	>a898	81a898	00 00 00 03 03 03 03 00 03 03 03 03 03 23 03 03
+	>a8a8	81a8a8	00 00 3f 00 03 03 03 03 00 00 3f 03 03 00 00 00
+	>a8b8	81a8b8	00 03 03 03 03 03 03 03 00 3f 03 03 03 25 15 3f
+	>a8c8	81a8c8	00 04 04 12 11 03 00 00 04 00 00 04 00 04 04 04
+	>a8d8	81a8d8	04 00 00 00 06 00 04 04 25 04 04 25 06 00 00 00
+	>a8e8	81a8e8	00 04 04 04 3f 00 04 00 00 00 04 04 00 14 13 12
+	>a8f8	81a8f8	11 04 04 04 04 00 00 00 00 00 04 04 04 04 00 00
+	>a908	81a908	00 04 00 00 00 00 04 04 04 04 03 00 04 00 04 00
+	>a918	81a918	00 04 03 00 04 3f 00 00
+405	>a920	81a920	0d 26 04 03 3f 03 02 02			col6 .binary "outlaw_col5.map"
+	>a928	81a928	02 02 04 0b 3d 09 1c 0d 1b 1c 0e 1d 04 1c 0d 1d
+	>a938	81a938	04 0b 0c 18 1a 0a 09 04 0d 1b 04 2c 2d 1f 0f 2f
+	>a948	81a948	04 04 04 00 05 22 04 00 04 03 04 00 00 04 04 00
+	>a958	81a958	04 00 00 04 04 04 04 00 04 04 04 04 04 00 04 3f
+	>a968	81a968	04 04 04 03 04 33 00 04 04 04 27 00 12 11 04 04
+	>a978	81a978	04 04 00 02 04 00 00 03 27 03 00 00 04 00 04 27
+	>a988	81a988	04 00 04 02 03 04 04 04 04 03 04 02 04 32 00 03
+	>a998	81a998	04 04 04 3f 04 04 06 04 15 3f 15 15 15 15 15 04
+	>a9a8	81a9a8	15 06 04 3f 03 03 04 04 04 04 04 03 03 04 04 04
+	>a9b8	81a9b8	04 04 04 43 42 04 03 04 04 02 27 27 03 03 04 04
+	>a9c8	81a9c8	03 04 04 04 03 04 3f 04 04 04 04 03 04 04 02 04
+	>a9d8	81a9d8	04 04 03 04 04 04 3b 3c 3c 0e 1d 03 2c 2d 1f 1f
+	>a9e8	81a9e8	0f 2f 04 1c 0d 1b 1c 0e 0e 0e 0e 1d 04 04 04 3f
+	>a9f8	81a9f8	04 23 04 04 04 03 03 04 04 04 04 04 04 03 12 11
+	>aa08	81aa08	04 04 04 03 04 25 25 04 04 3f 04 04 04 03 03 03
+	>aa18	81aa18	04 04 3f 04 04 04 04 04 04 04 04 04 04 03 03 03
+	>aa28	81aa28	3f 04 04 04 04 04 04 03 04 04 04 03 04 03 04 03
+	>aa38	81aa38	04 04 12 11 02 03 04 04 04 3f 03 04 04 04 04 04
+	>aa48	81aa48	04 04 04 04 04 04 04 04 04 04 04 04 06 04 06 33
+	>aa58	81aa58	04 02 02 02 02 03 02 06 15 15 05 03 06 15 06 25
+	>aa68	81aa68	03 15 15 04 03 04 04 04 04 04 03 04 04 04 04 03
+	>aa78	81aa78	04 3f 04 03 04 04 04 04 04 04 04 03 04 04 04 04
+	>aa88	81aa88	04 2e 0e 0e 0e 1d 04 04 04 04 04 0b 0c 18 0a 09
+	>aa98	81aa98	04 04 04 00 04 04 00 04 04 04 04 00 04 24 04 04
+	>aaa8	81aaa8	04 04 04 04 04 04 04 04 3f 00 00 04 00 04 04 00
+	>aab8	81aab8	00 04 04 3f 04 04 04 00 04 04 04 04 25 06 04 25
+	>aac8	81aac8	00 04 04 00 04 04 00 00 04 04 04 00 04 00 00 00
+	>aad8	81aad8	04 3f 00 25 00 04 25 3f 04 06 00 06 15 00 3f 00
+	>aae8	81aae8	00 00 04 04 04 3f 00 04 04 00 00 12 11 04 12 11
+	>aaf8	81aaf8	04 04 04 04 00 04 3f 04 04 04 00 3f 04 00 04 00
+	>ab08	81ab08	04 04 00 04 04 04 00 04 04 03 04 3f 04 04 04 04
+	>ab18	81ab18	04 00 00 00 03 3f 03 00
+406	>ab20	81ab20	0d 1d 03 03 02 02 02 02			col7 .binary "outlaw_col6.map"
+	>ab28	81ab28	04 00 04 1c 0d 08 1c 0d 1b 2c 28 2f 04 2e 0d 1d
+	>ab38	81ab38	00 19 07 07 07 07 08 04 0d 1b 04 05 00 04 04 04
+	>ab48	81ab48	04 00 00 00 00 23 02 00 04 04 00 00 05 04 04 00
+	>ab58	81ab58	00 04 04 00 04 04 04 04 3f 00 04 04 04 00 00 05
+	>ab68	81ab68	00 00 04 3f 04 02 03 00 04 12 11 00 04 00 04 04
+	>ab78	81ab78	00 00 12 11 04 04 04 12 11 3f 00 00 00 04 12 11
+	>ab88	81ab88	04 04 12 11 03 03 27 00 03 03 12 11 03 33 04 03
+	>ab98	81ab98	06 04 15 04 04 15 3f 15 15 15 15 15 3f 15 15 15
+	>aba8	81aba8	04 04 04 03 03 03 04 04 04 04 03 03 04 04 04 3f
+	>abb8	81abb8	04 04 04 04 04 04 03 03 04 04 27 04 27 04 04 3f
+	>abc8	81abc8	04 03 04 04 03 04 04 04 04 04 3f 04 04 04 0b 0c
+	>abd8	81abd8	18 0a 09 03 04 04 2c 2d 1f 0f 2f 03 04 04 04 04
+	>abe8	81abe8	04 04 03 1c 0d 1b 2c 2d 1f 1f 0f 2f 04 04 04 03
+	>abf8	81abf8	04 24 04 04 04 04 04 3f 04 04 04 12 11 04 03 04
+	>ac08	81ac08	12 11 03 03 03 03 25 25 04 04 04 04 04 3f 04 04
+	>ac18	81ac18	04 04 04 04 04 04 04 3f 04 04 03 04 04 04 05 04
+	>ac28	81ac28	04 04 04 04 04 04 04 04 3f 04 03 04 04 03 03 03
+	>ac38	81ac38	04 12 11 02 04 04 3f 03 03 03 04 04 04 3f 04 04
+	>ac48	81ac48	04 3f 04 04 04 3f 04 04 04 04 04 04 04 04 04 3f
+	>ac58	81ac58	02 03 03 03 03 02 15 15 25 06 06 15 3f 06 15 15
+	>ac68	81ac68	06 15 15 04 15 04 04 03 03 03 04 04 3f 04 04 03
+	>ac78	81ac78	04 04 04 03 04 04 04 04 0b 0c 18 1a 1a 1a 0a 09
+	>ac88	81ac88	04 2c 2d 1f 1e 2f 04 04 04 04 04 19 07 07 07 08
+	>ac98	81ac98	0b 0c 18 0a 09 00 0b 0c 18 0a 09 00 00 04 00 3f
+	>aca8	81aca8	04 04 04 04 3f 04 04 04 04 04 00 00 04 04 04 04
+	>acb8	81acb8	04 00 00 04 04 00 00 04 04 04 04 04 06 04 00 04
+	>acc8	81acc8	04 04 12 11 00 00 00 12 11 00 3f 04 04 00 00 05
+	>acd8	81acd8	04 04 04 00 00 00 15 00 00 00 04 04 04 00 00 00
+	>ace8	81ace8	00 04 00 00 04 04 00 00 3f 00 00 00 04 00 00 04
+	>acf8	81acf8	04 00 05 04 04 00 00 00 00 04 04 00 3f 00 00 00
+	>ad08	81ad08	3f 00 04 00 00 00 00 00 04 04 03 04 04 04 04 3f
+	>ad18	81ad18	00 00 00 04 03 00 03 3f
+407	>ad20	81ad20	0f 2f 02 02 02 02 04 04			col8 .binary "outlaw_col7.map"
+	>ad28	81ad28	04 04 00 1c 0d 1b 1c 0d 1b 00 2a 29 00 2c 28 2f
+	>ad38	81ad38	00 1c 0d 0d 0d 0d 1b 04 0d 1b 04 00 00 00 00 00
+	>ad48	81ad48	04 04 04 02 04 36 00 02 04 04 00 04 04 04 04 04
+	>ad58	81ad58	3f 04 00 00 00 00 04 00 04 04 04 00 04 04 04 00
+	>ad68	81ad68	00 00 00 04 04 00 02 04 04 04 00 00 00 00 04 04
+	>ad78	81ad78	00 04 04 04 04 04 04 00 00 00 00 00 00 00 00 04
+	>ad88	81ad88	00 04 04 00 03 12 11 00 00 03 00 00 04 02 15 15
+	>ad98	81ad98	04 04 04 15 04 04 06 04 15 15 15 04 04 15 15 06
+	>ada8	81ada8	04 15 04 04 04 04 04 03 3f 04 04 04 04 04 04 04
+	>adb8	81adb8	04 04 04 04 04 04 04 04 04 04 27 04 04 04 04 04
+	>adc8	81adc8	04 03 03 03 3f 04 04 04 04 04 04 04 04 04 19 07
+	>add8	81add8	07 07 08 04 03 03 04 04 04 04 04 04 04 04 04 04
+	>ade8	81ade8	04 04 04 1c 0d 1b 04 2a 2b 2b 2b 29 04 04 04 03
+	>adf8	81adf8	04 04 04 3f 04 04 04 04 04 04 04 04 04 04 04 03
+	>ae08	81ae08	03 04 12 11 04 04 04 25 25 04 04 04 04 04 04 04
+	>ae18	81ae18	04 04 04 04 3f 04 03 03 03 03 04 04 04 3f 04 04
+	>ae28	81ae28	04 04 04 04 3f 04 04 04 04 04 04 04 04 04 04 3f
+	>ae38	81ae38	04 04 02 04 04 03 04 04 04 04 04 04 04 04 04 04
+	>ae48	81ae48	04 04 3f 04 04 04 04 04 04 04 3f 04 04 15 04 04
+	>ae58	81ae58	3f 02 02 02 02 15 15 15 15 15 25 04 04 03 03 03
+	>ae68	81ae68	06 15 15 03 04 04 04 04 3f 04 04 04 04 04 04 04
+	>ae78	81ae78	03 03 03 04 04 04 04 04 19 07 07 07 07 07 07 1b
+	>ae88	81ae88	04 04 2a 2b 2b 29 04 04 04 04 04 1c 0d 0d 0d 1b
+	>ae98	81ae98	19 07 07 07 08 04 19 07 07 07 08 00 00 04 04 04
+	>aea8	81aea8	04 04 04 04 04 04 04 04 04 04 04 04 04 04 3f 04
+	>aeb8	81aeb8	04 04 04 00 00 04 04 04 3f 00 00 00 00 00 00 00
+	>aec8	81aec8	00 00 00 00 00 12 11 04 00 04 04 00 00 00 04 00
+	>aed8	81aed8	00 04 00 04 00 00 04 00 04 00 04 00 04 00 04 00
+	>aee8	81aee8	3f 04 04 04 04 00 00 00 00 04 00 00 04 00 00 00
+	>aef8	81aef8	00 00 04 00 04 00 04 00 04 3f 00 04 00 00 04 00
+	>af08	81af08	00 00 04 00 04 00 3f 04 04 04 04 03 00 04 00 00
+	>af18	81af18	00 00 00 04 00 00 00 00
+408							.bend
+409	.af20	81af20					BlockData .block
+410	>af20	81af20	00 00 01 00 00 00 02 00			row1 .binary "outlaw_row1.blk"
+	>af28	81af28	03 00 06 00 07 00 08 00 09 00 0a 00 00 00 01 00
+	>af38	81af38	00 00 02 00 05 00 00 00 01 00 00 00 02 00 05 00
+	>af48	81af48	0a 00 04 00 05 00 04 00 03 00 00 00 01 00 00 00
+	>af58	81af58	02 00 05 00 0a 00 04 00 0a 00 00 00 03 00 2e 00
+	>af68	81af68	2f 00 30 00 31 00 2f 00 32 00 33 00 33 00 33 00
+	>af78	81af78	33 00 02 00 39 00 3a 00 3b 00 3c 00 01 00 3d 00
+	>af88	81af88	48 00 49 00 4a 00 03 00 06 00 00 00 06 00 00 00
+	>af98	81af98	06 00 56 00 57 00 58 00 4a 00 31 00 2f 00 30 00
+	>afa8	81afa8	31 00 2f 00 31 00 2f 00 30 00 31 00 59 00 5a 00
+	>afb8	81afb8	5b 00 5c 00 5d 00 37 00 06 00 07 00 08 00 09 00
+	>afc8	81afc8	0a 00 65 00 66 00 67 00 68 00 0a 00 06 00 04 00
+	>afd8	81afd8	06 00 01 00 01 00 02 00 7e 00 0a 00 01 00 0a 00
+	>afe8	81afe8	02 00 01 00 0a 00 04 00 05 00 28 00 29 00 05 00
+	>aff8	81aff8	04 00 03 00 06 00 07 00 08 00 09 00 0a 00 06 00
+	>b008	81b008	07 00 08 00 09 00 0a 00 05 00 39 00 4b 00 4c 00
+	>b018	81b018	4a 00 06 00 01 00 06 00 05 00 05 00 0a 00 39 00
+	>b028	81b028	48 00 49 00 4a 00 32 00 33 00 33 00 33 00 33 00
+	>b038	81b038	06 00 01 00 06 00 05 00 05 00 92 00 92 00 92 00
+	>b048	81b048	92 00 92 00 5a 00 5b 00 5c 00 5d 00 37 00 5a 00
+	>b058	81b058	5b 00 5c 00 5d 00 37 00 9b 00 9c 00 9d 00 9e 00
+	>b068	81b068	9d 00 9e 00 9c 00 9c 00 9e 00 9d 00 9d 00 9e 00
+	>b078	81b078	9c 00 9d 00 9c 00 9d 00 9c 00 9e 00 9d 00 b7 00
+	>b088	81b088	0a 00 04 00 05 00 04 00 03 00 0a 00 04 00 05 00
+	>b098	81b098	04 00 03 00 32 00 c5 00 c6 00 c7 00 92 00 00 00
+	>b0a8	81b0a8	01 00 00 00 02 00 05 00 5a 00 d1 00 d2 00 d3 00
+	>b0b8	81b0b8	04 00 d9 00 02 00 03 00 01 00 03 00 06 00 0a 00
+	>b0c8	81b0c8	06 00 01 00 0a 00 d9 00 01 00 02 00 0a 00 03 00
+	>b0d8	81b0d8	0a 00 00 00 01 00 00 00 02 00 5a 00 d1 00 d2 00
+	>b0e8	81b0e8	d3 00 04 00 05 00 06 00 01 00 04 00 06 00 e2 00
+	>b0f8	81b0f8	e3 00 96 00 5d 00 37 00 9b 00 9c 00 9d 00 9e 00
+	>b108	81b108	9d 00 9e 00 9c 00 9c 00 9e 00 9d 00 00 00 01 00
+	>b118	81b118	00 00 1a 00 05 00 00 00 01 00 00 00 02 00 05 00
+	>b128	81b128	0a 00 04 00 05 00 04 00 03 00 00 00 01 00 00 00
+	>b138	81b138	02 00 05 00 0a 00 04 00 05 00 04 00 03 00 01 00
+	>b148	81b148	3d 00 4d 00 4e 00 4a 00 32 00 c5 00 c6 00 c7 00
+	>b158	81b158	92 00 06 00 56 00 57 00 58 00 4a 00 d9 00 39 00
+	>b168	81b168	4b 00 4c 00 4a 00 06 00 01 00 06 00 05 00 05 00
+	>b178	81b178	2e 00 2f 00 30 00 31 00 59 00 06 00 56 00 57 00
+	>b188	81b188	58 00 4a 00 91 00 9b 00 9d 00 9e 00 9d 00 00 00
+	>b198	81b198	ee 00 04 00 00 00 05 00 65 00 66 00 67 00 68 00
+	>b1a8	81b1a8	0a 00 06 00 04 00 06 00 01 00 01 00 02 00 7e 00
+	>b1b8	81b1b8	0a 00 01 00 0a 00 02 00 01 00 0a 00 04 00 05 00
+411	>b1c8	81b1c8	03 00 04 00 04 00 01 00			row2 .binary "outlaw_row2.blk"
+	>b1d0	81b1d0	04 00 0b 00 0c 00 0d 00 0e 00 05 00 03 00 04 00
+	>b1e0	81b1e0	1a 00 01 00 04 00 03 00 04 00 04 00 01 00 04 00
+	>b1f0	81b1f0	03 00 01 00 03 00 06 00 01 00 03 00 06 00 20 00
+	>b200	81b200	21 00 04 00 03 00 01 00 00 00 0a 00 01 00 2e 00
+	>b210	81b210	2f 00 30 00 31 00 2f 00 34 00 34 00 34 00 34 00
+	>b220	81b220	34 00 01 00 3d 00 3e 00 3f 00 40 00 03 00 39 00
+	>b230	81b230	4b 00 4c 00 4a 00 06 00 01 00 06 00 50 00 51 00
+	>b240	81b240	01 00 39 00 41 00 4c 00 4a 00 31 00 2f 00 30 00
+	>b250	81b250	31 00 2f 00 31 00 2f 00 30 00 31 00 59 00 5a 00
+	>b260	81b260	5e 00 5f 00 60 00 37 00 62 00 0c 00 0d 00 0e 00
+	>b270	81b270	05 00 69 00 6a 00 6b 00 6c 00 06 00 04 00 01 00
+	>b280	81b280	04 00 01 00 04 00 0a 00 7f 00 04 00 04 00 02 00
+	>b290	81b290	0a 00 85 00 0a 00 04 00 01 00 2a 00 2b 00 03 00
+	>b2a0	81b2a0	28 00 29 00 8d 00 0c 00 0d 00 0e 00 05 00 8d 00
+	>b2b0	81b2b0	0c 00 0d 00 0e 00 05 00 04 00 3d 00 4d 00 4f 00
+	>b2c0	81b2c0	4a 00 2e 00 2f 00 30 00 31 00 2f 00 06 00 3d 00
+	>b2d0	81b2d0	4d 00 4f 00 4a 00 34 00 34 00 34 00 34 00 34 00
+	>b2e0	81b2e0	31 00 2f 00 30 00 31 00 2f 00 93 00 93 00 93 00
+	>b2f0	81b2f0	93 00 93 00 5a 00 5e 00 5f 00 60 00 37 00 5a 00
+	>b300	81b300	61 00 5f 00 60 00 37 00 9f 00 a0 00 a1 00 a2 00
+	>b310	81b310	a3 00 ae 00 af 00 b0 00 b0 00 b1 00 b3 00 b4 00
+	>b320	81b320	b5 00 b6 00 af 00 b8 00 a1 00 b9 00 b5 00 ba 00
+	>b330	81b330	03 00 01 00 03 00 06 00 01 00 03 00 06 00 03 00
+	>b340	81b340	06 00 01 00 34 00 c8 00 c9 00 ca 00 93 00 03 00
+	>b350	81b350	04 00 ce 00 01 00 04 00 5a 00 d4 00 d5 00 d6 00
+	>b360	81b360	01 00 d9 00 0a 00 02 00 06 00 01 00 0a 00 01 00
+	>b370	81b370	0a 00 0a 00 00 00 d9 00 02 00 03 00 05 00 02 00
+	>b380	81b380	dc 00 dd 00 0a 00 02 00 0a 00 5a 00 d4 00 d5 00
+	>b390	81b390	d6 00 01 00 31 00 2f 00 30 00 31 00 59 00 e4 00
+	>b3a0	81b3a0	e5 00 98 00 60 00 37 00 9f 00 e8 00 b6 00 af 00
+	>b3b0	81b3b0	e9 00 ea 00 eb 00 b1 00 ec 00 a3 00 03 00 04 00
+	>b3c0	81b3c0	04 00 1b 00 04 00 03 00 04 00 1a 00 01 00 04 00
+	>b3d0	81b3d0	03 00 1a 00 03 00 06 00 1a 00 1a 00 04 00 04 00
+	>b3e0	81b3e0	1a 00 04 00 03 00 1a 00 06 00 06 00 01 00 03 00
+	>b3f0	81b3f0	39 00 4b 00 4c 00 4a 00 34 00 c8 00 c9 00 ca 00
+	>b400	81b400	93 00 01 00 39 00 41 00 4c 00 4a 00 d9 00 3d 00
+	>b410	81b410	4d 00 4f 00 4a 00 2e 00 2f 00 30 00 31 00 59 00
+	>b420	81b420	2e 00 2f 00 30 00 31 00 59 00 01 00 39 00 41 00
+	>b430	81b430	4c 00 4a 00 06 00 ba 00 ed 00 b5 00 ea 00 01 00
+	>b440	81b440	ef 00 f0 00 f1 00 06 00 69 00 6a 00 6b 00 6c 00
+	>b450	81b450	06 00 04 00 01 00 04 00 01 00 04 00 0a 00 7f 00
+	>b460	81b460	04 00 04 00 02 00 0a 00 85 00 0a 00 04 00 01 00
+412	>b470	81b470	01 00 02 00 03 00 04 00			row3 .binary "outlaw_row3.blk"
+	>b478	81b478	01 00 0f 00 10 00 11 00 12 00 03 00 01 00 02 00
+	>b488	81b488	1b 00 04 00 01 00 01 00 02 00 03 00 04 00 01 00
+	>b498	81b498	02 00 03 00 0a 00 03 00 04 00 01 00 22 00 23 00
+	>b4a8	81b4a8	24 00 01 00 02 00 28 00 29 00 00 00 04 00 2e 00
+	>b4b8	81b4b8	2f 00 30 00 31 00 2f 00 35 00 35 00 35 00 35 00
+	>b4c8	81b4c8	35 00 02 00 39 00 41 00 42 00 35 00 0a 00 3d 00
+	>b4d8	81b4d8	4d 00 4e 00 4a 00 04 00 00 00 01 00 52 00 4a 00
+	>b4e8	81b4e8	0a 00 3d 00 48 00 49 00 4a 00 31 00 2f 00 30 00
+	>b4f8	81b4f8	31 00 2f 00 31 00 2f 00 30 00 31 00 59 00 5a 00
+	>b508	81b508	5b 00 5c 00 5d 00 37 00 63 00 64 00 11 00 12 00
+	>b518	81b518	03 00 6d 00 6e 00 6f 00 70 00 0a 00 06 00 04 00
+	>b528	81b528	06 00 06 00 01 00 03 00 80 00 04 00 01 00 04 00
+	>b538	81b538	86 00 87 00 88 00 02 00 02 00 2c 00 2d 00 0a 00
+	>b548	81b548	2a 00 2b 00 8e 00 8f 00 11 00 12 00 03 00 63 00
+	>b558	81b558	64 00 11 00 12 00 03 00 01 00 39 00 3a 00 55 00
+	>b568	81b568	4a 00 2e 00 2f 00 30 00 31 00 2f 00 0a 00 39 00
+	>b578	81b578	3a 00 55 00 4a 00 35 00 35 00 35 00 35 00 35 00
+	>b588	81b588	31 00 2f 00 30 00 31 00 2f 00 94 00 94 00 94 00
+	>b598	81b598	94 00 94 00 5a 00 5b 00 5c 00 5d 00 37 00 5a 00
+	>b5a8	81b5a8	95 00 96 00 5d 00 37 00 a4 00 a5 00 a6 00 a7 00
+	>b5b8	81b5b8	a8 00 a6 00 a8 00 a6 00 a7 00 a8 00 a7 00 a8 00
+	>b5c8	81b5c8	a6 00 a8 00 a6 00 a7 00 a6 00 a8 00 a5 00 bb 00
+	>b5d8	81b5d8	02 00 03 00 0a 00 03 00 04 00 02 00 03 00 bf 00
+	>b5e8	81b5e8	c0 00 04 00 35 00 cb 00 cc 00 cd 00 94 00 01 00
+	>b5f8	81b5f8	02 00 cf 00 04 00 01 00 5a 00 5b 00 5c 00 d7 00
+	>b608	81b608	d8 00 d9 00 06 00 02 00 02 00 03 00 db 00 01 00
+	>b618	81b618	03 00 04 00 0a 00 d9 00 0a 00 05 00 01 00 03 00
+	>b628	81b628	5a 00 de 00 00 00 0a 00 03 00 5a 00 5b 00 5c 00
+	>b638	81b638	d7 00 d8 00 31 00 2f 00 30 00 31 00 59 00 94 00
+	>b648	81b648	e6 00 99 00 5d 00 37 00 a4 00 a5 00 a6 00 a7 00
+	>b658	81b658	a8 00 a6 00 a8 00 a6 00 a7 00 a8 00 01 00 02 00
+	>b668	81b668	03 00 1c 00 1d 00 01 00 02 00 1b 00 04 00 01 00
+	>b678	81b678	02 00 1b 00 0a 00 03 00 1b 00 1b 00 02 00 03 00
+	>b688	81b688	1b 00 01 00 02 00 1b 00 01 00 03 00 04 00 0a 00
+	>b698	81b698	3d 00 4d 00 4e 00 4a 00 35 00 cb 00 cc 00 cd 00
+	>b6a8	81b6a8	94 00 db 00 3d 00 48 00 49 00 4a 00 d9 00 39 00
+	>b6b8	81b6b8	3a 00 55 00 4a 00 2e 00 2f 00 30 00 31 00 59 00
+	>b6c8	81b6c8	2e 00 2f 00 30 00 31 00 59 00 0a 00 3d 00 48 00
+	>b6d8	81b6d8	49 00 4a 00 04 00 a4 00 a5 00 a6 00 a8 00 04 00
+	>b6e8	81b6e8	f2 00 f3 00 f4 00 04 00 6d 00 6e 00 6f 00 70 00
+	>b6f8	81b6f8	0a 00 06 00 04 00 06 00 06 00 01 00 03 00 80 00
+	>b708	81b708	04 00 01 00 04 00 86 00 87 00 88 00 02 00 02 00
+413	>b718	81b718	05 00 03 00 00 00 05 00			row4 .binary "outlaw_row4.blk"
+	>b720	81b720	04 00 13 00 06 00 14 00 15 00 16 00 05 00 03 00
+	>b730	81b730	1c 00 1d 00 04 00 05 00 03 00 00 00 05 00 04 00
+	>b740	81b740	01 00 00 00 00 00 01 00 05 00 05 00 25 00 26 00
+	>b750	81b750	27 00 04 00 01 00 2a 00 2b 00 01 00 05 00 2e 00
+	>b760	81b760	2f 00 30 00 31 00 2f 00 36 00 37 00 37 00 37 00
+	>b770	81b770	37 00 0a 00 43 00 44 00 45 00 46 00 01 00 39 00
+	>b780	81b780	4b 00 4c 00 4a 00 06 00 01 00 04 00 53 00 4a 00
+	>b790	81b790	06 00 39 00 4b 00 4c 00 4a 00 31 00 2f 00 30 00
+	>b7a0	81b7a0	31 00 2f 00 31 00 2f 00 30 00 31 00 59 00 5a 00
+	>b7b0	81b7b0	5e 00 5f 00 60 00 37 00 13 00 06 00 14 00 15 00
+	>b7c0	81b7c0	16 00 71 00 72 00 73 00 74 00 75 00 06 00 7a 00
+	>b7d0	81b7d0	7b 00 00 00 01 00 0a 00 47 00 81 00 82 00 04 00
+	>b7e0	81b7e0	01 00 89 00 02 00 01 00 0a 00 01 00 00 00 00 00
+	>b7f0	81b7f0	2c 00 2d 00 13 00 06 00 14 00 15 00 16 00 13 00
+	>b800	81b800	06 00 14 00 15 00 16 00 04 00 3d 00 3e 00 90 00
+	>b810	81b810	4a 00 2e 00 2f 00 30 00 31 00 2f 00 91 00 3d 00
+	>b820	81b820	3e 00 90 00 4a 00 37 00 37 00 37 00 37 00 37 00
+	>b830	81b830	31 00 2f 00 30 00 31 00 2f 00 37 00 37 00 37 00
+	>b840	81b840	37 00 37 00 5a 00 5e 00 5f 00 60 00 37 00 5a 00
+	>b850	81b850	97 00 98 00 60 00 37 00 04 00 a9 00 01 00 03 00
+	>b860	81b860	06 00 91 00 04 00 01 00 0a 00 00 00 01 00 06 00
+	>b870	81b870	01 00 04 00 02 00 0a 00 04 00 01 00 a9 00 04 00
+	>b880	81b880	01 00 00 00 00 00 01 00 05 00 01 00 00 00 c1 00
+	>b890	81b890	c2 00 05 00 37 00 37 00 37 00 37 00 37 00 05 00
+	>b8a0	81b8a0	03 00 1c 00 1d 00 04 00 5a 00 5e 00 5f 00 60 00
+	>b8b0	81b8b0	37 00 d9 00 02 00 06 00 01 00 02 00 d9 00 04 00
+	>b8c0	81b8c0	06 00 01 00 03 00 d9 00 05 00 02 00 02 00 03 00
+	>b8d0	81b8d0	5a 00 df 00 01 00 00 00 03 00 5a 00 5e 00 5f 00
+	>b8e0	81b8e0	60 00 37 00 31 00 2f 00 30 00 31 00 59 00 37 00
+	>b8f0	81b8f0	37 00 37 00 37 00 37 00 04 00 a9 00 01 00 03 00
+	>b900	81b900	06 00 91 00 04 00 01 00 0a 00 00 00 05 00 03 00
+	>b910	81b910	00 00 05 00 1e 00 1f 00 03 00 1c 00 1d 00 04 00
+	>b920	81b920	01 00 1c 00 1d 00 01 00 1c 00 1c 00 1d 00 00 00
+	>b930	81b930	1c 00 1d 00 01 00 1c 00 1d 00 01 00 05 00 01 00
+	>b940	81b940	39 00 4b 00 4c 00 4a 00 36 00 37 00 37 00 37 00
+	>b950	81b950	37 00 d9 00 39 00 4b 00 4c 00 4a 00 d9 00 3d 00
+	>b960	81b960	3e 00 90 00 4a 00 2e 00 2f 00 30 00 31 00 59 00
+	>b970	81b970	2e 00 2f 00 30 00 31 00 59 00 06 00 39 00 4b 00
+	>b980	81b980	4c 00 4a 00 1d 00 06 00 a9 00 03 00 06 00 05 00
+	>b990	81b990	06 00 f5 00 91 00 05 00 71 00 72 00 73 00 74 00
+	>b9a0	81b9a0	75 00 06 00 7a 00 7b 00 00 00 01 00 0a 00 47 00
+	>b9b0	81b9b0	81 00 82 00 04 00 01 00 89 00 02 00 01 00 0a 00
+414	>b9c0	81b9c0	03 00 01 00 02 00 03 00			row5 .binary "outlaw_row5.blk"
+	>b9c8	81b9c8	01 00 0a 00 17 00 18 00 19 00 0a 00 03 00 01 00
+	>b9d8	81b9d8	02 00 1e 00 1f 00 03 00 01 00 02 00 03 00 01 00
+	>b9e8	81b9e8	03 00 0a 00 01 00 04 00 06 00 03 00 01 00 02 00
+	>b9f8	81b9f8	03 00 01 00 0a 00 2c 00 2d 00 04 00 06 00 2e 00
+	>ba08	81ba08	2f 00 30 00 31 00 2f 00 38 00 37 00 37 00 37 00
+	>ba18	81ba18	37 00 06 00 01 00 06 00 0a 00 47 00 0a 00 3d 00
+	>ba28	81ba28	4d 00 4f 00 4a 00 01 00 06 00 54 00 55 00 4a 00
+	>ba38	81ba38	01 00 3d 00 4d 00 4e 00 4a 00 31 00 2f 00 30 00
+	>ba48	81ba48	31 00 2f 00 31 00 2f 00 30 00 31 00 59 00 5a 00
+	>ba58	81ba58	61 00 5c 00 5d 00 37 00 0a 00 17 00 18 00 19 00
+	>ba68	81ba68	0a 00 0a 00 76 00 77 00 78 00 79 00 00 00 7c 00
+	>ba78	81ba78	7d 00 01 00 0a 00 04 00 01 00 01 00 83 00 84 00
+	>ba88	81ba88	8a 00 8b 00 8c 00 02 00 04 00 03 00 0a 00 01 00
+	>ba98	81ba98	04 00 06 00 0a 00 17 00 18 00 19 00 0a 00 0a 00
+	>baa8	81baa8	17 00 18 00 19 00 0a 00 05 00 39 00 41 00 4c 00
+	>bab8	81bab8	4a 00 2e 00 2f 00 30 00 31 00 2f 00 06 00 39 00
+	>bac8	81bac8	41 00 4c 00 4a 00 37 00 37 00 37 00 37 00 37 00
+	>bad8	81bad8	31 00 2f 00 30 00 31 00 2f 00 37 00 37 00 37 00
+	>bae8	81bae8	37 00 37 00 5a 00 5b 00 5c 00 5d 00 37 00 5a 00
+	>baf8	81baf8	5b 00 99 00 9a 00 37 00 00 00 aa 00 ab 00 ac 00
+	>bb08	81bb08	ad 00 ad 00 ac 00 ad 00 ad 00 b2 00 ac 00 ad 00
+	>bb18	81bb18	ac 00 ad 00 b2 00 ac 00 ad 00 b2 00 bc 00 ab 00
+	>bb28	81bb28	bd 00 be 00 01 00 04 00 06 00 03 00 0a 00 06 00
+	>bb38	81bb38	c3 00 c4 00 37 00 37 00 37 00 37 00 37 00 03 00
+	>bb48	81bb48	01 00 02 00 d0 00 0a 00 5a 00 61 00 5c 00 5d 00
+	>bb58	81bb58	37 00 da 00 01 00 02 00 0a 00 02 00 d9 00 01 00
+	>bb68	81bb68	03 00 0a 00 04 00 d9 00 01 00 0a 00 05 00 01 00
+	>bb78	81bb78	5a 00 e0 00 e1 00 01 00 00 00 5a 00 5b 00 5c 00
+	>bb88	81bb88	5d 00 37 00 31 00 2f 00 30 00 31 00 59 00 37 00
+	>bb98	81bb98	37 00 37 00 37 00 e7 00 00 00 aa 00 ab 00 ac 00
+	>bba8	81bba8	ad 00 ad 00 ac 00 ad 00 ad 00 b2 00 03 00 01 00
+	>bbb8	81bbb8	02 00 03 00 01 00 03 00 01 00 02 00 1e 00 1f 00
+	>bbc8	81bbc8	1f 00 0a 00 1e 00 1f 00 06 00 03 00 1e 00 1f 00
+	>bbd8	81bbd8	03 00 1e 00 bd 00 be 00 1e 00 1f 00 06 00 0a 00
+	>bbe8	81bbe8	3d 00 4d 00 4f 00 4a 00 38 00 37 00 37 00 37 00
+	>bbf8	81bbf8	37 00 d9 00 3d 00 4d 00 4e 00 4a 00 d9 00 39 00
+	>bc08	81bc08	41 00 4c 00 4a 00 2e 00 2f 00 30 00 31 00 59 00
+	>bc18	81bc18	2e 00 2f 00 30 00 31 00 59 00 01 00 3d 00 4d 00
+	>bc28	81bc28	4f 00 4a 00 1e 00 1f 00 aa 00 ab 00 ad 00 06 00
+	>bc38	81bc38	06 00 f6 00 f7 00 00 00 0a 00 76 00 77 00 78 00
+	>bc48	81bc48	79 00 00 00 7c 00 7d 00 01 00 0a 00 04 00 01 00
+	>bc58	81bc58	01 00 83 00 84 00 8a 00 8b 00 8c 00 02 00 04 00
+415							.bend
+416							.send ; sDataBank
+
+418							.databank `DataBankStart				; make sure we are back into the DataBank err Bank
+
+420	.023e	80823e					map_InitEmptyScreen_xx
+421	.023e	80823e					_ASSERT_JSR
+422	.023e	80823e	08		php			php
+66:4	.023f	80823f	e2 30		sep #$30		SEP #$30
+424:3	.0241	808241	a9 08		lda #$08		lda #8							; to draw the screen by looping it
+425	.0243	808243	85 0f		sta $0f			sta MapSubRowTop
+426	.0245	808245	64 10		stz $10			stz MapSubRowBot				; top    = block 511, subChar 4, VRAM row 63
+70:4	.0247	808247	c2 30		rep #$30		REP #$30
+428:3	.0249	808249	a9 00 02	lda #$0200		lda #512
+429	.024c	80824c	85 0d		sta $0d			sta MapBlockIndexBot			; bot starts at the last map position, -1
+430	.024e	80824e	a9 ff 01	lda #$01ff		lda #511
+431	.0251	808251	85 0b		sta $0b			sta MapBlockIndexTop			; top starts at 511 so we can use the system
+432	.0253	808253	a9 e0 07	lda #$07e0		lda #63*32
+433	.0256	808256	85 11		sta $11			sta MapVRAMTop
+434	.0258	808258	64 13		stz $13			stz MapVRAMBot
+435	.025a	80825a	a9 20 01	lda #$0120		lda #512-224
+436	.025d	80825d	85 17		sta $17			sta ScreenYOffset				; start the Y at the bottom of the screen
+437	.025f	80825f	64 19		stz $19			stz MapBufferTarget			; we want this to be negative, so set 0
+438	.0261	808261	c6 19		dec $19			dec MapBufferTarget			; dec 1 to be -1
+439	.0263	808263	28		plp			plp
+440	.0264	808264	60		rts			rts
+
+442	.0265	808265					map_fillRowBufferTopEdge_xx
+443	.0265	808265					_ASSERT_JSR
+444	.0265	808265	08		php			php
+70:4	.0266	808266	c2 30		rep #$30		REP #$30
+446:3	.0268	808268	a5 11		lda $11			lda MapVRAMTop			; which row do we need to write it to
+447	.026a	80826a	85 19		sta $19			sta MapBufferTarget	; MapVramTop is premultiplied by 32
+448	.026c	80826c	ba		tsx			tsx
+449	.026d	80826d	86 af		stx $af			stx <MapStackStore,d
+450	.026f	80826f	a2 ae 00	ldx #$00ae		ldx #<>MapColumnBufferEnd
+451	.0272	808272	9a		txs			txs								; set the stack to the buffer
+452	.0273	808273	a4 0b		ldy $0b			ldy MapBlockIndexTop			; which block do we want
+453	.0275	808275	a5 0f		lda $0f			lda MapSubRowTop
+454	.0277	808277	29 ff 00	and #$00ff		and #$ff
+455	.027a	80827a	aa		tax			tax
+456	.027b	80827b	80 16		bra $808293		bra map_fillRowBufferEdgeCommon
+
+458	.027d	80827d					map_fillRowBufferBotEdge_xx
+459	.027d	80827d					_ASSERT_JSR
+460	.027d	80827d	08		php			php
+70:4	.027e	80827e	c2 30		rep #$30		REP #$30
+462:3	.0280	808280	a5 13		lda $13			lda MapVRAMBot			; which row do we need to write it to
+463	.0282	808282	85 19		sta $19			sta MapBufferTarget	; MapVRAMBot is premultiplied by 32
+464	.0284	808284	ba		tsx			tsx
+465	.0285	808285	86 af		stx $af			stx <MapStackStore,d
+466	.0287	808287	a2 ae 00	ldx #$00ae		ldx #<>MapColumnBufferEnd
+467	.028a	80828a	9a		txs			txs								; set the stack to the buffer
+468	.028b	80828b	a4 0d		ldy $0d			ldy MapBlockIndexBot			; which block do we want
+469	.028d	80828d	a5 10		lda $10			lda MapSubRowBot
+470	.028f	80828f	29 ff 00	and #$00ff		and #$ff
+471	.0292	808292	aa		tax			tax
+472							; bra map_fillRowBufferEdgeCommon
+473							; fall through
+474	.0293	808293					map_fillRowBufferEdgeCommon
+475	.0293	808293	7c 96 82	jmp ($808296,x)		jmp (+,x)
+476	>0296	808296	a0 82 b3 83 c6 84 d9 85		+ .word <>(_Row1,_Row2,_Row3,_Row4,_Row5)
+	>029e	80829e	ec 86
+477	.02a0	8082a0					_Row1
+533	.02a0	8082a0	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
+534	.02a3	8082a3	29 ff 00	and #$00ff		and #$ff
+535	.02a6	8082a6	85 15		sta $15			sta MapTempWord
+536	.02a8	8082a8	0a		asl a			asl a
+537	.02a9	8082a9	0a		asl a			asl a
+538	.02aa	8082aa	65 15		adc $15			adc MapTempWord; x5
+539	.02ac	8082ac	0a		asl a			asl a ; x10
+540	.02ad	8082ad	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.02ae	8082ae	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+543	.02b1	8082b1	48		pha			pha
+544	.02b2	8082b2	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+545	.02b5	8082b5	48		pha			pha
+546	.02b6	8082b6	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+547	.02b9	8082b9	48		pha			pha
+548	.02ba	8082ba	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+549	.02bd	8082bd	48		pha			pha
+550	.02be	8082be	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+551	.02c1	8082c1	48		pha			pha
+533	.02c2	8082c2	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
+534	.02c5	8082c5	29 ff 00	and #$00ff		and #$ff
+535	.02c8	8082c8	85 15		sta $15			sta MapTempWord
+536	.02ca	8082ca	0a		asl a			asl a
+537	.02cb	8082cb	0a		asl a			asl a
+538	.02cc	8082cc	65 15		adc $15			adc MapTempWord; x5
+539	.02ce	8082ce	0a		asl a			asl a ; x10
+540	.02cf	8082cf	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.02d0	8082d0	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+543	.02d3	8082d3	48		pha			pha
+544	.02d4	8082d4	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+545	.02d7	8082d7	48		pha			pha
+546	.02d8	8082d8	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+547	.02db	8082db	48		pha			pha
+548	.02dc	8082dc	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+549	.02df	8082df	48		pha			pha
+550	.02e0	8082e0	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+551	.02e3	8082e3	48		pha			pha
+533	.02e4	8082e4	b9 20 a9	lda $81a920,y		lda MapData.col6,y
+534	.02e7	8082e7	29 ff 00	and #$00ff		and #$ff
+535	.02ea	8082ea	85 15		sta $15			sta MapTempWord
+536	.02ec	8082ec	0a		asl a			asl a
+537	.02ed	8082ed	0a		asl a			asl a
+538	.02ee	8082ee	65 15		adc $15			adc MapTempWord; x5
+539	.02f0	8082f0	0a		asl a			asl a ; x10
+540	.02f1	8082f1	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.02f2	8082f2	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+543	.02f5	8082f5	48		pha			pha
+544	.02f6	8082f6	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+545	.02f9	8082f9	48		pha			pha
+546	.02fa	8082fa	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+547	.02fd	8082fd	48		pha			pha
+548	.02fe	8082fe	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+549	.0301	808301	48		pha			pha
+550	.0302	808302	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+551	.0305	808305	48		pha			pha
+533	.0306	808306	b9 20 a7	lda $81a720,y		lda MapData.col5,y
+534	.0309	808309	29 ff 00	and #$00ff		and #$ff
+535	.030c	80830c	85 15		sta $15			sta MapTempWord
+536	.030e	80830e	0a		asl a			asl a
+537	.030f	80830f	0a		asl a			asl a
+538	.0310	808310	65 15		adc $15			adc MapTempWord; x5
+539	.0312	808312	0a		asl a			asl a ; x10
+540	.0313	808313	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.0314	808314	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+543	.0317	808317	48		pha			pha
+544	.0318	808318	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+545	.031b	80831b	48		pha			pha
+546	.031c	80831c	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+547	.031f	80831f	48		pha			pha
+548	.0320	808320	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+549	.0323	808323	48		pha			pha
+550	.0324	808324	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+551	.0327	808327	48		pha			pha
+533	.0328	808328	b9 20 a5	lda $81a520,y		lda MapData.col4,y
+534	.032b	80832b	29 ff 00	and #$00ff		and #$ff
+535	.032e	80832e	85 15		sta $15			sta MapTempWord
+536	.0330	808330	0a		asl a			asl a
+537	.0331	808331	0a		asl a			asl a
+538	.0332	808332	65 15		adc $15			adc MapTempWord; x5
+539	.0334	808334	0a		asl a			asl a ; x10
+540	.0335	808335	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.0336	808336	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+543	.0339	808339	48		pha			pha
+544	.033a	80833a	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+545	.033d	80833d	48		pha			pha
+546	.033e	80833e	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+547	.0341	808341	48		pha			pha
+548	.0342	808342	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+549	.0345	808345	48		pha			pha
+550	.0346	808346	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+551	.0349	808349	48		pha			pha
+533	.034a	80834a	b9 20 a3	lda $81a320,y		lda MapData.col3,y
+534	.034d	80834d	29 ff 00	and #$00ff		and #$ff
+535	.0350	808350	85 15		sta $15			sta MapTempWord
+536	.0352	808352	0a		asl a			asl a
+537	.0353	808353	0a		asl a			asl a
+538	.0354	808354	65 15		adc $15			adc MapTempWord; x5
+539	.0356	808356	0a		asl a			asl a ; x10
+540	.0357	808357	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.0358	808358	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+543	.035b	80835b	48		pha			pha
+544	.035c	80835c	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+545	.035f	80835f	48		pha			pha
+546	.0360	808360	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+547	.0363	808363	48		pha			pha
+548	.0364	808364	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+549	.0367	808367	48		pha			pha
+550	.0368	808368	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+551	.036b	80836b	48		pha			pha
+533	.036c	80836c	b9 20 a1	lda $81a120,y		lda MapData.col2,y
+534	.036f	80836f	29 ff 00	and #$00ff		and #$ff
+535	.0372	808372	85 15		sta $15			sta MapTempWord
+536	.0374	808374	0a		asl a			asl a
+537	.0375	808375	0a		asl a			asl a
+538	.0376	808376	65 15		adc $15			adc MapTempWord; x5
+539	.0378	808378	0a		asl a			asl a ; x10
+540	.0379	808379	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.037a	80837a	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+543	.037d	80837d	48		pha			pha
+544	.037e	80837e	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+545	.0381	808381	48		pha			pha
+546	.0382	808382	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+547	.0385	808385	48		pha			pha
+548	.0386	808386	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+549	.0389	808389	48		pha			pha
+550	.038a	80838a	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+551	.038d	80838d	48		pha			pha
+533	.038e	80838e	b9 20 9f	lda $819f20,y		lda MapData.col1,y
+534	.0391	808391	29 ff 00	and #$00ff		and #$ff
+535	.0394	808394	85 15		sta $15			sta MapTempWord
+536	.0396	808396	0a		asl a			asl a
+537	.0397	808397	0a		asl a			asl a
+538	.0398	808398	65 15		adc $15			adc MapTempWord; x5
+539	.039a	80839a	0a		asl a			asl a ; x10
+540	.039b	80839b	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.039c	80839c	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+543	.039f	80839f	48		pha			pha
+544	.03a0	8083a0	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+545	.03a3	8083a3	48		pha			pha
+546	.03a4	8083a4	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+547	.03a7	8083a7	48		pha			pha
+548	.03a8	8083a8	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+549	.03ab	8083ab	48		pha			pha
+550	.03ac	8083ac	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+551	.03af	8083af	48		pha			pha
+486	.03b0	8083b0	4c fc 87	jmp $8087fc		jmp _exit
+487	.03b3	8083b3					_Row2
+533	.03b3	8083b3	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
+534	.03b6	8083b6	29 ff 00	and #$00ff		and #$ff
+535	.03b9	8083b9	85 15		sta $15			sta MapTempWord
+536	.03bb	8083bb	0a		asl a			asl a
+537	.03bc	8083bc	0a		asl a			asl a
+538	.03bd	8083bd	65 15		adc $15			adc MapTempWord; x5
+539	.03bf	8083bf	0a		asl a			asl a ; x10
+540	.03c0	8083c0	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.03c1	8083c1	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+543	.03c4	8083c4	48		pha			pha
+544	.03c5	8083c5	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+545	.03c8	8083c8	48		pha			pha
+546	.03c9	8083c9	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+547	.03cc	8083cc	48		pha			pha
+548	.03cd	8083cd	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+549	.03d0	8083d0	48		pha			pha
+550	.03d1	8083d1	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+551	.03d4	8083d4	48		pha			pha
+533	.03d5	8083d5	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
+534	.03d8	8083d8	29 ff 00	and #$00ff		and #$ff
+535	.03db	8083db	85 15		sta $15			sta MapTempWord
+536	.03dd	8083dd	0a		asl a			asl a
+537	.03de	8083de	0a		asl a			asl a
+538	.03df	8083df	65 15		adc $15			adc MapTempWord; x5
+539	.03e1	8083e1	0a		asl a			asl a ; x10
+540	.03e2	8083e2	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.03e3	8083e3	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+543	.03e6	8083e6	48		pha			pha
+544	.03e7	8083e7	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+545	.03ea	8083ea	48		pha			pha
+546	.03eb	8083eb	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+547	.03ee	8083ee	48		pha			pha
+548	.03ef	8083ef	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+549	.03f2	8083f2	48		pha			pha
+550	.03f3	8083f3	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+551	.03f6	8083f6	48		pha			pha
+533	.03f7	8083f7	b9 20 a9	lda $81a920,y		lda MapData.col6,y
+534	.03fa	8083fa	29 ff 00	and #$00ff		and #$ff
+535	.03fd	8083fd	85 15		sta $15			sta MapTempWord
+536	.03ff	8083ff	0a		asl a			asl a
+537	.0400	808400	0a		asl a			asl a
+538	.0401	808401	65 15		adc $15			adc MapTempWord; x5
+539	.0403	808403	0a		asl a			asl a ; x10
+540	.0404	808404	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.0405	808405	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+543	.0408	808408	48		pha			pha
+544	.0409	808409	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+545	.040c	80840c	48		pha			pha
+546	.040d	80840d	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+547	.0410	808410	48		pha			pha
+548	.0411	808411	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+549	.0414	808414	48		pha			pha
+550	.0415	808415	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+551	.0418	808418	48		pha			pha
+533	.0419	808419	b9 20 a7	lda $81a720,y		lda MapData.col5,y
+534	.041c	80841c	29 ff 00	and #$00ff		and #$ff
+535	.041f	80841f	85 15		sta $15			sta MapTempWord
+536	.0421	808421	0a		asl a			asl a
+537	.0422	808422	0a		asl a			asl a
+538	.0423	808423	65 15		adc $15			adc MapTempWord; x5
+539	.0425	808425	0a		asl a			asl a ; x10
+540	.0426	808426	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.0427	808427	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+543	.042a	80842a	48		pha			pha
+544	.042b	80842b	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+545	.042e	80842e	48		pha			pha
+546	.042f	80842f	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+547	.0432	808432	48		pha			pha
+548	.0433	808433	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+549	.0436	808436	48		pha			pha
+550	.0437	808437	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+551	.043a	80843a	48		pha			pha
+533	.043b	80843b	b9 20 a5	lda $81a520,y		lda MapData.col4,y
+534	.043e	80843e	29 ff 00	and #$00ff		and #$ff
+535	.0441	808441	85 15		sta $15			sta MapTempWord
+536	.0443	808443	0a		asl a			asl a
+537	.0444	808444	0a		asl a			asl a
+538	.0445	808445	65 15		adc $15			adc MapTempWord; x5
+539	.0447	808447	0a		asl a			asl a ; x10
+540	.0448	808448	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.0449	808449	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+543	.044c	80844c	48		pha			pha
+544	.044d	80844d	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+545	.0450	808450	48		pha			pha
+546	.0451	808451	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+547	.0454	808454	48		pha			pha
+548	.0455	808455	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+549	.0458	808458	48		pha			pha
+550	.0459	808459	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+551	.045c	80845c	48		pha			pha
+533	.045d	80845d	b9 20 a3	lda $81a320,y		lda MapData.col3,y
+534	.0460	808460	29 ff 00	and #$00ff		and #$ff
+535	.0463	808463	85 15		sta $15			sta MapTempWord
+536	.0465	808465	0a		asl a			asl a
+537	.0466	808466	0a		asl a			asl a
+538	.0467	808467	65 15		adc $15			adc MapTempWord; x5
+539	.0469	808469	0a		asl a			asl a ; x10
+540	.046a	80846a	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.046b	80846b	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+543	.046e	80846e	48		pha			pha
+544	.046f	80846f	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+545	.0472	808472	48		pha			pha
+546	.0473	808473	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+547	.0476	808476	48		pha			pha
+548	.0477	808477	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+549	.047a	80847a	48		pha			pha
+550	.047b	80847b	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+551	.047e	80847e	48		pha			pha
+533	.047f	80847f	b9 20 a1	lda $81a120,y		lda MapData.col2,y
+534	.0482	808482	29 ff 00	and #$00ff		and #$ff
+535	.0485	808485	85 15		sta $15			sta MapTempWord
+536	.0487	808487	0a		asl a			asl a
+537	.0488	808488	0a		asl a			asl a
+538	.0489	808489	65 15		adc $15			adc MapTempWord; x5
+539	.048b	80848b	0a		asl a			asl a ; x10
+540	.048c	80848c	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.048d	80848d	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+543	.0490	808490	48		pha			pha
+544	.0491	808491	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+545	.0494	808494	48		pha			pha
+546	.0495	808495	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+547	.0498	808498	48		pha			pha
+548	.0499	808499	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+549	.049c	80849c	48		pha			pha
+550	.049d	80849d	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+551	.04a0	8084a0	48		pha			pha
+533	.04a1	8084a1	b9 20 9f	lda $819f20,y		lda MapData.col1,y
+534	.04a4	8084a4	29 ff 00	and #$00ff		and #$ff
+535	.04a7	8084a7	85 15		sta $15			sta MapTempWord
+536	.04a9	8084a9	0a		asl a			asl a
+537	.04aa	8084aa	0a		asl a			asl a
+538	.04ab	8084ab	65 15		adc $15			adc MapTempWord; x5
+539	.04ad	8084ad	0a		asl a			asl a ; x10
+540	.04ae	8084ae	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.04af	8084af	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+543	.04b2	8084b2	48		pha			pha
+544	.04b3	8084b3	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+545	.04b6	8084b6	48		pha			pha
+546	.04b7	8084b7	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+547	.04ba	8084ba	48		pha			pha
+548	.04bb	8084bb	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+549	.04be	8084be	48		pha			pha
+550	.04bf	8084bf	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+551	.04c2	8084c2	48		pha			pha
+496	.04c3	8084c3	4c fc 87	jmp $8087fc		jmp _exit
+497	.04c6	8084c6					_Row3
+533	.04c6	8084c6	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
+534	.04c9	8084c9	29 ff 00	and #$00ff		and #$ff
+535	.04cc	8084cc	85 15		sta $15			sta MapTempWord
+536	.04ce	8084ce	0a		asl a			asl a
+537	.04cf	8084cf	0a		asl a			asl a
+538	.04d0	8084d0	65 15		adc $15			adc MapTempWord; x5
+539	.04d2	8084d2	0a		asl a			asl a ; x10
+540	.04d3	8084d3	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.04d4	8084d4	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+543	.04d7	8084d7	48		pha			pha
+544	.04d8	8084d8	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+545	.04db	8084db	48		pha			pha
+546	.04dc	8084dc	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+547	.04df	8084df	48		pha			pha
+548	.04e0	8084e0	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+549	.04e3	8084e3	48		pha			pha
+550	.04e4	8084e4	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+551	.04e7	8084e7	48		pha			pha
+533	.04e8	8084e8	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
+534	.04eb	8084eb	29 ff 00	and #$00ff		and #$ff
+535	.04ee	8084ee	85 15		sta $15			sta MapTempWord
+536	.04f0	8084f0	0a		asl a			asl a
+537	.04f1	8084f1	0a		asl a			asl a
+538	.04f2	8084f2	65 15		adc $15			adc MapTempWord; x5
+539	.04f4	8084f4	0a		asl a			asl a ; x10
+540	.04f5	8084f5	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.04f6	8084f6	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+543	.04f9	8084f9	48		pha			pha
+544	.04fa	8084fa	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+545	.04fd	8084fd	48		pha			pha
+546	.04fe	8084fe	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+547	.0501	808501	48		pha			pha
+548	.0502	808502	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+549	.0505	808505	48		pha			pha
+550	.0506	808506	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+551	.0509	808509	48		pha			pha
+533	.050a	80850a	b9 20 a9	lda $81a920,y		lda MapData.col6,y
+534	.050d	80850d	29 ff 00	and #$00ff		and #$ff
+535	.0510	808510	85 15		sta $15			sta MapTempWord
+536	.0512	808512	0a		asl a			asl a
+537	.0513	808513	0a		asl a			asl a
+538	.0514	808514	65 15		adc $15			adc MapTempWord; x5
+539	.0516	808516	0a		asl a			asl a ; x10
+540	.0517	808517	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.0518	808518	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+543	.051b	80851b	48		pha			pha
+544	.051c	80851c	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+545	.051f	80851f	48		pha			pha
+546	.0520	808520	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+547	.0523	808523	48		pha			pha
+548	.0524	808524	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+549	.0527	808527	48		pha			pha
+550	.0528	808528	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+551	.052b	80852b	48		pha			pha
+533	.052c	80852c	b9 20 a7	lda $81a720,y		lda MapData.col5,y
+534	.052f	80852f	29 ff 00	and #$00ff		and #$ff
+535	.0532	808532	85 15		sta $15			sta MapTempWord
+536	.0534	808534	0a		asl a			asl a
+537	.0535	808535	0a		asl a			asl a
+538	.0536	808536	65 15		adc $15			adc MapTempWord; x5
+539	.0538	808538	0a		asl a			asl a ; x10
+540	.0539	808539	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.053a	80853a	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+543	.053d	80853d	48		pha			pha
+544	.053e	80853e	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+545	.0541	808541	48		pha			pha
+546	.0542	808542	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+547	.0545	808545	48		pha			pha
+548	.0546	808546	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+549	.0549	808549	48		pha			pha
+550	.054a	80854a	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+551	.054d	80854d	48		pha			pha
+533	.054e	80854e	b9 20 a5	lda $81a520,y		lda MapData.col4,y
+534	.0551	808551	29 ff 00	and #$00ff		and #$ff
+535	.0554	808554	85 15		sta $15			sta MapTempWord
+536	.0556	808556	0a		asl a			asl a
+537	.0557	808557	0a		asl a			asl a
+538	.0558	808558	65 15		adc $15			adc MapTempWord; x5
+539	.055a	80855a	0a		asl a			asl a ; x10
+540	.055b	80855b	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.055c	80855c	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+543	.055f	80855f	48		pha			pha
+544	.0560	808560	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+545	.0563	808563	48		pha			pha
+546	.0564	808564	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+547	.0567	808567	48		pha			pha
+548	.0568	808568	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+549	.056b	80856b	48		pha			pha
+550	.056c	80856c	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+551	.056f	80856f	48		pha			pha
+533	.0570	808570	b9 20 a3	lda $81a320,y		lda MapData.col3,y
+534	.0573	808573	29 ff 00	and #$00ff		and #$ff
+535	.0576	808576	85 15		sta $15			sta MapTempWord
+536	.0578	808578	0a		asl a			asl a
+537	.0579	808579	0a		asl a			asl a
+538	.057a	80857a	65 15		adc $15			adc MapTempWord; x5
+539	.057c	80857c	0a		asl a			asl a ; x10
+540	.057d	80857d	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.057e	80857e	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+543	.0581	808581	48		pha			pha
+544	.0582	808582	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+545	.0585	808585	48		pha			pha
+546	.0586	808586	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+547	.0589	808589	48		pha			pha
+548	.058a	80858a	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+549	.058d	80858d	48		pha			pha
+550	.058e	80858e	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+551	.0591	808591	48		pha			pha
+533	.0592	808592	b9 20 a1	lda $81a120,y		lda MapData.col2,y
+534	.0595	808595	29 ff 00	and #$00ff		and #$ff
+535	.0598	808598	85 15		sta $15			sta MapTempWord
+536	.059a	80859a	0a		asl a			asl a
+537	.059b	80859b	0a		asl a			asl a
+538	.059c	80859c	65 15		adc $15			adc MapTempWord; x5
+539	.059e	80859e	0a		asl a			asl a ; x10
+540	.059f	80859f	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.05a0	8085a0	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+543	.05a3	8085a3	48		pha			pha
+544	.05a4	8085a4	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+545	.05a7	8085a7	48		pha			pha
+546	.05a8	8085a8	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+547	.05ab	8085ab	48		pha			pha
+548	.05ac	8085ac	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+549	.05af	8085af	48		pha			pha
+550	.05b0	8085b0	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+551	.05b3	8085b3	48		pha			pha
+533	.05b4	8085b4	b9 20 9f	lda $819f20,y		lda MapData.col1,y
+534	.05b7	8085b7	29 ff 00	and #$00ff		and #$ff
+535	.05ba	8085ba	85 15		sta $15			sta MapTempWord
+536	.05bc	8085bc	0a		asl a			asl a
+537	.05bd	8085bd	0a		asl a			asl a
+538	.05be	8085be	65 15		adc $15			adc MapTempWord; x5
+539	.05c0	8085c0	0a		asl a			asl a ; x10
+540	.05c1	8085c1	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.05c2	8085c2	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+543	.05c5	8085c5	48		pha			pha
+544	.05c6	8085c6	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+545	.05c9	8085c9	48		pha			pha
+546	.05ca	8085ca	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+547	.05cd	8085cd	48		pha			pha
+548	.05ce	8085ce	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+549	.05d1	8085d1	48		pha			pha
+550	.05d2	8085d2	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+551	.05d5	8085d5	48		pha			pha
+506	.05d6	8085d6	4c fc 87	jmp $8087fc		jmp _exit
+507	.05d9	8085d9					_Row4
+533	.05d9	8085d9	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
+534	.05dc	8085dc	29 ff 00	and #$00ff		and #$ff
+535	.05df	8085df	85 15		sta $15			sta MapTempWord
+536	.05e1	8085e1	0a		asl a			asl a
+537	.05e2	8085e2	0a		asl a			asl a
+538	.05e3	8085e3	65 15		adc $15			adc MapTempWord; x5
+539	.05e5	8085e5	0a		asl a			asl a ; x10
+540	.05e6	8085e6	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.05e7	8085e7	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+543	.05ea	8085ea	48		pha			pha
+544	.05eb	8085eb	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+545	.05ee	8085ee	48		pha			pha
+546	.05ef	8085ef	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+547	.05f2	8085f2	48		pha			pha
+548	.05f3	8085f3	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+549	.05f6	8085f6	48		pha			pha
+550	.05f7	8085f7	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+551	.05fa	8085fa	48		pha			pha
+533	.05fb	8085fb	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
+534	.05fe	8085fe	29 ff 00	and #$00ff		and #$ff
+535	.0601	808601	85 15		sta $15			sta MapTempWord
+536	.0603	808603	0a		asl a			asl a
+537	.0604	808604	0a		asl a			asl a
+538	.0605	808605	65 15		adc $15			adc MapTempWord; x5
+539	.0607	808607	0a		asl a			asl a ; x10
+540	.0608	808608	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.0609	808609	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+543	.060c	80860c	48		pha			pha
+544	.060d	80860d	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+545	.0610	808610	48		pha			pha
+546	.0611	808611	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+547	.0614	808614	48		pha			pha
+548	.0615	808615	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+549	.0618	808618	48		pha			pha
+550	.0619	808619	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+551	.061c	80861c	48		pha			pha
+533	.061d	80861d	b9 20 a9	lda $81a920,y		lda MapData.col6,y
+534	.0620	808620	29 ff 00	and #$00ff		and #$ff
+535	.0623	808623	85 15		sta $15			sta MapTempWord
+536	.0625	808625	0a		asl a			asl a
+537	.0626	808626	0a		asl a			asl a
+538	.0627	808627	65 15		adc $15			adc MapTempWord; x5
+539	.0629	808629	0a		asl a			asl a ; x10
+540	.062a	80862a	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.062b	80862b	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+543	.062e	80862e	48		pha			pha
+544	.062f	80862f	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+545	.0632	808632	48		pha			pha
+546	.0633	808633	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+547	.0636	808636	48		pha			pha
+548	.0637	808637	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+549	.063a	80863a	48		pha			pha
+550	.063b	80863b	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+551	.063e	80863e	48		pha			pha
+533	.063f	80863f	b9 20 a7	lda $81a720,y		lda MapData.col5,y
+534	.0642	808642	29 ff 00	and #$00ff		and #$ff
+535	.0645	808645	85 15		sta $15			sta MapTempWord
+536	.0647	808647	0a		asl a			asl a
+537	.0648	808648	0a		asl a			asl a
+538	.0649	808649	65 15		adc $15			adc MapTempWord; x5
+539	.064b	80864b	0a		asl a			asl a ; x10
+540	.064c	80864c	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.064d	80864d	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+543	.0650	808650	48		pha			pha
+544	.0651	808651	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+545	.0654	808654	48		pha			pha
+546	.0655	808655	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+547	.0658	808658	48		pha			pha
+548	.0659	808659	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+549	.065c	80865c	48		pha			pha
+550	.065d	80865d	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+551	.0660	808660	48		pha			pha
+533	.0661	808661	b9 20 a5	lda $81a520,y		lda MapData.col4,y
+534	.0664	808664	29 ff 00	and #$00ff		and #$ff
+535	.0667	808667	85 15		sta $15			sta MapTempWord
+536	.0669	808669	0a		asl a			asl a
+537	.066a	80866a	0a		asl a			asl a
+538	.066b	80866b	65 15		adc $15			adc MapTempWord; x5
+539	.066d	80866d	0a		asl a			asl a ; x10
+540	.066e	80866e	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.066f	80866f	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+543	.0672	808672	48		pha			pha
+544	.0673	808673	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+545	.0676	808676	48		pha			pha
+546	.0677	808677	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+547	.067a	80867a	48		pha			pha
+548	.067b	80867b	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+549	.067e	80867e	48		pha			pha
+550	.067f	80867f	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+551	.0682	808682	48		pha			pha
+533	.0683	808683	b9 20 a3	lda $81a320,y		lda MapData.col3,y
+534	.0686	808686	29 ff 00	and #$00ff		and #$ff
+535	.0689	808689	85 15		sta $15			sta MapTempWord
+536	.068b	80868b	0a		asl a			asl a
+537	.068c	80868c	0a		asl a			asl a
+538	.068d	80868d	65 15		adc $15			adc MapTempWord; x5
+539	.068f	80868f	0a		asl a			asl a ; x10
+540	.0690	808690	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.0691	808691	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+543	.0694	808694	48		pha			pha
+544	.0695	808695	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+545	.0698	808698	48		pha			pha
+546	.0699	808699	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+547	.069c	80869c	48		pha			pha
+548	.069d	80869d	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+549	.06a0	8086a0	48		pha			pha
+550	.06a1	8086a1	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+551	.06a4	8086a4	48		pha			pha
+533	.06a5	8086a5	b9 20 a1	lda $81a120,y		lda MapData.col2,y
+534	.06a8	8086a8	29 ff 00	and #$00ff		and #$ff
+535	.06ab	8086ab	85 15		sta $15			sta MapTempWord
+536	.06ad	8086ad	0a		asl a			asl a
+537	.06ae	8086ae	0a		asl a			asl a
+538	.06af	8086af	65 15		adc $15			adc MapTempWord; x5
+539	.06b1	8086b1	0a		asl a			asl a ; x10
+540	.06b2	8086b2	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.06b3	8086b3	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+543	.06b6	8086b6	48		pha			pha
+544	.06b7	8086b7	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+545	.06ba	8086ba	48		pha			pha
+546	.06bb	8086bb	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+547	.06be	8086be	48		pha			pha
+548	.06bf	8086bf	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+549	.06c2	8086c2	48		pha			pha
+550	.06c3	8086c3	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+551	.06c6	8086c6	48		pha			pha
+533	.06c7	8086c7	b9 20 9f	lda $819f20,y		lda MapData.col1,y
+534	.06ca	8086ca	29 ff 00	and #$00ff		and #$ff
+535	.06cd	8086cd	85 15		sta $15			sta MapTempWord
+536	.06cf	8086cf	0a		asl a			asl a
+537	.06d0	8086d0	0a		asl a			asl a
+538	.06d1	8086d1	65 15		adc $15			adc MapTempWord; x5
+539	.06d3	8086d3	0a		asl a			asl a ; x10
+540	.06d4	8086d4	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.06d5	8086d5	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+543	.06d8	8086d8	48		pha			pha
+544	.06d9	8086d9	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+545	.06dc	8086dc	48		pha			pha
+546	.06dd	8086dd	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+547	.06e0	8086e0	48		pha			pha
+548	.06e1	8086e1	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+549	.06e4	8086e4	48		pha			pha
+550	.06e5	8086e5	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+551	.06e8	8086e8	48		pha			pha
+516	.06e9	8086e9	4c fc 87	jmp $8087fc		jmp _exit
+517	.06ec	8086ec					_Row5
+533	.06ec	8086ec	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
+534	.06ef	8086ef	29 ff 00	and #$00ff		and #$ff
+535	.06f2	8086f2	85 15		sta $15			sta MapTempWord
+536	.06f4	8086f4	0a		asl a			asl a
+537	.06f5	8086f5	0a		asl a			asl a
+538	.06f6	8086f6	65 15		adc $15			adc MapTempWord; x5
+539	.06f8	8086f8	0a		asl a			asl a ; x10
+540	.06f9	8086f9	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.06fa	8086fa	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+543	.06fd	8086fd	48		pha			pha
+544	.06fe	8086fe	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+545	.0701	808701	48		pha			pha
+546	.0702	808702	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+547	.0705	808705	48		pha			pha
+548	.0706	808706	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+549	.0709	808709	48		pha			pha
+550	.070a	80870a	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+551	.070d	80870d	48		pha			pha
+533	.070e	80870e	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
+534	.0711	808711	29 ff 00	and #$00ff		and #$ff
+535	.0714	808714	85 15		sta $15			sta MapTempWord
+536	.0716	808716	0a		asl a			asl a
+537	.0717	808717	0a		asl a			asl a
+538	.0718	808718	65 15		adc $15			adc MapTempWord; x5
+539	.071a	80871a	0a		asl a			asl a ; x10
+540	.071b	80871b	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.071c	80871c	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+543	.071f	80871f	48		pha			pha
+544	.0720	808720	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+545	.0723	808723	48		pha			pha
+546	.0724	808724	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+547	.0727	808727	48		pha			pha
+548	.0728	808728	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+549	.072b	80872b	48		pha			pha
+550	.072c	80872c	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+551	.072f	80872f	48		pha			pha
+533	.0730	808730	b9 20 a9	lda $81a920,y		lda MapData.col6,y
+534	.0733	808733	29 ff 00	and #$00ff		and #$ff
+535	.0736	808736	85 15		sta $15			sta MapTempWord
+536	.0738	808738	0a		asl a			asl a
+537	.0739	808739	0a		asl a			asl a
+538	.073a	80873a	65 15		adc $15			adc MapTempWord; x5
+539	.073c	80873c	0a		asl a			asl a ; x10
+540	.073d	80873d	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.073e	80873e	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+543	.0741	808741	48		pha			pha
+544	.0742	808742	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+545	.0745	808745	48		pha			pha
+546	.0746	808746	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+547	.0749	808749	48		pha			pha
+548	.074a	80874a	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+549	.074d	80874d	48		pha			pha
+550	.074e	80874e	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+551	.0751	808751	48		pha			pha
+533	.0752	808752	b9 20 a7	lda $81a720,y		lda MapData.col5,y
+534	.0755	808755	29 ff 00	and #$00ff		and #$ff
+535	.0758	808758	85 15		sta $15			sta MapTempWord
+536	.075a	80875a	0a		asl a			asl a
+537	.075b	80875b	0a		asl a			asl a
+538	.075c	80875c	65 15		adc $15			adc MapTempWord; x5
+539	.075e	80875e	0a		asl a			asl a ; x10
+540	.075f	80875f	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.0760	808760	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+543	.0763	808763	48		pha			pha
+544	.0764	808764	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+545	.0767	808767	48		pha			pha
+546	.0768	808768	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+547	.076b	80876b	48		pha			pha
+548	.076c	80876c	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+549	.076f	80876f	48		pha			pha
+550	.0770	808770	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+551	.0773	808773	48		pha			pha
+533	.0774	808774	b9 20 a5	lda $81a520,y		lda MapData.col4,y
+534	.0777	808777	29 ff 00	and #$00ff		and #$ff
+535	.077a	80877a	85 15		sta $15			sta MapTempWord
+536	.077c	80877c	0a		asl a			asl a
+537	.077d	80877d	0a		asl a			asl a
+538	.077e	80877e	65 15		adc $15			adc MapTempWord; x5
+539	.0780	808780	0a		asl a			asl a ; x10
+540	.0781	808781	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.0782	808782	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+543	.0785	808785	48		pha			pha
+544	.0786	808786	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+545	.0789	808789	48		pha			pha
+546	.078a	80878a	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+547	.078d	80878d	48		pha			pha
+548	.078e	80878e	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+549	.0791	808791	48		pha			pha
+550	.0792	808792	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+551	.0795	808795	48		pha			pha
+533	.0796	808796	b9 20 a3	lda $81a320,y		lda MapData.col3,y
+534	.0799	808799	29 ff 00	and #$00ff		and #$ff
+535	.079c	80879c	85 15		sta $15			sta MapTempWord
+536	.079e	80879e	0a		asl a			asl a
+537	.079f	80879f	0a		asl a			asl a
+538	.07a0	8087a0	65 15		adc $15			adc MapTempWord; x5
+539	.07a2	8087a2	0a		asl a			asl a ; x10
+540	.07a3	8087a3	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.07a4	8087a4	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+543	.07a7	8087a7	48		pha			pha
+544	.07a8	8087a8	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+545	.07ab	8087ab	48		pha			pha
+546	.07ac	8087ac	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+547	.07af	8087af	48		pha			pha
+548	.07b0	8087b0	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+549	.07b3	8087b3	48		pha			pha
+550	.07b4	8087b4	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+551	.07b7	8087b7	48		pha			pha
+533	.07b8	8087b8	b9 20 a1	lda $81a120,y		lda MapData.col2,y
+534	.07bb	8087bb	29 ff 00	and #$00ff		and #$ff
+535	.07be	8087be	85 15		sta $15			sta MapTempWord
+536	.07c0	8087c0	0a		asl a			asl a
+537	.07c1	8087c1	0a		asl a			asl a
+538	.07c2	8087c2	65 15		adc $15			adc MapTempWord; x5
+539	.07c4	8087c4	0a		asl a			asl a ; x10
+540	.07c5	8087c5	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.07c6	8087c6	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+543	.07c9	8087c9	48		pha			pha
+544	.07ca	8087ca	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+545	.07cd	8087cd	48		pha			pha
+546	.07ce	8087ce	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+547	.07d1	8087d1	48		pha			pha
+548	.07d2	8087d2	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+549	.07d5	8087d5	48		pha			pha
+550	.07d6	8087d6	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+551	.07d9	8087d9	48		pha			pha
+533	.07da	8087da	b9 20 9f	lda $819f20,y		lda MapData.col1,y
+534	.07dd	8087dd	29 ff 00	and #$00ff		and #$ff
+535	.07e0	8087e0	85 15		sta $15			sta MapTempWord
+536	.07e2	8087e2	0a		asl a			asl a
+537	.07e3	8087e3	0a		asl a			asl a
+538	.07e4	8087e4	65 15		adc $15			adc MapTempWord; x5
+539	.07e6	8087e6	0a		asl a			asl a ; x10
+540	.07e7	8087e7	aa		tax			tax
+541								;ldx #10 ; tile 1
+542	.07e8	8087e8	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+543	.07eb	8087eb	48		pha			pha
+544	.07ec	8087ec	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+545	.07ef	8087ef	48		pha			pha
+546	.07f0	8087f0	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+547	.07f3	8087f3	48		pha			pha
+548	.07f4	8087f4	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+549	.07f7	8087f7	48		pha			pha
+550	.07f8	8087f8	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+551	.07fb	8087fb	48		pha			pha
+526	.07fc	8087fc					_exit
+527	.07fc	8087fc	a6 af		ldx $af			ldx <MapStackStore
+528	.07fe	8087fe	9a		txs			txs							; restore stack
+529	.07ff	8087ff	28		plp			plp
+530	.0800	808800	60		rts			rts
+
+532							mColRowPlot .macro col, row
+552							.endm
+
+554	.0801	808801					dmaRow_xx
+555	.0801	808801	08		php			php
+46:4	.0802	808802	e2 20		sep #$20		SEP #$20
+62	.0804	808804	c2 10		rep #$10		REP #$10
+558:3	.0806	808806	a6 19		ldx $19			ldx MapBufferTarget		; set the target VRAM address
+559	.0808	808808	8e 16 21	stx $812116		stx $2116,b
+560	.080b	80880b	a2 ff ff	ldx #$ffff		ldx #$FFFF
+561	.080e	80880e	86 19		stx $19			stx MapBufferTarget		; clear the flag
+562	.0810	808810	a2 67 00	ldx #$0067		ldx #<>MapColumnBuffer+8
+563	.0813	808813	8e 02 43	stx $814302		stx $4302,b					; set the source as the last pos in the buffer
+46:4	.0816	808816	e2 20		sep #$20		SEP #$20
+565:3	.0818	808818	a9 80		lda #$80		lda #`MapColumnBuffer
+566	.081a	80881a	8f 04 43 80	sta $804304		sta $804304
+567	.081e	80881e	a2 40 00	ldx #$0040		ldx #64						; 32 words
+568	.0821	808821	8e 05 43	stx $814305		stx $4305,b
+569	.0824	808824	a2 01 18	ldx #$1801		ldx #%00000001 | $1800	; A->B, Inc, Write WORD, $2118
+570	.0827	808827	8e 00 43	stx $814300		stx $4300,b
+571	.082a	80882a	a9 80		lda #$80		lda #$80
+572	.082c	80882c	8d 15 21	sta $812115		sta $2115,b					; inc VRAM port address by 1
+573	.082f	80882f	a9 01		lda #$01		lda #1
+574	.0831	808831	8d 0b 42	sta $81420b		sta $420B,b
+575	.0834	808834	28		plp			plp
+576	.0835	808835	60		rts			rts
+
+578	.0836	808836					map_advancePointersTopEdge_ra16
+579	.0836	808836					_ASSERT_JSR
+46:4	.0836	808836	e2 20		sep #$20		SEP #$20
+581:3	.0838	808838	a5 0f		lda $0f			lda MapSubRowTop					; we shift the char by 2 as it stored as words
+582	.083a	80883a	18		clc			clc
+583	.083b	80883b	69 02		adc #$02		adc #2
+584	.083d	80883d	85 0f		sta $0f			sta MapSubRowTop
+585	.083f	80883f	c9 0a		cmp #$0a		cmp #10								; done a whole block? 5 chars?
+586	.0841	808841	90 06		bcc $808849		bcc _next
+587	.0843	808843	64 0f		stz $0f				stz MapSubRowTop				; first row in it
+50:4	.0845	808845	c2 20		rep #$20		REP #$20
+589:3	.0847	808847	e6 0b		inc $0b				inc MapBlockIndexTop			; move to the next block
+590	.0849	808849						_next
+50:4	.0849	808849	c2 20		rep #$20		REP #$20
+592:3	.084b	80884b	a5 11		lda $11			lda MapVRAMTop						; move the VRAM row down one as well
+593	.084d	80884d	18		clc			clc
+594	.084e	80884e	69 20 00	adc #$0020		adc #32								; move to the next line
+595	.0851	808851	29 ff 07	and #$07ff		and #$7ff							; wrap to the screen
+596	.0854	808854	85 11		sta $11			sta MapVRAMTop
+597	.0856	808856	60		rts			rts
+
+599	.0857	808857					map_advancePointersBotEdge_ra16
+600	.0857	808857					_ASSERT_JSR
+46:4	.0857	808857	e2 20		sep #$20		SEP #$20
+602:3	.0859	808859	a5 10		lda $10			lda MapSubRowBot					; same as above but for the bottom edge
+603	.085b	80885b	18		clc			clc
+604	.085c	80885c	69 02		adc #$02		adc #2
+605	.085e	80885e	85 10		sta $10			sta MapSubRowBot
+606	.0860	808860	c9 0a		cmp #$0a		cmp #10
+607	.0862	808862	90 06		bcc $80886a		bcc _next
+608	.0864	808864	64 10		stz $10				stz MapSubRowBot
+50:4	.0866	808866	c2 20		rep #$20		REP #$20
+610:3	.0868	808868	e6 0d		inc $0d				inc MapBlockIndexBot
+611	.086a	80886a						_next
+50:4	.086a	80886a	c2 20		rep #$20		REP #$20
+613:3	.086c	80886c	a5 13		lda $13			lda MapVRAMBot
+614	.086e	80886e	18		clc			clc
+615	.086f	80886f	69 20 00	adc #$0020		adc #32
+616	.0872	808872	29 ff 07	and #$07ff		and #$7ff
+617	.0875	808875	85 13		sta $13			sta MapVRAMBot
+618	.0877	808877	60		rts			rts
+
+620	.0878	808878					map_retreatPointersTopEdge_ra16
+621	.0878	808878					_ASSERT_JSR
+46:4	.0878	808878	e2 20		sep #$20		SEP #$20
+623:3	.087a	80887a	a5 0f		lda $0f			lda MapSubRowTop				; sub 2 as we are dealing with words
+624	.087c	80887c	38		sec			sec
+625	.087d	80887d	e9 02		sbc #$02		sbc #2
+626	.087f	80887f	85 0f		sta $0f			sta MapSubRowTop
+627	.0881	808881	b0 08		bcs $80888b		bcs _next						; under flowed?
+628	.0883	808883	a9 08		lda #$08			lda #8
+629	.0885	808885	85 0f		sta $0f				sta MapSubRowTop			; last row of it
+50:4	.0887	808887	c2 20		rep #$20		REP #$20
+631:3	.0889	808889	c6 0b		dec $0b				dec MapBlockIndexTop		; previous block
+632	.088b	80888b						_next
+50:4	.088b	80888b	c2 20		rep #$20		REP #$20
+634:3	.088d	80888d	a5 11		lda $11			lda MapVRAMTop					; move VRAM row back 1
+635	.088f	80888f	38		sec			sec
+636	.0890	808890	e9 20 00	sbc #$0020		sbc #32
+637	.0893	808893	29 ff 07	and #$07ff		and #$7ff						; wrap to VRAM memory
+638	.0896	808896	85 11		sta $11			sta MapVRAMTop
+639	.0898	808898	60		rts			rts
+
+641	.0899	808899					map_retreatPointersBotEdge_ra16
+642	.0899	808899					_ASSERT_JSR
+46:4	.0899	808899	e2 20		sep #$20		SEP #$20
+644:3	.089b	80889b	a5 10		lda $10			lda MapSubRowBot				; sub 2 as we are dealing with words
+645	.089d	80889d	38		sec			sec
+646	.089e	80889e	e9 02		sbc #$02		sbc #2
+647	.08a0	8088a0	85 10		sta $10			sta MapSubRowBot
+648	.08a2	8088a2	b0 08		bcs $8088ac		bcs _next						; under flowed?
+649	.08a4	8088a4	a9 08		lda #$08			lda #8
+650	.08a6	8088a6	85 10		sta $10				sta MapSubRowBot			; last row of it
+50:4	.08a8	8088a8	c2 20		rep #$20		REP #$20
+652:3	.08aa	8088aa	c6 0d		dec $0d				dec MapBlockIndexBot		; previous block
+653	.08ac	8088ac						_next
+50:4	.08ac	8088ac	c2 20		rep #$20		REP #$20
+655:3	.08ae	8088ae	a5 13		lda $13			lda MapVRAMBot					; move VRAM row back 1
+656	.08b0	8088b0	38		sec			sec
+657	.08b1	8088b1	e9 20 00	sbc #$0020		sbc #32
+658	.08b4	8088b4	29 ff 07	and #$07ff		and #$7ff						; wrap to VRAM memory
+659	.08b7	8088b7	85 13		sta $13			sta MapVRAMBot
+660	.08b9	8088b9	60		rts			rts
+
+
+:1	;******  Return to file: master.asm
+
+115							.send
+
+117							.include "SNESDef.asm"
+
+:4	;******  Processing file: SNESDef.asm
+
+1	=0						kSPri_0 = 0<<4
+2	=16						kSPri_1 = 1<<4
+3	=32						kSPri_2 = 2<<4
+4	=48						kSPri_3 = 3<<4
+
+6	=0						kSPal_0 = 0<<1
+7	=2						kSPal_1 = 1<<1
+8	=4						kSPal_2 = 2<<1
+9	=6						kSPal_3 = 3<<1
+10	=8						kSPal_4 = 4<<1
+11	=10						kSPal_5 = 5<<1
+12	=12						kSPal_6 = 6<<1
+13	=14						kSPal_7 = 7<<1
+
+15	=64						kSFlipX = 64
+16	=128						kSFlipY = 128
+
+18	=0						kBaseSize_32x32 = 0
+19	=1						kBaseSize_64x32 = 1
+20	=2						kBaseSize_32x64 = 2
+21	=3						kBaseSize_64x64 = 3
+
+23							;takes the screen base in Word Offset and ScreenLayout in kBaseSize_XXxXX
+24							fBGBaseSize .function base,screenLayout
+25							.endf ((base/1024)<<2) | screenLayout
+
+27							;takes the 4 screen character base addresses in Word Offset
+28							fBGCharAddress .function bg1,bg2,bg3,bg4
+29							.endf (bg4/4096)<<12 | (bg3/4096)<<8 | (bg2/4096)<<4 | (bg1/4096)
+
+31							; converts 24bit RGB value into a SNES 16bit word
+32							fRGBToSNES .function r,g,b
+33							.endf (b&$f8)<<7 | (g&$f8)<<2 | (r&$f8)>>3
+
+35							; this wil convert a sprite X,Y index for 16x16 sprites on the sprite "map" to a tilenum + attributes word
+36							; it handles multiple sprite "banks" as well
+37							fSprDef .function gridX,gridY,flags
+43							.endf (gridX*2+_y*32)|flags<<8
+
+45							A8 .macro
+47							.endm
+
+49							A16 .macro
+51							.endm
+
+53							A16Clear .macro
+55							.endm
+
+57							XY8 .macro
+59							.endm
+
+61							XY16 .macro
+63							.endm
+
+65							AXY8 .macro
+67							.endm
+
+69							AXY16 .macro
+71							.endm
+
+:1	;******  Return to file: master.asm
+
+
+119	.0000						HLWord .union
+120	>0000						    .word ?
+121							    .struct
+122	>0000						        lo .byte ?
+123	>0001						        hi .byte ?
+124							    .ends
+125							.endu
+
+127	.0000						HLBLong .union
+128	>0000						    .long ?
+129							    .struct
+130	>0000						        lo   .byte ?
+131	>0001						        hi   .byte ?
+132	>0002						        bank .byte ?
+133							    .ends
+134							    .struct
+135	>0000						        loWord .word ?
+136	>0002						        dummy1 .byte ?
+137							    .ends
+138							    .struct
+139	>0000						        dummy2 .byte ?
+140	>0001						        hiWord .word ?
+141							    .ends
+142							.endu
+
+
+;******  End of listing
