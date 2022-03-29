@@ -104,7 +104,7 @@ When it hits 8, we move to the next block and reset it to 0.
 I've used "holds next plot", rather than "current plot". So I plot, and then move them, but this is arbitrary. 
 
 One slight trick I will highlight; Detecting if you go over a "next char trigger"
-
+~~~
 		lda ScreenXOffset	; cache current Screen X offset
 		sta MapTempWord
 		clc
@@ -114,13 +114,13 @@ One slight trick I will highlight; Detecting if you go over a "next char trigger
 		and #$FFF8			; I only want to know if we have crossed over 8 pixels, i.e the 
 		#A8					; upper 13 bits have changed, so mask away the lower 3bits (0-7)
 		beq _noHold			; same, not crossed char boundary
-
+~~~
 so if we have 
 0 + 3 = 3 then
 
 0 eor 3 = 3 
 
-3 & FFF8 = 0 therefor the same value no change. 
+3 & FFF8 = 0 therefore the same value no change. 
 
 if we have
 
