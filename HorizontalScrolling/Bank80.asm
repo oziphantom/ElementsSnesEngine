@@ -107,6 +107,7 @@ InitSNESAndMirror
 	;stz mTS
 	;stz mTMW
 	;stz mTSW
+	stz $802130 ;31
 	lda #$00E0
 	sta $802132
 	sta mCOLDATA
