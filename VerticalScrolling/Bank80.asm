@@ -107,6 +107,7 @@ InitSNESAndMirror
 	;stz mTS
 	;stz mTMW
 	;stz mTSW
+	stz $802130 ;31
 	lda #$00E0
 	sta $802132
 	sta mCOLDATA
@@ -145,6 +146,7 @@ InitSNESAndMirror
 	lda #$01
 	sta $80420B		; FIRE DMA
 	stz NMIReadyNF
+	lda $4211,b		; clear any pending IRQs
 	cli
 	jsr dmaPalletes_xx		; install the game pallete
 	jsr dmaLevelChars_xx		; install the char set
@@ -176,6 +178,7 @@ _loop
 	sta $4200,b									; enable VBlank NMI and enable auto Joypad reading
 	lda #$0f
 	sta $2100,b									; turn screen on
+	sta NMIReadyNF								; make sure flag is clear
 
 ; ----- @Main Loop@ -----
 MainLoop
@@ -432,7 +435,7 @@ _ASSERT_JSR
 	lda #63*32
 	sta MapVRAMTop
 	stz MapVRAMBot
-	lda #512-224
+	lda #512-224-8					; use 8 to create an ahead buffer down the bottom
 	sta ScreenYOffset				; start the Y at the bottom of the screen
 	stz MapBufferTarget			; we want this to be negative, so set 0
 	dec MapBufferTarget			; dec 1 to be -1

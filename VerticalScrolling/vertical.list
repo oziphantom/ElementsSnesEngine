@@ -1,7 +1,7 @@
 
 ; 64tass Turbo Assembler Macro V1.55.2200 listing file
 ; 64tass.exe -a -o vertical.sfc -b -X --no-caret-diag --dump-labels -l vertical.tass -L vertical.list --verbose-list --line-numbers master.asm
-; Tue Mar 29 19:33:15 2022
+; Wed Mar 30 18:00:55 2022
 
 ;Line	;Offset	;PC	;Hex		;Monitor	;Source
 
@@ -101,23 +101,23 @@
 
 85							.section s65816Vectors
 86							.block; scope this so we don't get name clashes
-87	>7fe4	80ffe4	e9 81				vCOP   .word <>Bank80.justRTI ; COP is a assembly mnemonic so add v
-88	>7fe6	80ffe6	e9 81				vBRK   .word <>Bank80.justRTI ; BRK is a assembly mnemonic so add v
-89	>7fe8	80ffe8	e9 81				ABORT  .word <>Bank80.justRTI
-90	>7fea	80ffea	94 81				NMI    .word <>Bank80.NMI
-91	>7fec	80ffec	e9 81				RESET  .word <>Bank80.justRTI
-92	>7fee	80ffee	e9 81				IRQ    .word <>Bank80.justRTI
+87	>7fe4	80ffe4	f1 81				vCOP   .word <>Bank80.justRTI ; COP is a assembly mnemonic so add v
+88	>7fe6	80ffe6	f1 81				vBRK   .word <>Bank80.justRTI ; BRK is a assembly mnemonic so add v
+89	>7fe8	80ffe8	f1 81				ABORT  .word <>Bank80.justRTI
+90	>7fea	80ffea	9c 81				NMI    .word <>Bank80.NMI
+91	>7fec	80ffec	f1 81				RESET  .word <>Bank80.justRTI
+92	>7fee	80ffee	f1 81				IRQ    .word <>Bank80.justRTI
 93							.bend
 94							.send ; s65816Vectors
 
 96							.section s6502Vectors
 97							.block; scope this so we don't get name clashes
-98	>7ff4	80fff4	e9 81				vCOP   .word <>Bank80.justRTI  ; COP is a assembly mnemonic so add v
-99	>7ff6	80fff6	e9 81				vBRK   .word <>Bank80.justRTI  ; BRK is a assembly mnemonic so add v
-100	>7ff8	80fff8	e9 81				ABORT  .word <>Bank80.justRTI
-101	>7ffa	80fffa	e9 81				NMI    .word <>Bank80.justRTI
+98	>7ff4	80fff4	f1 81				vCOP   .word <>Bank80.justRTI  ; COP is a assembly mnemonic so add v
+99	>7ff6	80fff6	f1 81				vBRK   .word <>Bank80.justRTI  ; BRK is a assembly mnemonic so add v
+100	>7ff8	80fff8	f1 81				ABORT  .word <>Bank80.justRTI
+101	>7ffa	80fffa	f1 81				NMI    .word <>Bank80.justRTI
 102	>7ffc	80fffc	00 80				RESET  .word <>Bank80.RESET
-103	>7ffe	80fffe	e9 81				IRQ    .word <>Bank80.justRTI
+103	>7ffe	80fffe	f1 81				IRQ    .word <>Bank80.justRTI
 104							.bend
 105							.send ; s65816Vectors
 
@@ -167,7 +167,7 @@
 35	.001d	80801d					ClearWRAM
 36	.001d	80801d	a9 08 80	lda #$8008		lda #$8008		; A -> B, FIXED SOURCE, WRITE BYTE | WRAM
 37	.0020	808020	8d 00 43	sta $804300		sta $804300
-38	.0023	808023	a9 92 81	lda #$8192		lda #<>DMAZero	; 64Tass | get low word
+38	.0023	808023	a9 9a 81	lda #$819a		lda #<>DMAZero	; 64Tass | get low word
 39	.0026	808026	8d 02 43	sta $804302		sta $804302
 40	.0029	808029	a9 80 00	lda #$0080		lda #`DMAZero	; 64Tass | get bank
 41	.002c	80802c	8d 04 43	sta $804304		sta $804304
@@ -239,300 +239,303 @@
 107								;stz mTS
 108								;stz mTMW
 109								;stz mTSW
-110	.009a	80809a	a9 e0 00	lda #$00e0		lda #$00E0
-111	.009d	80809d	8d 32 21	sta $802132		sta $802132
-112	.00a0	8080a0	8d 59 00	sta $800059		sta mCOLDATA
-113								;stz mSETINI
-114								;ONTO THE CPU I/O REGS
-115	.00a3	8080a3	a9 00 ff	lda #$ff00		lda #$FF00
-116	.00a6	8080a6	8d 00 42	sta $804200		sta $804200
-117								;stz mNMITIMEN
-118	.00a9	8080a9	9c 02 42	stz $804202		stz $804202 ;3
-119	.00ac	8080ac	9c 04 42	stz $804204		stz $804204 ;5
-120	.00af	8080af	9c 06 42	stz $804206		stz $804206 ;7
-121	.00b2	8080b2	9c 08 42	stz $804208		stz $804208 ;9
-122	.00b5	8080b5	9c 0a 42	stz $80420a		stz $80420A ;B
-123	.00b8	8080b8	9c 0c 42	stz $80420c		stz $80420C ;D
-124								; CLEAR VRAM
-125	.00bb	8080bb	c2 20		rep #$20		rep #$20			; A16
-126	.00bd	8080bd	a9 09 18	lda #$1809		lda #$1809		; A -> B, FIXED SOURCE, WRITE WORD | VRAM
-127	.00c0	8080c0	8d 00 43	sta $804300		sta $804300
-128	.00c3	8080c3	a9 92 81	lda #$8192		lda #<>DMAZero	; THIS GET THE LOW WORD, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
-129	.00c6	8080c6	8d 02 43	sta $804302		sta $804302
-130	.00c9	8080c9	a9 80 00	lda #$0080		lda #`DMAZero	; THIS GETS THE BANK, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
-131	.00cc	8080cc	8d 04 43	sta $804304		sta $804304		; AND THE UPPER BYTE WILL BE 0
-132	.00cf	8080cf	9c 05 43	stz $804305		stz $804305		; DO 64K
-133	.00d2	8080d2	a9 80 00	lda #$0080		lda #$80			; INC ON HI WRITE
-134	.00d5	8080d5	8d 15 21	sta $802115		sta $802115
-135	.00d8	8080d8	9c 16 21	stz $802116		stz $802116		; START AT 00
-136	.00db	8080db	a9 01 00	lda #$0001		lda #$01
-137	.00de	8080de	8d 0b 42	sta $80420b		sta $80420B		; FIRE DMA
-138								; CLEAR CG-RAM
-139	.00e1	8080e1	a9 08 22	lda #$2208		lda #$2208		; A -> B, FIXED SOURCE, WRITE BYTE | CG-RAM
-140	.00e4	8080e4	8d 00 43	sta $804300		sta $804300
-141	.00e7	8080e7	a9 00 02	lda #$0200		lda #$200		; 512 BYTES
-142	.00ea	8080ea	8d 05 43	sta $804305		sta $804305
-143	.00ed	8080ed	e2 20		sep #$20		sep #$20			; A8
-144	.00ef	8080ef	9c 21 21	stz $802121		stz $802121		; START AT 0
-145	.00f2	8080f2	a9 01		lda #$01		lda #$01
-146	.00f4	8080f4	8d 0b 42	sta $80420b		sta $80420B		; FIRE DMA
-147	.00f7	8080f7	64 06		stz $06			stz NMIReadyNF
-148	.00f9	8080f9	58		cli			cli
-149	.00fa	8080fa	20 ea 81	jsr $8081ea		jsr dmaPalletes_xx		; install the game pallete
-150	.00fd	8080fd	20 10 82	jsr $808210		jsr dmaLevelChars_xx		; install the char set
-46:4	.0100	808100	e2 20		sep #$20		SEP #$20
-152:3	.0102	808102	a9 81		lda #$81		lda #`DataBankStart
-153	.0104	808104	48		pha			pha
-154	.0105	808105	ab		plb			plb								; set the data bank to the common bank
-155							.databank `DataBankStart		; tell the assembler as well
-156	.0106	808106	20 3e 82	jsr $80823e		jsr map_InitEmptyScreen_xx	; reset the map pointers
-157	.0109	808109					_loop
-158	.0109	808109	20 65 82	jsr $808265		jsr map_fillRowBufferTopEdge_xx		; draw the right edge to the buffer
-159	.010c	80810c	20 01 88	jsr $808801		jsr dmaRow_xx								; put it the screen
-160	.010f	80810f	20 78 88	jsr $808878		jsr map_retreatPointersTopEdge_ra16	; move the right over, just the right
-161								;#A16
-162								.al
-163	.0112	808112	a5 11		lda $11			lda MapVRAMTop								; have we done the screen + 1
-164	.0114	808114	c9 00 04	cmp #$0400		cmp #32*32
-165	.0117	808117	d0 f0		bne $808109		bne _loop									; no, go again
-46:4	.0119	808119	e2 20		sep #$20		SEP #$20
-167:3	.011b	80811b	a9 02		lda #$02		lda #fBGBaseSize(kVRAM.gameScreen,kBaseSize_32x64)
-168	.011d	80811d	8d 07 21	sta $812107		sta $2107,b									; set the BG1 to the Game Screen
-169	.0120	808120	a9 01		lda #$01		lda #fBGCharAddress(kVRAM.gameChars,0,0,0)
-170	.0122	808122	8d 0b 21	sta $81210b		sta $210b,b									; set the chars to the in game set
-171	.0125	808125	a9 01		lda #$01		lda #1
-172	.0127	808127	8d 05 21	sta $812105		sta $2105,b									; mode 1
-173	.012a	80812a	a9 01		lda #$01		lda #%00000001
-174	.012c	80812c	8d 2c 21	sta $81212c		sta $212C,b									; make BG1 on Main Screen
-175	.012f	80812f	a9 81		lda #$81		lda #%10000001
-176	.0131	808131	8d 00 42	sta $814200		sta $4200,b									; enable VBlank NMI and enable auto Joypad reading
-177	.0134	808134	a9 0f		lda #$0f		lda #$0f
-178	.0136	808136	8d 00 21	sta $812100		sta $2100,b									; turn screen on
+110	.009a	80809a	9c 30 21	stz $802130		stz $802130 ;31
+111	.009d	80809d	a9 e0 00	lda #$00e0		lda #$00E0
+112	.00a0	8080a0	8d 32 21	sta $802132		sta $802132
+113	.00a3	8080a3	8d 59 00	sta $800059		sta mCOLDATA
+114								;stz mSETINI
+115								;ONTO THE CPU I/O REGS
+116	.00a6	8080a6	a9 00 ff	lda #$ff00		lda #$FF00
+117	.00a9	8080a9	8d 00 42	sta $804200		sta $804200
+118								;stz mNMITIMEN
+119	.00ac	8080ac	9c 02 42	stz $804202		stz $804202 ;3
+120	.00af	8080af	9c 04 42	stz $804204		stz $804204 ;5
+121	.00b2	8080b2	9c 06 42	stz $804206		stz $804206 ;7
+122	.00b5	8080b5	9c 08 42	stz $804208		stz $804208 ;9
+123	.00b8	8080b8	9c 0a 42	stz $80420a		stz $80420A ;B
+124	.00bb	8080bb	9c 0c 42	stz $80420c		stz $80420C ;D
+125								; CLEAR VRAM
+126	.00be	8080be	c2 20		rep #$20		rep #$20			; A16
+127	.00c0	8080c0	a9 09 18	lda #$1809		lda #$1809		; A -> B, FIXED SOURCE, WRITE WORD | VRAM
+128	.00c3	8080c3	8d 00 43	sta $804300		sta $804300
+129	.00c6	8080c6	a9 9a 81	lda #$819a		lda #<>DMAZero	; THIS GET THE LOW WORD, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
+130	.00c9	8080c9	8d 02 43	sta $804302		sta $804302
+131	.00cc	8080cc	a9 80 00	lda #$0080		lda #`DMAZero	; THIS GETS THE BANK, YOU WILL NEED TO CHANGE IF NOT USING 64TASS
+132	.00cf	8080cf	8d 04 43	sta $804304		sta $804304		; AND THE UPPER BYTE WILL BE 0
+133	.00d2	8080d2	9c 05 43	stz $804305		stz $804305		; DO 64K
+134	.00d5	8080d5	a9 80 00	lda #$0080		lda #$80			; INC ON HI WRITE
+135	.00d8	8080d8	8d 15 21	sta $802115		sta $802115
+136	.00db	8080db	9c 16 21	stz $802116		stz $802116		; START AT 00
+137	.00de	8080de	a9 01 00	lda #$0001		lda #$01
+138	.00e1	8080e1	8d 0b 42	sta $80420b		sta $80420B		; FIRE DMA
+139								; CLEAR CG-RAM
+140	.00e4	8080e4	a9 08 22	lda #$2208		lda #$2208		; A -> B, FIXED SOURCE, WRITE BYTE | CG-RAM
+141	.00e7	8080e7	8d 00 43	sta $804300		sta $804300
+142	.00ea	8080ea	a9 00 02	lda #$0200		lda #$200		; 512 BYTES
+143	.00ed	8080ed	8d 05 43	sta $804305		sta $804305
+144	.00f0	8080f0	e2 20		sep #$20		sep #$20			; A8
+145	.00f2	8080f2	9c 21 21	stz $802121		stz $802121		; START AT 0
+146	.00f5	8080f5	a9 01		lda #$01		lda #$01
+147	.00f7	8080f7	8d 0b 42	sta $80420b		sta $80420B		; FIRE DMA
+148	.00fa	8080fa	64 06		stz $06			stz NMIReadyNF
+149	.00fc	8080fc	ad 11 42	lda $804211		lda $4211,b		; clear any pending IRQs
+150	.00ff	8080ff	58		cli			cli
+151	.0100	808100	20 f2 81	jsr $8081f2		jsr dmaPalletes_xx		; install the game pallete
+152	.0103	808103	20 18 82	jsr $808218		jsr dmaLevelChars_xx		; install the char set
+46:4	.0106	808106	e2 20		sep #$20		SEP #$20
+154:3	.0108	808108	a9 81		lda #$81		lda #`DataBankStart
+155	.010a	80810a	48		pha			pha
+156	.010b	80810b	ab		plb			plb								; set the data bank to the common bank
+157							.databank `DataBankStart		; tell the assembler as well
+158	.010c	80810c	20 46 82	jsr $808246		jsr map_InitEmptyScreen_xx	; reset the map pointers
+159	.010f	80810f					_loop
+160	.010f	80810f	20 6d 82	jsr $80826d		jsr map_fillRowBufferTopEdge_xx		; draw the right edge to the buffer
+161	.0112	808112	20 09 88	jsr $808809		jsr dmaRow_xx								; put it the screen
+162	.0115	808115	20 80 88	jsr $808880		jsr map_retreatPointersTopEdge_ra16	; move the right over, just the right
+163								;#A16
+164								.al
+165	.0118	808118	a5 11		lda $11			lda MapVRAMTop								; have we done the screen + 1
+166	.011a	80811a	c9 00 04	cmp #$0400		cmp #32*32
+167	.011d	80811d	d0 f0		bne $80810f		bne _loop									; no, go again
+46:4	.011f	80811f	e2 20		sep #$20		SEP #$20
+169:3	.0121	808121	a9 02		lda #$02		lda #fBGBaseSize(kVRAM.gameScreen,kBaseSize_32x64)
+170	.0123	808123	8d 07 21	sta $812107		sta $2107,b									; set the BG1 to the Game Screen
+171	.0126	808126	a9 01		lda #$01		lda #fBGCharAddress(kVRAM.gameChars,0,0,0)
+172	.0128	808128	8d 0b 21	sta $81210b		sta $210b,b									; set the chars to the in game set
+173	.012b	80812b	a9 01		lda #$01		lda #1
+174	.012d	80812d	8d 05 21	sta $812105		sta $2105,b									; mode 1
+175	.0130	808130	a9 01		lda #$01		lda #%00000001
+176	.0132	808132	8d 2c 21	sta $81212c		sta $212C,b									; make BG1 on Main Screen
+177	.0135	808135	a9 81		lda #$81		lda #%10000001
+178	.0137	808137	8d 00 42	sta $814200		sta $4200,b									; enable VBlank NMI and enable auto Joypad reading
+179	.013a	80813a	a9 0f		lda #$0f		lda #$0f
+180	.013c	80813c	8d 00 21	sta $812100		sta $2100,b									; turn screen on
+181	.013f	80813f	85 06		sta $06			sta NMIReadyNF								; make sure flag is clear
 
-180							; ----- @Main Loop@ -----
-181	.0139	808139					MainLoop
-46:4	.0139	808139	e2 20		sep #$20		SEP #$20
-183:3	.013b	80813b					MainLoopWait
-184	.013b	80813b	a5 06		lda $06			lda NMIReadyNF
-185	.013d	80813d	10 fc		bpl $80813b		bpl MainLoopWait		; Read Flag
-186	.013f	80813f	64 06		stz $06			stz NMIReadyNF			; Clear Flag
-187	.0141	808141	a5 07		lda $07			lda JoyHi
-188	.0143	808143	89 04		bit #$04		bit #4					; down
-189	.0145	808145	f0 22		beq $808169		beq _noDown
-50:4	.0147	808147	c2 20		rep #$20		REP #$20
-191:3	.0149	808149	a5 17		lda $17				lda ScreenYOffset	; cache current Screen Y offset
-192	.014b	80814b	85 15		sta $15				sta MapTempWord
-193	.014d	80814d	18		clc				clc
-194	.014e	80814e	69 03 00	adc #$0003			adc #3				; Y += 3
-195	.0151	808151	85 17		sta $17				sta ScreenYOffset
-196	.0153	808153	45 15		eor $15				eor MapTempWord	; if the bits are the same this will go to 0, not 0 otherwise
-197	.0155	808155	29 f8 ff	and #$fff8			and #$FFF8			; I only want to know if we have crossed over 8 pixels, i.e the
-46:4	.0158	808158	e2 20		sep #$20		SEP #$20
-199:3	.015a	80815a	f0 33		beq $80818f			beq _noHold			; same, not crossed char boundary
-200	.015c	80815c	20 7d 82	jsr $80827d				jsr map_fillRowBufferBotEdge_xx		; draw current next edge
-201	.015f	80815f	20 36 88	jsr $808836				jsr map_advancePointersTopEdge_ra16	; move top edge
-202	.0162	808162	20 57 88	jsr $808857				jsr map_advancePointersBotEdge_ra16	; move bottom edge
-46:4	.0165	808165	e2 20		sep #$20		SEP #$20
-204:3	.0167	808167	80 26		bra $80818f				bra _noHold
-205	.0169	808169					_noDown
-206	.0169	808169	89 08		bit #$08		bit #8					; up
-207	.016b	80816b	f0 22		beq $80818f		beq _noUp
-50:4	.016d	80816d	c2 20		rep #$20		REP #$20
-209:3	.016f	80816f	a5 17		lda $17				lda ScreenYOffset	; cache current Screen Y offset
-210	.0171	808171	85 15		sta $15				sta MapTempWord
-211	.0173	808173	38		sec				sec
-212	.0174	808174	e9 03 00	sbc #$0003			sbc #3				; Y =- 3
-213	.0177	808177	85 17		sta $17				sta ScreenYOffset
-214	.0179	808179	45 15		eor $15				eor MapTempWord
-215	.017b	80817b	29 f8 ff	and #$fff8			and #$FFF8			; have we gone over 8 barrier?
-46:4	.017e	80817e	e2 20		sep #$20		SEP #$20
-217:3	.0180	808180	f0 0d		beq $80818f			beq _noHold
-218	.0182	808182	20 65 82	jsr $808265				jsr map_fillRowBufferTopEdge_xx		; draw current next edge
-219	.0185	808185	20 78 88	jsr $808878				jsr map_retreatPointersTopEdge_ra16	; move top edge
-220	.0188	808188	20 99 88	jsr $808899				jsr map_retreatPointersBotEdge_ra16	; move bottom edge
-46:4	.018b	80818b	e2 20		sep #$20		SEP #$20
-222:3	.018d	80818d	80 00		bra $80818f				bra _noHold
-223	.018f	80818f					_noUp
-224	.018f	80818f					_noHold
-225	.018f	80818f	4c 39 81	jmp $808139		jmp	MainLoop
+183							; ----- @Main Loop@ -----
+184	.0141	808141					MainLoop
+46:4	.0141	808141	e2 20		sep #$20		SEP #$20
+186:3	.0143	808143					MainLoopWait
+187	.0143	808143	a5 06		lda $06			lda NMIReadyNF
+188	.0145	808145	10 fc		bpl $808143		bpl MainLoopWait		; Read Flag
+189	.0147	808147	64 06		stz $06			stz NMIReadyNF			; Clear Flag
+190	.0149	808149	a5 07		lda $07			lda JoyHi
+191	.014b	80814b	89 04		bit #$04		bit #4					; down
+192	.014d	80814d	f0 22		beq $808171		beq _noDown
+50:4	.014f	80814f	c2 20		rep #$20		REP #$20
+194:3	.0151	808151	a5 17		lda $17				lda ScreenYOffset	; cache current Screen Y offset
+195	.0153	808153	85 15		sta $15				sta MapTempWord
+196	.0155	808155	18		clc				clc
+197	.0156	808156	69 03 00	adc #$0003			adc #3				; Y += 3
+198	.0159	808159	85 17		sta $17				sta ScreenYOffset
+199	.015b	80815b	45 15		eor $15				eor MapTempWord	; if the bits are the same this will go to 0, not 0 otherwise
+200	.015d	80815d	29 f8 ff	and #$fff8			and #$FFF8			; I only want to know if we have crossed over 8 pixels, i.e the
+46:4	.0160	808160	e2 20		sep #$20		SEP #$20
+202:3	.0162	808162	f0 33		beq $808197			beq _noHold			; same, not crossed char boundary
+203	.0164	808164	20 85 82	jsr $808285				jsr map_fillRowBufferBotEdge_xx		; draw current next edge
+204	.0167	808167	20 3e 88	jsr $80883e				jsr map_advancePointersTopEdge_ra16	; move top edge
+205	.016a	80816a	20 5f 88	jsr $80885f				jsr map_advancePointersBotEdge_ra16	; move bottom edge
+46:4	.016d	80816d	e2 20		sep #$20		SEP #$20
+207:3	.016f	80816f	80 26		bra $808197				bra _noHold
+208	.0171	808171					_noDown
+209	.0171	808171	89 08		bit #$08		bit #8					; up
+210	.0173	808173	f0 22		beq $808197		beq _noUp
+50:4	.0175	808175	c2 20		rep #$20		REP #$20
+212:3	.0177	808177	a5 17		lda $17				lda ScreenYOffset	; cache current Screen Y offset
+213	.0179	808179	85 15		sta $15				sta MapTempWord
+214	.017b	80817b	38		sec				sec
+215	.017c	80817c	e9 03 00	sbc #$0003			sbc #3				; Y =- 3
+216	.017f	80817f	85 17		sta $17				sta ScreenYOffset
+217	.0181	808181	45 15		eor $15				eor MapTempWord
+218	.0183	808183	29 f8 ff	and #$fff8			and #$FFF8			; have we gone over 8 barrier?
+46:4	.0186	808186	e2 20		sep #$20		SEP #$20
+220:3	.0188	808188	f0 0d		beq $808197			beq _noHold
+221	.018a	80818a	20 6d 82	jsr $80826d				jsr map_fillRowBufferTopEdge_xx		; draw current next edge
+222	.018d	80818d	20 80 88	jsr $808880				jsr map_retreatPointersTopEdge_ra16	; move top edge
+223	.0190	808190	20 a1 88	jsr $8088a1				jsr map_retreatPointersBotEdge_ra16	; move bottom edge
+46:4	.0193	808193	e2 20		sep #$20		SEP #$20
+225:3	.0195	808195	80 00		bra $808197				bra _noHold
+226	.0197	808197					_noUp
+227	.0197	808197					_noHold
+228	.0197	808197	4c 41 81	jmp $808141		jmp	MainLoop
 
-227							.section sDP
-228	>0006						NMIReadyNF		.byte ?
-229	>0007						JoyHi				.byte ?
-230	>0008						JoyHiOld			.byte ?
-231	>0009						JoyHiEvent		.byte ?
-232	>000a						JoyHoldCounter .byte ?
-233							.send ; sDP
+230							.section sDP
+231	>0006						NMIReadyNF		.byte ?
+232	>0007						JoyHi				.byte ?
+233	>0008						JoyHiOld			.byte ?
+234	>0009						JoyHiEvent		.byte ?
+235	>000a						JoyHoldCounter .byte ?
+236							.send ; sDP
 
-235							.section sSharedWRAM
-236	>80001b						mINIDISP  .word ?
-237	>80001d						mOBSEL	.word ?
-238	>80001f						mBGMODE	.word ?
-239	>800021						mMOSIAC	.word ?
-240	>800023						mBG1SC	.word ?
-241	>800025						mBG2SC	.word ?
-242	>800027						mBG3SC	.word ?
-243	>800029						mBG4SC	.word ?
-244	>80002b						mBG12NBA  .word ?
-245	>80002d						mBG23NBA  .word ?
-246	.80002f						mBG1HOFS  .dunion HLWord
+238							.section sSharedWRAM
+239	>80001b						mINIDISP  .word ?
+240	>80001d						mOBSEL	.word ?
+241	>80001f						mBGMODE	.word ?
+242	>800021						mMOSIAC	.word ?
+243	>800023						mBG1SC	.word ?
+244	>800025						mBG2SC	.word ?
+245	>800027						mBG3SC	.word ?
+246	>800029						mBG4SC	.word ?
+247	>80002b						mBG12NBA  .word ?
+248	>80002d						mBG23NBA  .word ?
+249	.80002f						mBG1HOFS  .dunion HLWord
 120:1	>80002f						    .word ?
 121							    .struct
 122	>80002f						        lo .byte ?
 123	>800030						        hi .byte ?
 124							    .ends
 125							.endu
-247:3	.800031						mBG1VOFS  .dunion HLWord
+250:3	.800031						mBG1VOFS  .dunion HLWord
 120:1	>800031						    .word ?
 121							    .struct
 122	>800031						        lo .byte ?
 123	>800032						        hi .byte ?
 124							    .ends
 125							.endu
-248:3	.800033						mBG2HOFS  .dunion HLWord
+251:3	.800033						mBG2HOFS  .dunion HLWord
 120:1	>800033						    .word ?
 121							    .struct
 122	>800033						        lo .byte ?
 123	>800034						        hi .byte ?
 124							    .ends
 125							.endu
-249:3	.800035						mBG2VOFS  .dunion HLWord
+252:3	.800035						mBG2VOFS  .dunion HLWord
 120:1	>800035						    .word ?
 121							    .struct
 122	>800035						        lo .byte ?
 123	>800036						        hi .byte ?
 124							    .ends
 125							.endu
-250:3	.800037						mBG3HOFS  .dunion HLWord
+253:3	.800037						mBG3HOFS  .dunion HLWord
 120:1	>800037						    .word ?
 121							    .struct
 122	>800037						        lo .byte ?
 123	>800038						        hi .byte ?
 124							    .ends
 125							.endu
-251:3	.800039						mBG3VOFS  .dunion HLWord
+254:3	.800039						mBG3VOFS  .dunion HLWord
 120:1	>800039						    .word ?
 121							    .struct
 122	>800039						        lo .byte ?
 123	>80003a						        hi .byte ?
 124							    .ends
 125							.endu
-252:3	.80003b						mBG4HOFS  .dunion HLWord
+255:3	.80003b						mBG4HOFS  .dunion HLWord
 120:1	>80003b						    .word ?
 121							    .struct
 122	>80003b						        lo .byte ?
 123	>80003c						        hi .byte ?
 124							    .ends
 125							.endu
-253:3	.80003d						mBG4VOFS  .dunion HLWord
+256:3	.80003d						mBG4VOFS  .dunion HLWord
 120:1	>80003d						    .word ?
 121							    .struct
 122	>80003d						        lo .byte ?
 123	>80003e						        hi .byte ?
 124							    .ends
 125							.endu
-254:3	>80003f						mW12SEL	.word ?
-255	>800041						mW34SEL	.word ?
-256	>800043						mWOBJSEL  .word ?
-257	>800045						mWH0	  .word ?
-258	>800047						mWH1	  .word ?
-259	>800049						mWH2	  .word ?
-260	>80004b						mWH3	  .word ?
-261	>80004d						mWBGLOG	.word ?
-262	>80004f						mOBJLOG	.word ?
-263	>800051						mTM		.word ?
-264	>800053						mTS		.word ?
-265	>800055						mTMW	  .word ?
-266	>800057						mTSW	  .word ?
-267	>800059						mCOLDATA  .word ?
-268	>80005b						mSETINI	.word ?
-269	>80005d						mNMITIMEN .word ?
-270							.send  ; sSharedWRAM
+257:3	>80003f						mW12SEL	.word ?
+258	>800041						mW34SEL	.word ?
+259	>800043						mWOBJSEL  .word ?
+260	>800045						mWH0	  .word ?
+261	>800047						mWH1	  .word ?
+262	>800049						mWH2	  .word ?
+263	>80004b						mWH3	  .word ?
+264	>80004d						mWBGLOG	.word ?
+265	>80004f						mOBJLOG	.word ?
+266	>800051						mTM		.word ?
+267	>800053						mTS		.word ?
+268	>800055						mTMW	  .word ?
+269	>800057						mTSW	  .word ?
+270	>800059						mCOLDATA  .word ?
+271	>80005b						mSETINI	.word ?
+272	>80005d						mNMITIMEN .word ?
+273							.send  ; sSharedWRAM
 
 
-273	>0192	808192	00 00				DMAZero .word $0000
+276	>019a	80819a	00 00				DMAZero .word $0000
 
-275	.0194	808194					NMI
-276	.0194	808194	5c 98 81 80	jmp $808198		jml NMIFast				; Move To 8X:XXXX for speed
-277	.0198	808198					NMIFast
-278	.0198	808198	8b		phb			phb						; Save Data Bank
-279	.0199	808199	a9 81		lda #$81		lda #`DataBankStart
-280	.019b	80819b	48		pha			pha
-281	.019c	80819c	ab		plb			plb						; Set Data Bank to default databank
-282							.databank `DataBankStart
-283	.019d	80819d	e2 20		sep #$20		sep #$20				; A8
-284	.019f	80819f	2c 10 42	bit $814210		bit $4210,b			; Ack NMI
-285	.01a2	8081a2	2c 06 00	bit $810006		bit@W NMIReadyNF,b	; Check if this is safe
-286	.01a5	8081a5	10 02		bpl $8081a9		bpl _ready
-287	.01a7	8081a7	ab		plb				plb					; No, restore Data Bank
-288	.01a8	8081a8	40		rti				rti					; Exit
-289	.01a9	8081a9					_ready						; Safe
-290	.01a9	8081a9	c2 30		rep #$30		rep #$30					; A16 XY16
-291	.01ab	8081ab	48		pha			pha
-292	.01ac	8081ac	da		phx			phx
-293	.01ad	8081ad	5a		phy			phy						; Save A,X,Y
-294	.01ae	8081ae	0b		phd			phd						; Save the DP register
-295	.01af	8081af	a9 00 00	lda #$0000		lda #0000				; or where ever you want your NMI DP
-296	.01b2	8081b2	5b		tcd			tcd						; set DP to known value
-297	.01b3	8081b3	a5 19		lda $19			lda MapBufferTarget	; do we have something in the Map Column Buffer
-298	.01b5	8081b5	30 03		bmi $8081ba		bmi _noColumnDMA
-299	.01b7	8081b7	20 01 88	jsr $808801			jsr dmaRow_xx		; draw it
-300	.01ba	8081ba					_noColumnDMA
-46:4	.01ba	8081ba	e2 20		sep #$20		SEP #$20
-302:3	.01bc	8081bc	a9 01		lda #$01		lda #1					; since we don't have an OAM DMA to stall the start
-303	.01be	8081be	2c 12 42	bit $814212	-	bit $4212,b				; of the NMI, we have to wait for the joypad registers
-304	.01c1	8081c1	d0 fb		bne $8081be		bne -						; to be valid.
-305	.01c3	8081c3	a5 07		lda $07			lda JoyHi				; read the joypad
-306	.01c5	8081c5	85 08		sta $08			sta JoyHiOld			; for this example I only care about Left and Right
-307	.01c7	8081c7	ad 19 42	lda $814219		lda $4219,b				; so I only read the upper 8 bits
-308	.01ca	8081ca	85 07		sta $07			sta JoyHi
-309	.01cc	8081cc	25 08		and $08			and JoyHiOld
-310	.01ce	8081ce	45 07		eor $07			eor JoyHi
-311	.01d0	8081d0	85 09		sta $09			sta JoyHiEvent			; generate down event, this was handy for testing
-312	.01d2	8081d2	a5 17		lda $17			lda ScreenYOffset.lo ; update current Y Scroll Offset
-313	.01d4	8081d4	8d 0e 21	sta $81210e		sta $210e,b
-314	.01d7	8081d7	a5 18		lda $18			lda ScreenYOffset.hi
-315	.01d9	8081d9	8d 0e 21	sta $81210e		sta $210e,b
-316	.01dc	8081dc	e2 20		sep #$20		sep #$20					; A8
-317	.01de	8081de	a9 ff		lda #$ff		lda #$FF					; Doing this is slightly faster than DEC, but 2 more bytes
-318	.01e0	8081e0	85 06		sta $06			sta NMIReadyNF			; set NMI Done Flag
-319	.01e2	8081e2	c2 30		rep #$30		rep #$30					; A16 XY16
-320	.01e4	8081e4	2b		pld			pld						; restore DP page
-321	.01e5	8081e5	7a		ply			ply
-322	.01e6	8081e6	fa		plx			plx
-323	.01e7	8081e7	68		pla			pla						; Restore A,X,Y
-324	.01e8	8081e8	ab		plb			plb						; Restore Data Bank
-325	.01e9	8081e9					justRTI
-326	.01e9	8081e9	40		rti			rti						; Exit
-327							; ----- @DMA functions@ -----
+278	.019c	80819c					NMI
+279	.019c	80819c	5c a0 81 80	jmp $8081a0		jml NMIFast				; Move To 8X:XXXX for speed
+280	.01a0	8081a0					NMIFast
+281	.01a0	8081a0	8b		phb			phb						; Save Data Bank
+282	.01a1	8081a1	a9 81		lda #$81		lda #`DataBankStart
+283	.01a3	8081a3	48		pha			pha
+284	.01a4	8081a4	ab		plb			plb						; Set Data Bank to default databank
+285							.databank `DataBankStart
+286	.01a5	8081a5	e2 20		sep #$20		sep #$20				; A8
+287	.01a7	8081a7	2c 10 42	bit $814210		bit $4210,b			; Ack NMI
+288	.01aa	8081aa	2c 06 00	bit $810006		bit@W NMIReadyNF,b	; Check if this is safe
+289	.01ad	8081ad	10 02		bpl $8081b1		bpl _ready
+290	.01af	8081af	ab		plb				plb					; No, restore Data Bank
+291	.01b0	8081b0	40		rti				rti					; Exit
+292	.01b1	8081b1					_ready						; Safe
+293	.01b1	8081b1	c2 30		rep #$30		rep #$30					; A16 XY16
+294	.01b3	8081b3	48		pha			pha
+295	.01b4	8081b4	da		phx			phx
+296	.01b5	8081b5	5a		phy			phy						; Save A,X,Y
+297	.01b6	8081b6	0b		phd			phd						; Save the DP register
+298	.01b7	8081b7	a9 00 00	lda #$0000		lda #0000				; or where ever you want your NMI DP
+299	.01ba	8081ba	5b		tcd			tcd						; set DP to known value
+300	.01bb	8081bb	a5 19		lda $19			lda MapBufferTarget	; do we have something in the Map Column Buffer
+301	.01bd	8081bd	30 03		bmi $8081c2		bmi _noColumnDMA
+302	.01bf	8081bf	20 09 88	jsr $808809			jsr dmaRow_xx		; draw it
+303	.01c2	8081c2					_noColumnDMA
+46:4	.01c2	8081c2	e2 20		sep #$20		SEP #$20
+305:3	.01c4	8081c4	a9 01		lda #$01		lda #1					; since we don't have an OAM DMA to stall the start
+306	.01c6	8081c6	2c 12 42	bit $814212	-	bit $4212,b				; of the NMI, we have to wait for the joypad registers
+307	.01c9	8081c9	d0 fb		bne $8081c6		bne -						; to be valid.
+308	.01cb	8081cb	a5 07		lda $07			lda JoyHi				; read the joypad
+309	.01cd	8081cd	85 08		sta $08			sta JoyHiOld			; for this example I only care about Left and Right
+310	.01cf	8081cf	ad 19 42	lda $814219		lda $4219,b				; so I only read the upper 8 bits
+311	.01d2	8081d2	85 07		sta $07			sta JoyHi
+312	.01d4	8081d4	25 08		and $08			and JoyHiOld
+313	.01d6	8081d6	45 07		eor $07			eor JoyHi
+314	.01d8	8081d8	85 09		sta $09			sta JoyHiEvent			; generate down event, this was handy for testing
+315	.01da	8081da	a5 17		lda $17			lda ScreenYOffset.lo ; update current Y Scroll Offset
+316	.01dc	8081dc	8d 0e 21	sta $81210e		sta $210e,b
+317	.01df	8081df	a5 18		lda $18			lda ScreenYOffset.hi
+318	.01e1	8081e1	8d 0e 21	sta $81210e		sta $210e,b
+319	.01e4	8081e4	e2 20		sep #$20		sep #$20					; A8
+320	.01e6	8081e6	a9 ff		lda #$ff		lda #$FF					; Doing this is slightly faster than DEC, but 2 more bytes
+321	.01e8	8081e8	85 06		sta $06			sta NMIReadyNF			; set NMI Done Flag
+322	.01ea	8081ea	c2 30		rep #$30		rep #$30					; A16 XY16
+323	.01ec	8081ec	2b		pld			pld						; restore DP page
+324	.01ed	8081ed	7a		ply			ply
+325	.01ee	8081ee	fa		plx			plx
+326	.01ef	8081ef	68		pla			pla						; Restore A,X,Y
+327	.01f0	8081f0	ab		plb			plb						; Restore Data Bank
+328	.01f1	8081f1					justRTI
+329	.01f1	8081f1	40		rti			rti						; Exit
+330							; ----- @DMA functions@ -----
 
-329							.section sDataBank
-330	>8000	818000	4c 01 00 00 ff 7f 32 21		SpottyPal .binary "outlaw.pal"		; this will be in bank 81
+332							.section sDataBank
+333	>8000	818000	4c 01 00 00 ff 7f 32 21		SpottyPal .binary "outlaw.pal"		; this will be in bank 81
 	>8008	818008	7a 3f ce 26 10 67 52 59 00 00 00 00 00 00 00 00
 	>8018	818018	00 00 00 00 00 00 00 00
-331							.send ;sDataBank
+334							.send ;sDataBank
 
-333	.01ea	8081ea					dmaPalletes_xx
-334	.01ea	8081ea					_ASSERT_JSR
-335	.01ea	8081ea	08		php			php
-46:4	.01eb	8081eb	e2 20		sep #$20		SEP #$20
-62	.01ed	8081ed	c2 10		rep #$10		REP #$10
-338:3	.01ef	8081ef	a2 00 80	ldx #$8000			ldx #<>SpottyPal
-339	.01f2	8081f2	8e 02 43	stx $814302			stx $4302,b
-340	.01f5	8081f5	a9 81		lda #$81			lda #`SpottyPal
-341	.01f7	8081f7	8d 04 43	sta $814304			sta $4304,b
-342	.01fa	8081fa	a2 20 00	ldx #$0020			ldx #32
-343	.01fd	8081fd	8e 05 43	stx $814305			stx $4305,b
-344	.0200	808200	a2 02 22	ldx #$2202			ldx #%00000010 | $2200			; A->B, Inc, Write 2 Bytes, $2122
-345	.0203	808203	8e 00 43	stx $814300			stx $4300,b
-346	.0206	808206	9c 21 21	stz $812121			stz $2121,b							; start of Pallete
-347	.0209	808209	a9 01		lda #$01			lda #1
-348	.020b	80820b	8d 0b 42	sta $81420b			sta $420B,b
-349	.020e	80820e	28		plp			plp
-350	.020f	80820f	60		rts			rts
+336	.01f2	8081f2					dmaPalletes_xx
+337	.01f2	8081f2					_ASSERT_JSR
+338	.01f2	8081f2	08		php			php
+46:4	.01f3	8081f3	e2 20		sep #$20		SEP #$20
+62	.01f5	8081f5	c2 10		rep #$10		REP #$10
+341:3	.01f7	8081f7	a2 00 80	ldx #$8000			ldx #<>SpottyPal
+342	.01fa	8081fa	8e 02 43	stx $814302			stx $4302,b
+343	.01fd	8081fd	a9 81		lda #$81			lda #`SpottyPal
+344	.01ff	8081ff	8d 04 43	sta $814304			sta $4304,b
+345	.0202	808202	a2 20 00	ldx #$0020			ldx #32
+346	.0205	808205	8e 05 43	stx $814305			stx $4305,b
+347	.0208	808208	a2 02 22	ldx #$2202			ldx #%00000010 | $2200			; A->B, Inc, Write 2 Bytes, $2122
+348	.020b	80820b	8e 00 43	stx $814300			stx $4300,b
+349	.020e	80820e	9c 21 21	stz $812121			stz $2121,b							; start of Pallete
+350	.0211	808211	a9 01		lda #$01			lda #1
+351	.0213	808213	8d 0b 42	sta $81420b			sta $420B,b
+352	.0216	808216	28		plp			plp
+353	.0217	808217	60		rts			rts
 
-352							.section sDataBank
-353	>8020	818020	00 00 00 00 30 00 00 00		SpottyChars .binary "outlaw.chr"		; this will be in bank 81
+355							.section sDataBank
+356	>8020	818020	00 00 00 00 30 00 00 00		SpottyChars .binary "outlaw.chr"		; this will be in bank 81
 	>8028	818028	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 	>8038	818038	00 00 00 00 00 00 00 00 03 00 00 00 00 00 00 00
 	>8048	818048	00 00 30 00 00 00 00 00 00 00 00 00 00 00 00 00
@@ -1029,83 +1032,83 @@
 	>9ef8	819ef8	00 00 00 00 00 00 00 00 3f 00 fc 00 fc 00 ff 00
 	>9f08	819f08	ff 00 f0 00 fc 00 f0 00 00 00 00 00 00 00 00 00
 	>9f18	819f18	00 00 00 00 00 00 00 00
-354							.send ;sDataBank
+357							.send ;sDataBank
 
-356	.0210	808210					dmaLevelChars_xx
-357	.0210	808210					_ASSERT_JSR
-358	.0210	808210	08		php			php
-70:4	.0211	808211	c2 30		rep #$30		REP #$30
-360:3	.0213	808213	a9 20 80	lda #$8020			lda #<>SpottyChars
-361	.0216	808216	8d 02 43	sta $814302			sta $4302,b
-46:4	.0219	808219	e2 20		sep #$20		SEP #$20
-363:3	.021b	80821b	a9 81		lda #$81			lda #`SpottyChars
-364	.021d	80821d	8d 04 43	sta $814304			sta $4304,b
-365	.0220	808220	a2 00 1f	ldx #$1f00			ldx #size(SpottyChars)
-366	.0223	808223	8e 05 43	stx $814305			stx $4305,b
-367	.0226	808226	a2 01 18	ldx #$1801			ldx #%00000001 | $1800			; A->B, Inc, Write WORD, $2118
-368	.0229	808229	8e 00 43	stx $814300			stx $4300,b
-369	.022c	80822c	a2 00 10	ldx #$1000			ldx #kVRAM.gameChars
-370	.022f	80822f	8e 16 21	stx $812116			stx $2116,b
-371	.0232	808232	a9 80		lda #$80			lda #$80
-372	.0234	808234	8d 15 21	sta $812115			sta $2115,b							; inc VRAM port address
-373	.0237	808237	a9 01		lda #$01			lda #1
-374	.0239	808239	8d 0b 42	sta $81420b			sta $420B,b
-375	.023c	80823c	28		plp			plp
-376	.023d	80823d	60		rts			rts
+359	.0218	808218					dmaLevelChars_xx
+360	.0218	808218					_ASSERT_JSR
+361	.0218	808218	08		php			php
+70:4	.0219	808219	c2 30		rep #$30		REP #$30
+363:3	.021b	80821b	a9 20 80	lda #$8020			lda #<>SpottyChars
+364	.021e	80821e	8d 02 43	sta $814302			sta $4302,b
+46:4	.0221	808221	e2 20		sep #$20		SEP #$20
+366:3	.0223	808223	a9 81		lda #$81			lda #`SpottyChars
+367	.0225	808225	8d 04 43	sta $814304			sta $4304,b
+368	.0228	808228	a2 00 1f	ldx #$1f00			ldx #size(SpottyChars)
+369	.022b	80822b	8e 05 43	stx $814305			stx $4305,b
+370	.022e	80822e	a2 01 18	ldx #$1801			ldx #%00000001 | $1800			; A->B, Inc, Write WORD, $2118
+371	.0231	808231	8e 00 43	stx $814300			stx $4300,b
+372	.0234	808234	a2 00 10	ldx #$1000			ldx #kVRAM.gameChars
+373	.0237	808237	8e 16 21	stx $812116			stx $2116,b
+374	.023a	80823a	a9 80		lda #$80			lda #$80
+375	.023c	80823c	8d 15 21	sta $812115			sta $2115,b							; inc VRAM port address
+376	.023f	80823f	a9 01		lda #$01			lda #1
+377	.0241	808241	8d 0b 42	sta $81420b			sta $420B,b
+378	.0244	808244	28		plp			plp
+379	.0245	808245	60		rts			rts
 
-378							; ----- @Map Functions@ -----
-379							.section sDP
-380	>000b						MapBlockIndexTop	.word ?				; the left edge block index
-381	>000d						MapBlockIndexBot	.word ?				; for the right
-382	>000f						MapSubRowTop		.byte ?				; which row in the block, pre multiplied by 2
-383	>0010						MapSubRowBot		.byte ?
-384	.0011						MapVRAMTop			.DUNION HLWORD		; the top char memory location in VRAM
+381							; ----- @Map Functions@ -----
+382							.section sDP
+383	>000b						MapBlockIndexTop	.word ?				; the left edge block index
+384	>000d						MapBlockIndexBot	.word ?				; for the right
+385	>000f						MapSubRowTop		.byte ?				; which row in the block, pre multiplied by 2
+386	>0010						MapSubRowBot		.byte ?
+387	.0011						MapVRAMTop			.DUNION HLWORD		; the top char memory location in VRAM
 120:1	>0011						    .word ?
 121							    .struct
 122	>0011						        lo .byte ?
 123	>0012						        hi .byte ?
 124							    .ends
 125							.endu
-385:3	.0013						MapVRAMBot			.DUNION HLWORD
+388:3	.0013						MapVRAMBot			.DUNION HLWORD
 120:1	>0013						    .word ?
 121							    .struct
 122	>0013						        lo .byte ?
 123	>0014						        hi .byte ?
 124							    .ends
 125							.endu
-386:3	.0015						MapTempWord			.DUNION HLWORD		; used to hold data for the map functions
+389:3	.0015						MapTempWord			.DUNION HLWORD		; used to hold data for the map functions
 120:1	>0015						    .word ?
 121							    .struct
 122	>0015						        lo .byte ?
 123	>0016						        hi .byte ?
 124							    .ends
 125							.endu
-387:3	.0017						ScreenYOffset		.DUNION HLWORD		; current screen X scroll
+390:3	.0017						ScreenYOffset		.DUNION HLWORD		; current screen X scroll
 120:1	>0017						    .word ?
 121							    .struct
 122	>0017						        lo .byte ?
 123	>0018						        hi .byte ?
 124							    .ends
 125							.endu
-388:3	.0019						MapBufferTarget	.DUNION HLWORD		; where we want NMI to dma the buffer to
+391:3	.0019						MapBufferTarget	.DUNION HLWORD		; where we want NMI to dma the buffer to
 120:1	>0019						    .word ?
 121							    .struct
 122	>0019						        lo .byte ?
 123	>001a						        hi .byte ?
 124							    .ends
 125							.endu
-389:3							.send ;sDP
+392:3							.send ;sDP
 
-391							.section sSharedWRAM
-392	>80005f						MapColumnBuffer .fill 40*2					; buffer of 32 chars to be DMA'd in the NMI
-393	=$8000ae					MapColumnBufferEnd = * - 1					; stack pushes then decs so we point to the last element
-394	>8000af						MapStackStore .word ?						; Temp store to hold the stack value for restoration
-395							.send ; sSharedWRAM
+394							.section sSharedWRAM
+395	>80005f						MapColumnBuffer .fill 40*2					; buffer of 32 chars to be DMA'd in the NMI
+396	=$8000ae					MapColumnBufferEnd = * - 1					; stack pushes then decs so we point to the last element
+397	>8000af						MapStackStore .word ?						; Temp store to hold the stack value for restoration
+398							.send ; sSharedWRAM
 
-397							.section sDataBank							; bank 81
-398	.9f20	819f20					MapData .block
-399	=512							kColLen = 512
-400	>9f20	819f20	37 09 02 02 00 00 00 00			col1 .binary "outlaw_col0.map"
+400							.section sDataBank							; bank 81
+401	.9f20	819f20					MapData .block
+402	=512							kColLen = 512
+403	>9f20	819f20	37 09 02 02 00 00 00 00			col1 .binary "outlaw_col0.map"
 	>9f28	819f28	00 00 00 1c 0d 26 00 00 00 1c 0d 1d 00 04 00 00
 	>9f38	819f38	0b 3d 0d 0d 1d 00 00 04 04 00 00 04 04 2c 2d 1f
 	>9f48	819f48	1f 1f 0f 2f 02 35 32 04 04 02 04 04 04 04 04 04
@@ -1138,7 +1141,7 @@
 	>a0f8	81a0f8	00 3f 00 04 00 00 00 03 04 00 04 00 3f 00 00 00
 	>a108	81a108	00 00 00 00 04 04 00 3f 00 04 00 00 04 00 04 04
 	>a118	81a118	00 00 03 00 00 01 00 00
-401	>a120	81a120	0d 08 02 02 02 02 00 00			col2 .binary "outlaw_col1.map"
+404	>a120	81a120	0d 08 02 02 02 02 00 00			col2 .binary "outlaw_col1.map"
 	>a128	81a128	04 00 00 1c 0d 1d 0b 3d 09 1c 0d 1d 04 25 04 04
 	>a138	81a138	19 07 0d 0d 1d 0b 0c 18 0a 09 00 00 00 00 2a 2b
 	>a148	81a148	2b 2b 2b 29 04 34 33 00 02 00 00 00 00 00 3f 00
@@ -1171,7 +1174,7 @@
 	>a2f8	81a2f8	04 00 12 11 04 00 00 10 00 00 04 00 04 00 3f 00
 	>a308	81a308	04 00 04 04 00 00 04 00 04 00 3f 04 04 00 00 00
 	>a318	81a318	3f 04 00 3f 00 00 00 3f
-402	>a320	81a320	0d 26 03 03 02 02 02 02			col3 .binary "outlaw_col2.map"
+405	>a320	81a320	0d 26 03 03 02 02 02 02			col3 .binary "outlaw_col2.map"
 	>a328	81a328	00 00 04 2e 0e 1d 3b 0d 08 1c 0d 1d 00 04 04 04
 	>a338	81a338	2e 0e 0e 0e 1d 2e 3c 0e 0d 08 00 00 00 04 04 04
 	>a348	81a348	04 00 00 00 04 3e 05 02 04 04 04 04 04 04 04 00
@@ -1204,7 +1207,7 @@
 	>a4f8	81a4f8	00 04 00 04 00 04 04 00 00 04 00 04 00 00 00 04
 	>a508	81a508	00 04 00 00 00 04 04 04 04 04 04 04 00 04 3f 04
 	>a518	81a518	00 03 04 00 03 00 3f 00
-403	>a520	81a520	0d 26 04 03 03 03 02 02			col4 .binary "outlaw_col3.map"
+406	>a520	81a520	0d 26 04 03 03 03 02 02			col4 .binary "outlaw_col3.map"
 	>a528	81a528	02 02 04 2c 28 2f 1c 0d 1b 1c 0d 1d 04 0b 3d 09
 	>a538	81a538	2c 2d 1f 0f 2f 2c 2d 1f 0d 1b 04 0b 0c 18 0a 09
 	>a548	81a548	00 04 00 00 00 31 02 04 00 04 04 00 04 04 04 04
@@ -1237,7 +1240,7 @@
 	>a6f8	81a6f8	11 00 00 00 04 00 00 04 3f 00 00 00 00 00 04 04
 	>a708	81a708	00 00 04 04 3f 00 04 00 04 04 04 04 04 04 04 00
 	>a718	81a718	04 00 04 00 04 00 00 00
-404	>a720	81a720	0d 26 04 04 00 00 00 03			col5 .binary "outlaw_col4.map"
+407	>a720	81a720	0d 26 04 04 00 00 00 03			col5 .binary "outlaw_col4.map"
 	>a728	81a728	04 04 04 04 04 04 1c 0d 1b 1c 0d 1d 04 19 0d 38
 	>a738	81a738	00 04 04 00 04 04 04 04 0d 1b 04 1c 3c 3c 3c 38
 	>a748	81a748	04 04 04 03 04 21 03 04 04 00 3f 04 04 04 00 00
@@ -1270,7 +1273,7 @@
 	>a8f8	81a8f8	11 04 04 04 04 00 00 00 00 00 04 04 04 04 00 00
 	>a908	81a908	00 04 00 00 00 00 04 04 04 04 03 00 04 00 04 00
 	>a918	81a918	00 04 03 00 04 3f 00 00
-405	>a920	81a920	0d 26 04 03 3f 03 02 02			col6 .binary "outlaw_col5.map"
+408	>a920	81a920	0d 26 04 03 3f 03 02 02			col6 .binary "outlaw_col5.map"
 	>a928	81a928	02 02 04 0b 3d 09 1c 0d 1b 1c 0e 1d 04 1c 0d 1d
 	>a938	81a938	04 0b 0c 18 1a 0a 09 04 0d 1b 04 2c 2d 1f 0f 2f
 	>a948	81a948	04 04 04 00 05 22 04 00 04 03 04 00 00 04 04 00
@@ -1303,7 +1306,7 @@
 	>aaf8	81aaf8	04 04 04 04 00 04 3f 04 04 04 00 3f 04 00 04 00
 	>ab08	81ab08	04 04 00 04 04 04 00 04 04 03 04 3f 04 04 04 04
 	>ab18	81ab18	04 00 00 00 03 3f 03 00
-406	>ab20	81ab20	0d 1d 03 03 02 02 02 02			col7 .binary "outlaw_col6.map"
+409	>ab20	81ab20	0d 1d 03 03 02 02 02 02			col7 .binary "outlaw_col6.map"
 	>ab28	81ab28	04 00 04 1c 0d 08 1c 0d 1b 2c 28 2f 04 2e 0d 1d
 	>ab38	81ab38	00 19 07 07 07 07 08 04 0d 1b 04 05 00 04 04 04
 	>ab48	81ab48	04 00 00 00 00 23 02 00 04 04 00 00 05 04 04 00
@@ -1336,7 +1339,7 @@
 	>acf8	81acf8	04 00 05 04 04 00 00 00 00 04 04 00 3f 00 00 00
 	>ad08	81ad08	3f 00 04 00 00 00 00 00 04 04 03 04 04 04 04 3f
 	>ad18	81ad18	00 00 00 04 03 00 03 3f
-407	>ad20	81ad20	0f 2f 02 02 02 02 04 04			col8 .binary "outlaw_col7.map"
+410	>ad20	81ad20	0f 2f 02 02 02 02 04 04			col8 .binary "outlaw_col7.map"
 	>ad28	81ad28	04 04 00 1c 0d 1b 1c 0d 1b 00 2a 29 00 2c 28 2f
 	>ad38	81ad38	00 1c 0d 0d 0d 0d 1b 04 0d 1b 04 00 00 00 00 00
 	>ad48	81ad48	04 04 04 02 04 36 00 02 04 04 00 04 04 04 04 04
@@ -1369,9 +1372,9 @@
 	>aef8	81aef8	00 00 04 00 04 00 04 00 04 3f 00 04 00 00 04 00
 	>af08	81af08	00 00 04 00 04 00 3f 04 04 04 04 03 00 04 00 00
 	>af18	81af18	00 00 00 04 00 00 00 00
-408							.bend
-409	.af20	81af20					BlockData .block
-410	>af20	81af20	00 00 01 00 00 00 02 00			row1 .binary "outlaw_row1.blk"
+411							.bend
+412	.af20	81af20					BlockData .block
+413	>af20	81af20	00 00 01 00 00 00 02 00			row1 .binary "outlaw_row1.blk"
 	>af28	81af28	03 00 06 00 07 00 08 00 09 00 0a 00 00 00 01 00
 	>af38	81af38	00 00 02 00 05 00 00 00 01 00 00 00 02 00 05 00
 	>af48	81af48	0a 00 04 00 05 00 04 00 03 00 00 00 01 00 00 00
@@ -1414,7 +1417,7 @@
 	>b198	81b198	ee 00 04 00 00 00 05 00 65 00 66 00 67 00 68 00
 	>b1a8	81b1a8	0a 00 06 00 04 00 06 00 01 00 01 00 02 00 7e 00
 	>b1b8	81b1b8	0a 00 01 00 0a 00 02 00 01 00 0a 00 04 00 05 00
-411	>b1c8	81b1c8	03 00 04 00 04 00 01 00			row2 .binary "outlaw_row2.blk"
+414	>b1c8	81b1c8	03 00 04 00 04 00 01 00			row2 .binary "outlaw_row2.blk"
 	>b1d0	81b1d0	04 00 0b 00 0c 00 0d 00 0e 00 05 00 03 00 04 00
 	>b1e0	81b1e0	1a 00 01 00 04 00 03 00 04 00 04 00 01 00 04 00
 	>b1f0	81b1f0	03 00 01 00 03 00 06 00 01 00 03 00 06 00 20 00
@@ -1457,7 +1460,7 @@
 	>b440	81b440	ef 00 f0 00 f1 00 06 00 69 00 6a 00 6b 00 6c 00
 	>b450	81b450	06 00 04 00 01 00 04 00 01 00 04 00 0a 00 7f 00
 	>b460	81b460	04 00 04 00 02 00 0a 00 85 00 0a 00 04 00 01 00
-412	>b470	81b470	01 00 02 00 03 00 04 00			row3 .binary "outlaw_row3.blk"
+415	>b470	81b470	01 00 02 00 03 00 04 00			row3 .binary "outlaw_row3.blk"
 	>b478	81b478	01 00 0f 00 10 00 11 00 12 00 03 00 01 00 02 00
 	>b488	81b488	1b 00 04 00 01 00 01 00 02 00 03 00 04 00 01 00
 	>b498	81b498	02 00 03 00 0a 00 03 00 04 00 01 00 22 00 23 00
@@ -1500,7 +1503,7 @@
 	>b6e8	81b6e8	f2 00 f3 00 f4 00 04 00 6d 00 6e 00 6f 00 70 00
 	>b6f8	81b6f8	0a 00 06 00 04 00 06 00 06 00 01 00 03 00 80 00
 	>b708	81b708	04 00 01 00 04 00 86 00 87 00 88 00 02 00 02 00
-413	>b718	81b718	05 00 03 00 00 00 05 00			row4 .binary "outlaw_row4.blk"
+416	>b718	81b718	05 00 03 00 00 00 05 00			row4 .binary "outlaw_row4.blk"
 	>b720	81b720	04 00 13 00 06 00 14 00 15 00 16 00 05 00 03 00
 	>b730	81b730	1c 00 1d 00 04 00 05 00 03 00 00 00 05 00 04 00
 	>b740	81b740	01 00 00 00 00 00 01 00 05 00 05 00 25 00 26 00
@@ -1543,7 +1546,7 @@
 	>b990	81b990	06 00 f5 00 91 00 05 00 71 00 72 00 73 00 74 00
 	>b9a0	81b9a0	75 00 06 00 7a 00 7b 00 00 00 01 00 0a 00 47 00
 	>b9b0	81b9b0	81 00 82 00 04 00 01 00 89 00 02 00 01 00 0a 00
-414	>b9c0	81b9c0	03 00 01 00 02 00 03 00			row5 .binary "outlaw_row5.blk"
+417	>b9c0	81b9c0	03 00 01 00 02 00 03 00			row5 .binary "outlaw_row5.blk"
 	>b9c8	81b9c8	01 00 0a 00 17 00 18 00 19 00 0a 00 03 00 01 00
 	>b9d8	81b9d8	02 00 1e 00 1f 00 03 00 01 00 02 00 03 00 01 00
 	>b9e8	81b9e8	03 00 0a 00 01 00 04 00 06 00 03 00 01 00 02 00
@@ -1586,954 +1589,954 @@
 	>bc38	81bc38	06 00 f6 00 f7 00 00 00 0a 00 76 00 77 00 78 00
 	>bc48	81bc48	79 00 00 00 7c 00 7d 00 01 00 0a 00 04 00 01 00
 	>bc58	81bc58	01 00 83 00 84 00 8a 00 8b 00 8c 00 02 00 04 00
-415							.bend
-416							.send ; sDataBank
+418							.bend
+419							.send ; sDataBank
 
-418							.databank `DataBankStart				; make sure we are back into the DataBank err Bank
+421							.databank `DataBankStart				; make sure we are back into the DataBank err Bank
 
-420	.023e	80823e					map_InitEmptyScreen_xx
-421	.023e	80823e					_ASSERT_JSR
-422	.023e	80823e	08		php			php
-66:4	.023f	80823f	e2 30		sep #$30		SEP #$30
-424:3	.0241	808241	a9 08		lda #$08		lda #8							; to draw the screen by looping it
-425	.0243	808243	85 0f		sta $0f			sta MapSubRowTop
-426	.0245	808245	64 10		stz $10			stz MapSubRowBot				; top    = block 511, subChar 4, VRAM row 63
-70:4	.0247	808247	c2 30		rep #$30		REP #$30
-428:3	.0249	808249	a9 00 02	lda #$0200		lda #512
-429	.024c	80824c	85 0d		sta $0d			sta MapBlockIndexBot			; bot starts at the last map position, -1
-430	.024e	80824e	a9 ff 01	lda #$01ff		lda #511
-431	.0251	808251	85 0b		sta $0b			sta MapBlockIndexTop			; top starts at 511 so we can use the system
-432	.0253	808253	a9 e0 07	lda #$07e0		lda #63*32
-433	.0256	808256	85 11		sta $11			sta MapVRAMTop
-434	.0258	808258	64 13		stz $13			stz MapVRAMBot
-435	.025a	80825a	a9 20 01	lda #$0120		lda #512-224
-436	.025d	80825d	85 17		sta $17			sta ScreenYOffset				; start the Y at the bottom of the screen
-437	.025f	80825f	64 19		stz $19			stz MapBufferTarget			; we want this to be negative, so set 0
-438	.0261	808261	c6 19		dec $19			dec MapBufferTarget			; dec 1 to be -1
-439	.0263	808263	28		plp			plp
-440	.0264	808264	60		rts			rts
+423	.0246	808246					map_InitEmptyScreen_xx
+424	.0246	808246					_ASSERT_JSR
+425	.0246	808246	08		php			php
+66:4	.0247	808247	e2 30		sep #$30		SEP #$30
+427:3	.0249	808249	a9 08		lda #$08		lda #8							; to draw the screen by looping it
+428	.024b	80824b	85 0f		sta $0f			sta MapSubRowTop
+429	.024d	80824d	64 10		stz $10			stz MapSubRowBot				; top    = block 511, subChar 4, VRAM row 63
+70:4	.024f	80824f	c2 30		rep #$30		REP #$30
+431:3	.0251	808251	a9 00 02	lda #$0200		lda #512
+432	.0254	808254	85 0d		sta $0d			sta MapBlockIndexBot			; bot starts at the last map position, -1
+433	.0256	808256	a9 ff 01	lda #$01ff		lda #511
+434	.0259	808259	85 0b		sta $0b			sta MapBlockIndexTop			; top starts at 511 so we can use the system
+435	.025b	80825b	a9 e0 07	lda #$07e0		lda #63*32
+436	.025e	80825e	85 11		sta $11			sta MapVRAMTop
+437	.0260	808260	64 13		stz $13			stz MapVRAMBot
+438	.0262	808262	a9 18 01	lda #$0118		lda #512-224-8					; use 8 to create an ahead buffer down the bottom
+439	.0265	808265	85 17		sta $17			sta ScreenYOffset				; start the Y at the bottom of the screen
+440	.0267	808267	64 19		stz $19			stz MapBufferTarget			; we want this to be negative, so set 0
+441	.0269	808269	c6 19		dec $19			dec MapBufferTarget			; dec 1 to be -1
+442	.026b	80826b	28		plp			plp
+443	.026c	80826c	60		rts			rts
 
-442	.0265	808265					map_fillRowBufferTopEdge_xx
-443	.0265	808265					_ASSERT_JSR
-444	.0265	808265	08		php			php
-70:4	.0266	808266	c2 30		rep #$30		REP #$30
-446:3	.0268	808268	a5 11		lda $11			lda MapVRAMTop			; which row do we need to write it to
-447	.026a	80826a	85 19		sta $19			sta MapBufferTarget	; MapVramTop is premultiplied by 32
-448	.026c	80826c	ba		tsx			tsx
-449	.026d	80826d	86 af		stx $af			stx <MapStackStore,d
-450	.026f	80826f	a2 ae 00	ldx #$00ae		ldx #<>MapColumnBufferEnd
-451	.0272	808272	9a		txs			txs								; set the stack to the buffer
-452	.0273	808273	a4 0b		ldy $0b			ldy MapBlockIndexTop			; which block do we want
-453	.0275	808275	a5 0f		lda $0f			lda MapSubRowTop
-454	.0277	808277	29 ff 00	and #$00ff		and #$ff
-455	.027a	80827a	aa		tax			tax
-456	.027b	80827b	80 16		bra $808293		bra map_fillRowBufferEdgeCommon
+445	.026d	80826d					map_fillRowBufferTopEdge_xx
+446	.026d	80826d					_ASSERT_JSR
+447	.026d	80826d	08		php			php
+70:4	.026e	80826e	c2 30		rep #$30		REP #$30
+449:3	.0270	808270	a5 11		lda $11			lda MapVRAMTop			; which row do we need to write it to
+450	.0272	808272	85 19		sta $19			sta MapBufferTarget	; MapVramTop is premultiplied by 32
+451	.0274	808274	ba		tsx			tsx
+452	.0275	808275	86 af		stx $af			stx <MapStackStore,d
+453	.0277	808277	a2 ae 00	ldx #$00ae		ldx #<>MapColumnBufferEnd
+454	.027a	80827a	9a		txs			txs								; set the stack to the buffer
+455	.027b	80827b	a4 0b		ldy $0b			ldy MapBlockIndexTop			; which block do we want
+456	.027d	80827d	a5 0f		lda $0f			lda MapSubRowTop
+457	.027f	80827f	29 ff 00	and #$00ff		and #$ff
+458	.0282	808282	aa		tax			tax
+459	.0283	808283	80 16		bra $80829b		bra map_fillRowBufferEdgeCommon
 
-458	.027d	80827d					map_fillRowBufferBotEdge_xx
-459	.027d	80827d					_ASSERT_JSR
-460	.027d	80827d	08		php			php
-70:4	.027e	80827e	c2 30		rep #$30		REP #$30
-462:3	.0280	808280	a5 13		lda $13			lda MapVRAMBot			; which row do we need to write it to
-463	.0282	808282	85 19		sta $19			sta MapBufferTarget	; MapVRAMBot is premultiplied by 32
-464	.0284	808284	ba		tsx			tsx
-465	.0285	808285	86 af		stx $af			stx <MapStackStore,d
-466	.0287	808287	a2 ae 00	ldx #$00ae		ldx #<>MapColumnBufferEnd
-467	.028a	80828a	9a		txs			txs								; set the stack to the buffer
-468	.028b	80828b	a4 0d		ldy $0d			ldy MapBlockIndexBot			; which block do we want
-469	.028d	80828d	a5 10		lda $10			lda MapSubRowBot
-470	.028f	80828f	29 ff 00	and #$00ff		and #$ff
-471	.0292	808292	aa		tax			tax
-472							; bra map_fillRowBufferEdgeCommon
-473							; fall through
-474	.0293	808293					map_fillRowBufferEdgeCommon
-475	.0293	808293	7c 96 82	jmp ($808296,x)		jmp (+,x)
-476	>0296	808296	a0 82 b3 83 c6 84 d9 85		+ .word <>(_Row1,_Row2,_Row3,_Row4,_Row5)
-	>029e	80829e	ec 86
-477	.02a0	8082a0					_Row1
-533	.02a0	8082a0	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
-534	.02a3	8082a3	29 ff 00	and #$00ff		and #$ff
-535	.02a6	8082a6	85 15		sta $15			sta MapTempWord
-536	.02a8	8082a8	0a		asl a			asl a
-537	.02a9	8082a9	0a		asl a			asl a
-538	.02aa	8082aa	65 15		adc $15			adc MapTempWord; x5
-539	.02ac	8082ac	0a		asl a			asl a ; x10
-540	.02ad	8082ad	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.02ae	8082ae	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
-543	.02b1	8082b1	48		pha			pha
-544	.02b2	8082b2	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
-545	.02b5	8082b5	48		pha			pha
-546	.02b6	8082b6	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
-547	.02b9	8082b9	48		pha			pha
-548	.02ba	8082ba	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
-549	.02bd	8082bd	48		pha			pha
-550	.02be	8082be	bd 20 af	lda $81af20,x		lda BlockData.row1,x
-551	.02c1	8082c1	48		pha			pha
-533	.02c2	8082c2	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
-534	.02c5	8082c5	29 ff 00	and #$00ff		and #$ff
-535	.02c8	8082c8	85 15		sta $15			sta MapTempWord
-536	.02ca	8082ca	0a		asl a			asl a
-537	.02cb	8082cb	0a		asl a			asl a
-538	.02cc	8082cc	65 15		adc $15			adc MapTempWord; x5
-539	.02ce	8082ce	0a		asl a			asl a ; x10
-540	.02cf	8082cf	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.02d0	8082d0	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
-543	.02d3	8082d3	48		pha			pha
-544	.02d4	8082d4	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
-545	.02d7	8082d7	48		pha			pha
-546	.02d8	8082d8	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
-547	.02db	8082db	48		pha			pha
-548	.02dc	8082dc	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
-549	.02df	8082df	48		pha			pha
-550	.02e0	8082e0	bd 20 af	lda $81af20,x		lda BlockData.row1,x
-551	.02e3	8082e3	48		pha			pha
-533	.02e4	8082e4	b9 20 a9	lda $81a920,y		lda MapData.col6,y
-534	.02e7	8082e7	29 ff 00	and #$00ff		and #$ff
-535	.02ea	8082ea	85 15		sta $15			sta MapTempWord
-536	.02ec	8082ec	0a		asl a			asl a
-537	.02ed	8082ed	0a		asl a			asl a
-538	.02ee	8082ee	65 15		adc $15			adc MapTempWord; x5
-539	.02f0	8082f0	0a		asl a			asl a ; x10
-540	.02f1	8082f1	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.02f2	8082f2	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
-543	.02f5	8082f5	48		pha			pha
-544	.02f6	8082f6	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
-545	.02f9	8082f9	48		pha			pha
-546	.02fa	8082fa	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
-547	.02fd	8082fd	48		pha			pha
-548	.02fe	8082fe	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
-549	.0301	808301	48		pha			pha
-550	.0302	808302	bd 20 af	lda $81af20,x		lda BlockData.row1,x
-551	.0305	808305	48		pha			pha
-533	.0306	808306	b9 20 a7	lda $81a720,y		lda MapData.col5,y
-534	.0309	808309	29 ff 00	and #$00ff		and #$ff
-535	.030c	80830c	85 15		sta $15			sta MapTempWord
-536	.030e	80830e	0a		asl a			asl a
-537	.030f	80830f	0a		asl a			asl a
-538	.0310	808310	65 15		adc $15			adc MapTempWord; x5
-539	.0312	808312	0a		asl a			asl a ; x10
-540	.0313	808313	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.0314	808314	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
-543	.0317	808317	48		pha			pha
-544	.0318	808318	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
-545	.031b	80831b	48		pha			pha
-546	.031c	80831c	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
-547	.031f	80831f	48		pha			pha
-548	.0320	808320	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
-549	.0323	808323	48		pha			pha
-550	.0324	808324	bd 20 af	lda $81af20,x		lda BlockData.row1,x
-551	.0327	808327	48		pha			pha
-533	.0328	808328	b9 20 a5	lda $81a520,y		lda MapData.col4,y
-534	.032b	80832b	29 ff 00	and #$00ff		and #$ff
-535	.032e	80832e	85 15		sta $15			sta MapTempWord
-536	.0330	808330	0a		asl a			asl a
-537	.0331	808331	0a		asl a			asl a
-538	.0332	808332	65 15		adc $15			adc MapTempWord; x5
-539	.0334	808334	0a		asl a			asl a ; x10
-540	.0335	808335	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.0336	808336	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
-543	.0339	808339	48		pha			pha
-544	.033a	80833a	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
-545	.033d	80833d	48		pha			pha
-546	.033e	80833e	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
-547	.0341	808341	48		pha			pha
-548	.0342	808342	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
-549	.0345	808345	48		pha			pha
-550	.0346	808346	bd 20 af	lda $81af20,x		lda BlockData.row1,x
-551	.0349	808349	48		pha			pha
-533	.034a	80834a	b9 20 a3	lda $81a320,y		lda MapData.col3,y
-534	.034d	80834d	29 ff 00	and #$00ff		and #$ff
-535	.0350	808350	85 15		sta $15			sta MapTempWord
-536	.0352	808352	0a		asl a			asl a
-537	.0353	808353	0a		asl a			asl a
-538	.0354	808354	65 15		adc $15			adc MapTempWord; x5
-539	.0356	808356	0a		asl a			asl a ; x10
-540	.0357	808357	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.0358	808358	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
-543	.035b	80835b	48		pha			pha
-544	.035c	80835c	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
-545	.035f	80835f	48		pha			pha
-546	.0360	808360	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
-547	.0363	808363	48		pha			pha
-548	.0364	808364	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
-549	.0367	808367	48		pha			pha
-550	.0368	808368	bd 20 af	lda $81af20,x		lda BlockData.row1,x
-551	.036b	80836b	48		pha			pha
-533	.036c	80836c	b9 20 a1	lda $81a120,y		lda MapData.col2,y
-534	.036f	80836f	29 ff 00	and #$00ff		and #$ff
-535	.0372	808372	85 15		sta $15			sta MapTempWord
-536	.0374	808374	0a		asl a			asl a
-537	.0375	808375	0a		asl a			asl a
-538	.0376	808376	65 15		adc $15			adc MapTempWord; x5
-539	.0378	808378	0a		asl a			asl a ; x10
-540	.0379	808379	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.037a	80837a	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
-543	.037d	80837d	48		pha			pha
-544	.037e	80837e	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
-545	.0381	808381	48		pha			pha
-546	.0382	808382	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
-547	.0385	808385	48		pha			pha
-548	.0386	808386	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
-549	.0389	808389	48		pha			pha
-550	.038a	80838a	bd 20 af	lda $81af20,x		lda BlockData.row1,x
-551	.038d	80838d	48		pha			pha
-533	.038e	80838e	b9 20 9f	lda $819f20,y		lda MapData.col1,y
-534	.0391	808391	29 ff 00	and #$00ff		and #$ff
-535	.0394	808394	85 15		sta $15			sta MapTempWord
-536	.0396	808396	0a		asl a			asl a
-537	.0397	808397	0a		asl a			asl a
-538	.0398	808398	65 15		adc $15			adc MapTempWord; x5
-539	.039a	80839a	0a		asl a			asl a ; x10
-540	.039b	80839b	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.039c	80839c	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
-543	.039f	80839f	48		pha			pha
-544	.03a0	8083a0	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
-545	.03a3	8083a3	48		pha			pha
-546	.03a4	8083a4	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
-547	.03a7	8083a7	48		pha			pha
-548	.03a8	8083a8	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
-549	.03ab	8083ab	48		pha			pha
-550	.03ac	8083ac	bd 20 af	lda $81af20,x		lda BlockData.row1,x
-551	.03af	8083af	48		pha			pha
-486	.03b0	8083b0	4c fc 87	jmp $8087fc		jmp _exit
-487	.03b3	8083b3					_Row2
-533	.03b3	8083b3	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
-534	.03b6	8083b6	29 ff 00	and #$00ff		and #$ff
-535	.03b9	8083b9	85 15		sta $15			sta MapTempWord
-536	.03bb	8083bb	0a		asl a			asl a
-537	.03bc	8083bc	0a		asl a			asl a
-538	.03bd	8083bd	65 15		adc $15			adc MapTempWord; x5
-539	.03bf	8083bf	0a		asl a			asl a ; x10
-540	.03c0	8083c0	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.03c1	8083c1	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
-543	.03c4	8083c4	48		pha			pha
-544	.03c5	8083c5	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
-545	.03c8	8083c8	48		pha			pha
-546	.03c9	8083c9	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
-547	.03cc	8083cc	48		pha			pha
-548	.03cd	8083cd	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
-549	.03d0	8083d0	48		pha			pha
-550	.03d1	8083d1	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
-551	.03d4	8083d4	48		pha			pha
-533	.03d5	8083d5	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
-534	.03d8	8083d8	29 ff 00	and #$00ff		and #$ff
-535	.03db	8083db	85 15		sta $15			sta MapTempWord
-536	.03dd	8083dd	0a		asl a			asl a
-537	.03de	8083de	0a		asl a			asl a
-538	.03df	8083df	65 15		adc $15			adc MapTempWord; x5
-539	.03e1	8083e1	0a		asl a			asl a ; x10
-540	.03e2	8083e2	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.03e3	8083e3	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
-543	.03e6	8083e6	48		pha			pha
-544	.03e7	8083e7	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
-545	.03ea	8083ea	48		pha			pha
-546	.03eb	8083eb	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
-547	.03ee	8083ee	48		pha			pha
-548	.03ef	8083ef	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
-549	.03f2	8083f2	48		pha			pha
-550	.03f3	8083f3	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
-551	.03f6	8083f6	48		pha			pha
-533	.03f7	8083f7	b9 20 a9	lda $81a920,y		lda MapData.col6,y
-534	.03fa	8083fa	29 ff 00	and #$00ff		and #$ff
-535	.03fd	8083fd	85 15		sta $15			sta MapTempWord
-536	.03ff	8083ff	0a		asl a			asl a
-537	.0400	808400	0a		asl a			asl a
-538	.0401	808401	65 15		adc $15			adc MapTempWord; x5
-539	.0403	808403	0a		asl a			asl a ; x10
-540	.0404	808404	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.0405	808405	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
-543	.0408	808408	48		pha			pha
-544	.0409	808409	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
-545	.040c	80840c	48		pha			pha
-546	.040d	80840d	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
-547	.0410	808410	48		pha			pha
-548	.0411	808411	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
-549	.0414	808414	48		pha			pha
-550	.0415	808415	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
-551	.0418	808418	48		pha			pha
-533	.0419	808419	b9 20 a7	lda $81a720,y		lda MapData.col5,y
-534	.041c	80841c	29 ff 00	and #$00ff		and #$ff
-535	.041f	80841f	85 15		sta $15			sta MapTempWord
-536	.0421	808421	0a		asl a			asl a
-537	.0422	808422	0a		asl a			asl a
-538	.0423	808423	65 15		adc $15			adc MapTempWord; x5
-539	.0425	808425	0a		asl a			asl a ; x10
-540	.0426	808426	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.0427	808427	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
-543	.042a	80842a	48		pha			pha
-544	.042b	80842b	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
-545	.042e	80842e	48		pha			pha
-546	.042f	80842f	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
-547	.0432	808432	48		pha			pha
-548	.0433	808433	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
-549	.0436	808436	48		pha			pha
-550	.0437	808437	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
-551	.043a	80843a	48		pha			pha
-533	.043b	80843b	b9 20 a5	lda $81a520,y		lda MapData.col4,y
-534	.043e	80843e	29 ff 00	and #$00ff		and #$ff
-535	.0441	808441	85 15		sta $15			sta MapTempWord
-536	.0443	808443	0a		asl a			asl a
-537	.0444	808444	0a		asl a			asl a
-538	.0445	808445	65 15		adc $15			adc MapTempWord; x5
-539	.0447	808447	0a		asl a			asl a ; x10
-540	.0448	808448	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.0449	808449	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
-543	.044c	80844c	48		pha			pha
-544	.044d	80844d	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
-545	.0450	808450	48		pha			pha
-546	.0451	808451	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
-547	.0454	808454	48		pha			pha
-548	.0455	808455	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
-549	.0458	808458	48		pha			pha
-550	.0459	808459	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
-551	.045c	80845c	48		pha			pha
-533	.045d	80845d	b9 20 a3	lda $81a320,y		lda MapData.col3,y
-534	.0460	808460	29 ff 00	and #$00ff		and #$ff
-535	.0463	808463	85 15		sta $15			sta MapTempWord
-536	.0465	808465	0a		asl a			asl a
-537	.0466	808466	0a		asl a			asl a
-538	.0467	808467	65 15		adc $15			adc MapTempWord; x5
-539	.0469	808469	0a		asl a			asl a ; x10
-540	.046a	80846a	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.046b	80846b	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
-543	.046e	80846e	48		pha			pha
-544	.046f	80846f	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
-545	.0472	808472	48		pha			pha
-546	.0473	808473	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
-547	.0476	808476	48		pha			pha
-548	.0477	808477	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
-549	.047a	80847a	48		pha			pha
-550	.047b	80847b	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
-551	.047e	80847e	48		pha			pha
-533	.047f	80847f	b9 20 a1	lda $81a120,y		lda MapData.col2,y
-534	.0482	808482	29 ff 00	and #$00ff		and #$ff
-535	.0485	808485	85 15		sta $15			sta MapTempWord
-536	.0487	808487	0a		asl a			asl a
-537	.0488	808488	0a		asl a			asl a
-538	.0489	808489	65 15		adc $15			adc MapTempWord; x5
-539	.048b	80848b	0a		asl a			asl a ; x10
-540	.048c	80848c	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.048d	80848d	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
-543	.0490	808490	48		pha			pha
-544	.0491	808491	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
-545	.0494	808494	48		pha			pha
-546	.0495	808495	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
-547	.0498	808498	48		pha			pha
-548	.0499	808499	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
-549	.049c	80849c	48		pha			pha
-550	.049d	80849d	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
-551	.04a0	8084a0	48		pha			pha
-533	.04a1	8084a1	b9 20 9f	lda $819f20,y		lda MapData.col1,y
-534	.04a4	8084a4	29 ff 00	and #$00ff		and #$ff
-535	.04a7	8084a7	85 15		sta $15			sta MapTempWord
-536	.04a9	8084a9	0a		asl a			asl a
-537	.04aa	8084aa	0a		asl a			asl a
-538	.04ab	8084ab	65 15		adc $15			adc MapTempWord; x5
-539	.04ad	8084ad	0a		asl a			asl a ; x10
-540	.04ae	8084ae	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.04af	8084af	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
-543	.04b2	8084b2	48		pha			pha
-544	.04b3	8084b3	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
-545	.04b6	8084b6	48		pha			pha
-546	.04b7	8084b7	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
-547	.04ba	8084ba	48		pha			pha
-548	.04bb	8084bb	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
-549	.04be	8084be	48		pha			pha
-550	.04bf	8084bf	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
-551	.04c2	8084c2	48		pha			pha
-496	.04c3	8084c3	4c fc 87	jmp $8087fc		jmp _exit
-497	.04c6	8084c6					_Row3
-533	.04c6	8084c6	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
-534	.04c9	8084c9	29 ff 00	and #$00ff		and #$ff
-535	.04cc	8084cc	85 15		sta $15			sta MapTempWord
-536	.04ce	8084ce	0a		asl a			asl a
-537	.04cf	8084cf	0a		asl a			asl a
-538	.04d0	8084d0	65 15		adc $15			adc MapTempWord; x5
-539	.04d2	8084d2	0a		asl a			asl a ; x10
-540	.04d3	8084d3	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.04d4	8084d4	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
-543	.04d7	8084d7	48		pha			pha
-544	.04d8	8084d8	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
-545	.04db	8084db	48		pha			pha
-546	.04dc	8084dc	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
-547	.04df	8084df	48		pha			pha
-548	.04e0	8084e0	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
-549	.04e3	8084e3	48		pha			pha
-550	.04e4	8084e4	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
-551	.04e7	8084e7	48		pha			pha
-533	.04e8	8084e8	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
-534	.04eb	8084eb	29 ff 00	and #$00ff		and #$ff
-535	.04ee	8084ee	85 15		sta $15			sta MapTempWord
-536	.04f0	8084f0	0a		asl a			asl a
-537	.04f1	8084f1	0a		asl a			asl a
-538	.04f2	8084f2	65 15		adc $15			adc MapTempWord; x5
-539	.04f4	8084f4	0a		asl a			asl a ; x10
-540	.04f5	8084f5	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.04f6	8084f6	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
-543	.04f9	8084f9	48		pha			pha
-544	.04fa	8084fa	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
-545	.04fd	8084fd	48		pha			pha
-546	.04fe	8084fe	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
-547	.0501	808501	48		pha			pha
-548	.0502	808502	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
-549	.0505	808505	48		pha			pha
-550	.0506	808506	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
-551	.0509	808509	48		pha			pha
-533	.050a	80850a	b9 20 a9	lda $81a920,y		lda MapData.col6,y
-534	.050d	80850d	29 ff 00	and #$00ff		and #$ff
-535	.0510	808510	85 15		sta $15			sta MapTempWord
-536	.0512	808512	0a		asl a			asl a
-537	.0513	808513	0a		asl a			asl a
-538	.0514	808514	65 15		adc $15			adc MapTempWord; x5
-539	.0516	808516	0a		asl a			asl a ; x10
-540	.0517	808517	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.0518	808518	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
-543	.051b	80851b	48		pha			pha
-544	.051c	80851c	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
-545	.051f	80851f	48		pha			pha
-546	.0520	808520	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
-547	.0523	808523	48		pha			pha
-548	.0524	808524	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
-549	.0527	808527	48		pha			pha
-550	.0528	808528	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
-551	.052b	80852b	48		pha			pha
-533	.052c	80852c	b9 20 a7	lda $81a720,y		lda MapData.col5,y
-534	.052f	80852f	29 ff 00	and #$00ff		and #$ff
-535	.0532	808532	85 15		sta $15			sta MapTempWord
-536	.0534	808534	0a		asl a			asl a
-537	.0535	808535	0a		asl a			asl a
-538	.0536	808536	65 15		adc $15			adc MapTempWord; x5
-539	.0538	808538	0a		asl a			asl a ; x10
-540	.0539	808539	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.053a	80853a	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
-543	.053d	80853d	48		pha			pha
-544	.053e	80853e	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
-545	.0541	808541	48		pha			pha
-546	.0542	808542	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
-547	.0545	808545	48		pha			pha
-548	.0546	808546	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
-549	.0549	808549	48		pha			pha
-550	.054a	80854a	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
-551	.054d	80854d	48		pha			pha
-533	.054e	80854e	b9 20 a5	lda $81a520,y		lda MapData.col4,y
-534	.0551	808551	29 ff 00	and #$00ff		and #$ff
-535	.0554	808554	85 15		sta $15			sta MapTempWord
-536	.0556	808556	0a		asl a			asl a
-537	.0557	808557	0a		asl a			asl a
-538	.0558	808558	65 15		adc $15			adc MapTempWord; x5
-539	.055a	80855a	0a		asl a			asl a ; x10
-540	.055b	80855b	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.055c	80855c	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
-543	.055f	80855f	48		pha			pha
-544	.0560	808560	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
-545	.0563	808563	48		pha			pha
-546	.0564	808564	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
-547	.0567	808567	48		pha			pha
-548	.0568	808568	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
-549	.056b	80856b	48		pha			pha
-550	.056c	80856c	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
-551	.056f	80856f	48		pha			pha
-533	.0570	808570	b9 20 a3	lda $81a320,y		lda MapData.col3,y
-534	.0573	808573	29 ff 00	and #$00ff		and #$ff
-535	.0576	808576	85 15		sta $15			sta MapTempWord
-536	.0578	808578	0a		asl a			asl a
-537	.0579	808579	0a		asl a			asl a
-538	.057a	80857a	65 15		adc $15			adc MapTempWord; x5
-539	.057c	80857c	0a		asl a			asl a ; x10
-540	.057d	80857d	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.057e	80857e	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
-543	.0581	808581	48		pha			pha
-544	.0582	808582	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
-545	.0585	808585	48		pha			pha
-546	.0586	808586	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
-547	.0589	808589	48		pha			pha
-548	.058a	80858a	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
-549	.058d	80858d	48		pha			pha
-550	.058e	80858e	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
-551	.0591	808591	48		pha			pha
-533	.0592	808592	b9 20 a1	lda $81a120,y		lda MapData.col2,y
-534	.0595	808595	29 ff 00	and #$00ff		and #$ff
-535	.0598	808598	85 15		sta $15			sta MapTempWord
-536	.059a	80859a	0a		asl a			asl a
-537	.059b	80859b	0a		asl a			asl a
-538	.059c	80859c	65 15		adc $15			adc MapTempWord; x5
-539	.059e	80859e	0a		asl a			asl a ; x10
-540	.059f	80859f	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.05a0	8085a0	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
-543	.05a3	8085a3	48		pha			pha
-544	.05a4	8085a4	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
-545	.05a7	8085a7	48		pha			pha
-546	.05a8	8085a8	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
-547	.05ab	8085ab	48		pha			pha
-548	.05ac	8085ac	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
-549	.05af	8085af	48		pha			pha
-550	.05b0	8085b0	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
-551	.05b3	8085b3	48		pha			pha
-533	.05b4	8085b4	b9 20 9f	lda $819f20,y		lda MapData.col1,y
-534	.05b7	8085b7	29 ff 00	and #$00ff		and #$ff
-535	.05ba	8085ba	85 15		sta $15			sta MapTempWord
-536	.05bc	8085bc	0a		asl a			asl a
-537	.05bd	8085bd	0a		asl a			asl a
-538	.05be	8085be	65 15		adc $15			adc MapTempWord; x5
-539	.05c0	8085c0	0a		asl a			asl a ; x10
-540	.05c1	8085c1	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.05c2	8085c2	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
-543	.05c5	8085c5	48		pha			pha
-544	.05c6	8085c6	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
-545	.05c9	8085c9	48		pha			pha
-546	.05ca	8085ca	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
-547	.05cd	8085cd	48		pha			pha
-548	.05ce	8085ce	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
-549	.05d1	8085d1	48		pha			pha
-550	.05d2	8085d2	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
-551	.05d5	8085d5	48		pha			pha
-506	.05d6	8085d6	4c fc 87	jmp $8087fc		jmp _exit
-507	.05d9	8085d9					_Row4
-533	.05d9	8085d9	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
-534	.05dc	8085dc	29 ff 00	and #$00ff		and #$ff
-535	.05df	8085df	85 15		sta $15			sta MapTempWord
-536	.05e1	8085e1	0a		asl a			asl a
-537	.05e2	8085e2	0a		asl a			asl a
-538	.05e3	8085e3	65 15		adc $15			adc MapTempWord; x5
-539	.05e5	8085e5	0a		asl a			asl a ; x10
-540	.05e6	8085e6	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.05e7	8085e7	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
-543	.05ea	8085ea	48		pha			pha
-544	.05eb	8085eb	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
-545	.05ee	8085ee	48		pha			pha
-546	.05ef	8085ef	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
-547	.05f2	8085f2	48		pha			pha
-548	.05f3	8085f3	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
-549	.05f6	8085f6	48		pha			pha
-550	.05f7	8085f7	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
-551	.05fa	8085fa	48		pha			pha
-533	.05fb	8085fb	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
-534	.05fe	8085fe	29 ff 00	and #$00ff		and #$ff
-535	.0601	808601	85 15		sta $15			sta MapTempWord
-536	.0603	808603	0a		asl a			asl a
-537	.0604	808604	0a		asl a			asl a
-538	.0605	808605	65 15		adc $15			adc MapTempWord; x5
-539	.0607	808607	0a		asl a			asl a ; x10
-540	.0608	808608	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.0609	808609	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
-543	.060c	80860c	48		pha			pha
-544	.060d	80860d	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
-545	.0610	808610	48		pha			pha
-546	.0611	808611	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
-547	.0614	808614	48		pha			pha
-548	.0615	808615	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
-549	.0618	808618	48		pha			pha
-550	.0619	808619	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
-551	.061c	80861c	48		pha			pha
-533	.061d	80861d	b9 20 a9	lda $81a920,y		lda MapData.col6,y
-534	.0620	808620	29 ff 00	and #$00ff		and #$ff
-535	.0623	808623	85 15		sta $15			sta MapTempWord
-536	.0625	808625	0a		asl a			asl a
-537	.0626	808626	0a		asl a			asl a
-538	.0627	808627	65 15		adc $15			adc MapTempWord; x5
-539	.0629	808629	0a		asl a			asl a ; x10
-540	.062a	80862a	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.062b	80862b	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
-543	.062e	80862e	48		pha			pha
-544	.062f	80862f	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
-545	.0632	808632	48		pha			pha
-546	.0633	808633	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
-547	.0636	808636	48		pha			pha
-548	.0637	808637	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
-549	.063a	80863a	48		pha			pha
-550	.063b	80863b	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
-551	.063e	80863e	48		pha			pha
-533	.063f	80863f	b9 20 a7	lda $81a720,y		lda MapData.col5,y
-534	.0642	808642	29 ff 00	and #$00ff		and #$ff
-535	.0645	808645	85 15		sta $15			sta MapTempWord
-536	.0647	808647	0a		asl a			asl a
-537	.0648	808648	0a		asl a			asl a
-538	.0649	808649	65 15		adc $15			adc MapTempWord; x5
-539	.064b	80864b	0a		asl a			asl a ; x10
-540	.064c	80864c	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.064d	80864d	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
-543	.0650	808650	48		pha			pha
-544	.0651	808651	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
-545	.0654	808654	48		pha			pha
-546	.0655	808655	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
-547	.0658	808658	48		pha			pha
-548	.0659	808659	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
-549	.065c	80865c	48		pha			pha
-550	.065d	80865d	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
-551	.0660	808660	48		pha			pha
-533	.0661	808661	b9 20 a5	lda $81a520,y		lda MapData.col4,y
-534	.0664	808664	29 ff 00	and #$00ff		and #$ff
-535	.0667	808667	85 15		sta $15			sta MapTempWord
-536	.0669	808669	0a		asl a			asl a
-537	.066a	80866a	0a		asl a			asl a
-538	.066b	80866b	65 15		adc $15			adc MapTempWord; x5
-539	.066d	80866d	0a		asl a			asl a ; x10
-540	.066e	80866e	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.066f	80866f	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
-543	.0672	808672	48		pha			pha
-544	.0673	808673	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
-545	.0676	808676	48		pha			pha
-546	.0677	808677	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
-547	.067a	80867a	48		pha			pha
-548	.067b	80867b	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
-549	.067e	80867e	48		pha			pha
-550	.067f	80867f	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
-551	.0682	808682	48		pha			pha
-533	.0683	808683	b9 20 a3	lda $81a320,y		lda MapData.col3,y
-534	.0686	808686	29 ff 00	and #$00ff		and #$ff
-535	.0689	808689	85 15		sta $15			sta MapTempWord
-536	.068b	80868b	0a		asl a			asl a
-537	.068c	80868c	0a		asl a			asl a
-538	.068d	80868d	65 15		adc $15			adc MapTempWord; x5
-539	.068f	80868f	0a		asl a			asl a ; x10
-540	.0690	808690	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.0691	808691	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
-543	.0694	808694	48		pha			pha
-544	.0695	808695	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
-545	.0698	808698	48		pha			pha
-546	.0699	808699	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
-547	.069c	80869c	48		pha			pha
-548	.069d	80869d	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
-549	.06a0	8086a0	48		pha			pha
-550	.06a1	8086a1	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
-551	.06a4	8086a4	48		pha			pha
-533	.06a5	8086a5	b9 20 a1	lda $81a120,y		lda MapData.col2,y
-534	.06a8	8086a8	29 ff 00	and #$00ff		and #$ff
-535	.06ab	8086ab	85 15		sta $15			sta MapTempWord
-536	.06ad	8086ad	0a		asl a			asl a
-537	.06ae	8086ae	0a		asl a			asl a
-538	.06af	8086af	65 15		adc $15			adc MapTempWord; x5
-539	.06b1	8086b1	0a		asl a			asl a ; x10
-540	.06b2	8086b2	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.06b3	8086b3	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
-543	.06b6	8086b6	48		pha			pha
-544	.06b7	8086b7	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
-545	.06ba	8086ba	48		pha			pha
-546	.06bb	8086bb	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
-547	.06be	8086be	48		pha			pha
-548	.06bf	8086bf	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
-549	.06c2	8086c2	48		pha			pha
-550	.06c3	8086c3	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
-551	.06c6	8086c6	48		pha			pha
-533	.06c7	8086c7	b9 20 9f	lda $819f20,y		lda MapData.col1,y
-534	.06ca	8086ca	29 ff 00	and #$00ff		and #$ff
-535	.06cd	8086cd	85 15		sta $15			sta MapTempWord
-536	.06cf	8086cf	0a		asl a			asl a
-537	.06d0	8086d0	0a		asl a			asl a
-538	.06d1	8086d1	65 15		adc $15			adc MapTempWord; x5
-539	.06d3	8086d3	0a		asl a			asl a ; x10
-540	.06d4	8086d4	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.06d5	8086d5	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
-543	.06d8	8086d8	48		pha			pha
-544	.06d9	8086d9	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
-545	.06dc	8086dc	48		pha			pha
-546	.06dd	8086dd	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
-547	.06e0	8086e0	48		pha			pha
-548	.06e1	8086e1	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
-549	.06e4	8086e4	48		pha			pha
-550	.06e5	8086e5	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
-551	.06e8	8086e8	48		pha			pha
-516	.06e9	8086e9	4c fc 87	jmp $8087fc		jmp _exit
-517	.06ec	8086ec					_Row5
-533	.06ec	8086ec	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
-534	.06ef	8086ef	29 ff 00	and #$00ff		and #$ff
-535	.06f2	8086f2	85 15		sta $15			sta MapTempWord
-536	.06f4	8086f4	0a		asl a			asl a
-537	.06f5	8086f5	0a		asl a			asl a
-538	.06f6	8086f6	65 15		adc $15			adc MapTempWord; x5
-539	.06f8	8086f8	0a		asl a			asl a ; x10
-540	.06f9	8086f9	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.06fa	8086fa	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
-543	.06fd	8086fd	48		pha			pha
-544	.06fe	8086fe	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
-545	.0701	808701	48		pha			pha
-546	.0702	808702	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
-547	.0705	808705	48		pha			pha
-548	.0706	808706	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
-549	.0709	808709	48		pha			pha
-550	.070a	80870a	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
-551	.070d	80870d	48		pha			pha
-533	.070e	80870e	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
-534	.0711	808711	29 ff 00	and #$00ff		and #$ff
-535	.0714	808714	85 15		sta $15			sta MapTempWord
-536	.0716	808716	0a		asl a			asl a
-537	.0717	808717	0a		asl a			asl a
-538	.0718	808718	65 15		adc $15			adc MapTempWord; x5
-539	.071a	80871a	0a		asl a			asl a ; x10
-540	.071b	80871b	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.071c	80871c	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
-543	.071f	80871f	48		pha			pha
-544	.0720	808720	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
-545	.0723	808723	48		pha			pha
-546	.0724	808724	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
-547	.0727	808727	48		pha			pha
-548	.0728	808728	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
-549	.072b	80872b	48		pha			pha
-550	.072c	80872c	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
-551	.072f	80872f	48		pha			pha
-533	.0730	808730	b9 20 a9	lda $81a920,y		lda MapData.col6,y
-534	.0733	808733	29 ff 00	and #$00ff		and #$ff
-535	.0736	808736	85 15		sta $15			sta MapTempWord
-536	.0738	808738	0a		asl a			asl a
-537	.0739	808739	0a		asl a			asl a
-538	.073a	80873a	65 15		adc $15			adc MapTempWord; x5
-539	.073c	80873c	0a		asl a			asl a ; x10
-540	.073d	80873d	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.073e	80873e	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
-543	.0741	808741	48		pha			pha
-544	.0742	808742	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
-545	.0745	808745	48		pha			pha
-546	.0746	808746	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
-547	.0749	808749	48		pha			pha
-548	.074a	80874a	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
-549	.074d	80874d	48		pha			pha
-550	.074e	80874e	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
-551	.0751	808751	48		pha			pha
-533	.0752	808752	b9 20 a7	lda $81a720,y		lda MapData.col5,y
-534	.0755	808755	29 ff 00	and #$00ff		and #$ff
-535	.0758	808758	85 15		sta $15			sta MapTempWord
-536	.075a	80875a	0a		asl a			asl a
-537	.075b	80875b	0a		asl a			asl a
-538	.075c	80875c	65 15		adc $15			adc MapTempWord; x5
-539	.075e	80875e	0a		asl a			asl a ; x10
-540	.075f	80875f	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.0760	808760	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
-543	.0763	808763	48		pha			pha
-544	.0764	808764	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
-545	.0767	808767	48		pha			pha
-546	.0768	808768	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
-547	.076b	80876b	48		pha			pha
-548	.076c	80876c	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
-549	.076f	80876f	48		pha			pha
-550	.0770	808770	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
-551	.0773	808773	48		pha			pha
-533	.0774	808774	b9 20 a5	lda $81a520,y		lda MapData.col4,y
-534	.0777	808777	29 ff 00	and #$00ff		and #$ff
-535	.077a	80877a	85 15		sta $15			sta MapTempWord
-536	.077c	80877c	0a		asl a			asl a
-537	.077d	80877d	0a		asl a			asl a
-538	.077e	80877e	65 15		adc $15			adc MapTempWord; x5
-539	.0780	808780	0a		asl a			asl a ; x10
-540	.0781	808781	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.0782	808782	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
-543	.0785	808785	48		pha			pha
-544	.0786	808786	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
-545	.0789	808789	48		pha			pha
-546	.078a	80878a	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
-547	.078d	80878d	48		pha			pha
-548	.078e	80878e	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
-549	.0791	808791	48		pha			pha
-550	.0792	808792	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
-551	.0795	808795	48		pha			pha
-533	.0796	808796	b9 20 a3	lda $81a320,y		lda MapData.col3,y
-534	.0799	808799	29 ff 00	and #$00ff		and #$ff
-535	.079c	80879c	85 15		sta $15			sta MapTempWord
-536	.079e	80879e	0a		asl a			asl a
-537	.079f	80879f	0a		asl a			asl a
-538	.07a0	8087a0	65 15		adc $15			adc MapTempWord; x5
-539	.07a2	8087a2	0a		asl a			asl a ; x10
-540	.07a3	8087a3	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.07a4	8087a4	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
-543	.07a7	8087a7	48		pha			pha
-544	.07a8	8087a8	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
-545	.07ab	8087ab	48		pha			pha
-546	.07ac	8087ac	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
-547	.07af	8087af	48		pha			pha
-548	.07b0	8087b0	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
-549	.07b3	8087b3	48		pha			pha
-550	.07b4	8087b4	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
-551	.07b7	8087b7	48		pha			pha
-533	.07b8	8087b8	b9 20 a1	lda $81a120,y		lda MapData.col2,y
-534	.07bb	8087bb	29 ff 00	and #$00ff		and #$ff
-535	.07be	8087be	85 15		sta $15			sta MapTempWord
-536	.07c0	8087c0	0a		asl a			asl a
-537	.07c1	8087c1	0a		asl a			asl a
-538	.07c2	8087c2	65 15		adc $15			adc MapTempWord; x5
-539	.07c4	8087c4	0a		asl a			asl a ; x10
-540	.07c5	8087c5	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.07c6	8087c6	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
-543	.07c9	8087c9	48		pha			pha
-544	.07ca	8087ca	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
-545	.07cd	8087cd	48		pha			pha
-546	.07ce	8087ce	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
-547	.07d1	8087d1	48		pha			pha
-548	.07d2	8087d2	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
-549	.07d5	8087d5	48		pha			pha
-550	.07d6	8087d6	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
-551	.07d9	8087d9	48		pha			pha
-533	.07da	8087da	b9 20 9f	lda $819f20,y		lda MapData.col1,y
-534	.07dd	8087dd	29 ff 00	and #$00ff		and #$ff
-535	.07e0	8087e0	85 15		sta $15			sta MapTempWord
-536	.07e2	8087e2	0a		asl a			asl a
-537	.07e3	8087e3	0a		asl a			asl a
-538	.07e4	8087e4	65 15		adc $15			adc MapTempWord; x5
-539	.07e6	8087e6	0a		asl a			asl a ; x10
-540	.07e7	8087e7	aa		tax			tax
-541								;ldx #10 ; tile 1
-542	.07e8	8087e8	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
-543	.07eb	8087eb	48		pha			pha
-544	.07ec	8087ec	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
-545	.07ef	8087ef	48		pha			pha
-546	.07f0	8087f0	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
-547	.07f3	8087f3	48		pha			pha
-548	.07f4	8087f4	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
-549	.07f7	8087f7	48		pha			pha
-550	.07f8	8087f8	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
-551	.07fb	8087fb	48		pha			pha
-526	.07fc	8087fc					_exit
-527	.07fc	8087fc	a6 af		ldx $af			ldx <MapStackStore
-528	.07fe	8087fe	9a		txs			txs							; restore stack
-529	.07ff	8087ff	28		plp			plp
-530	.0800	808800	60		rts			rts
+461	.0285	808285					map_fillRowBufferBotEdge_xx
+462	.0285	808285					_ASSERT_JSR
+463	.0285	808285	08		php			php
+70:4	.0286	808286	c2 30		rep #$30		REP #$30
+465:3	.0288	808288	a5 13		lda $13			lda MapVRAMBot			; which row do we need to write it to
+466	.028a	80828a	85 19		sta $19			sta MapBufferTarget	; MapVRAMBot is premultiplied by 32
+467	.028c	80828c	ba		tsx			tsx
+468	.028d	80828d	86 af		stx $af			stx <MapStackStore,d
+469	.028f	80828f	a2 ae 00	ldx #$00ae		ldx #<>MapColumnBufferEnd
+470	.0292	808292	9a		txs			txs								; set the stack to the buffer
+471	.0293	808293	a4 0d		ldy $0d			ldy MapBlockIndexBot			; which block do we want
+472	.0295	808295	a5 10		lda $10			lda MapSubRowBot
+473	.0297	808297	29 ff 00	and #$00ff		and #$ff
+474	.029a	80829a	aa		tax			tax
+475							; bra map_fillRowBufferEdgeCommon
+476							; fall through
+477	.029b	80829b					map_fillRowBufferEdgeCommon
+478	.029b	80829b	7c 9e 82	jmp ($80829e,x)		jmp (+,x)
+479	>029e	80829e	a8 82 bb 83 ce 84 e1 85		+ .word <>(_Row1,_Row2,_Row3,_Row4,_Row5)
+	>02a6	8082a6	f4 86
+480	.02a8	8082a8					_Row1
+536	.02a8	8082a8	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
+537	.02ab	8082ab	29 ff 00	and #$00ff		and #$ff
+538	.02ae	8082ae	85 15		sta $15			sta MapTempWord
+539	.02b0	8082b0	0a		asl a			asl a
+540	.02b1	8082b1	0a		asl a			asl a
+541	.02b2	8082b2	65 15		adc $15			adc MapTempWord; x5
+542	.02b4	8082b4	0a		asl a			asl a ; x10
+543	.02b5	8082b5	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.02b6	8082b6	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+546	.02b9	8082b9	48		pha			pha
+547	.02ba	8082ba	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+548	.02bd	8082bd	48		pha			pha
+549	.02be	8082be	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+550	.02c1	8082c1	48		pha			pha
+551	.02c2	8082c2	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+552	.02c5	8082c5	48		pha			pha
+553	.02c6	8082c6	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+554	.02c9	8082c9	48		pha			pha
+536	.02ca	8082ca	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
+537	.02cd	8082cd	29 ff 00	and #$00ff		and #$ff
+538	.02d0	8082d0	85 15		sta $15			sta MapTempWord
+539	.02d2	8082d2	0a		asl a			asl a
+540	.02d3	8082d3	0a		asl a			asl a
+541	.02d4	8082d4	65 15		adc $15			adc MapTempWord; x5
+542	.02d6	8082d6	0a		asl a			asl a ; x10
+543	.02d7	8082d7	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.02d8	8082d8	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+546	.02db	8082db	48		pha			pha
+547	.02dc	8082dc	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+548	.02df	8082df	48		pha			pha
+549	.02e0	8082e0	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+550	.02e3	8082e3	48		pha			pha
+551	.02e4	8082e4	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+552	.02e7	8082e7	48		pha			pha
+553	.02e8	8082e8	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+554	.02eb	8082eb	48		pha			pha
+536	.02ec	8082ec	b9 20 a9	lda $81a920,y		lda MapData.col6,y
+537	.02ef	8082ef	29 ff 00	and #$00ff		and #$ff
+538	.02f2	8082f2	85 15		sta $15			sta MapTempWord
+539	.02f4	8082f4	0a		asl a			asl a
+540	.02f5	8082f5	0a		asl a			asl a
+541	.02f6	8082f6	65 15		adc $15			adc MapTempWord; x5
+542	.02f8	8082f8	0a		asl a			asl a ; x10
+543	.02f9	8082f9	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.02fa	8082fa	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+546	.02fd	8082fd	48		pha			pha
+547	.02fe	8082fe	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+548	.0301	808301	48		pha			pha
+549	.0302	808302	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+550	.0305	808305	48		pha			pha
+551	.0306	808306	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+552	.0309	808309	48		pha			pha
+553	.030a	80830a	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+554	.030d	80830d	48		pha			pha
+536	.030e	80830e	b9 20 a7	lda $81a720,y		lda MapData.col5,y
+537	.0311	808311	29 ff 00	and #$00ff		and #$ff
+538	.0314	808314	85 15		sta $15			sta MapTempWord
+539	.0316	808316	0a		asl a			asl a
+540	.0317	808317	0a		asl a			asl a
+541	.0318	808318	65 15		adc $15			adc MapTempWord; x5
+542	.031a	80831a	0a		asl a			asl a ; x10
+543	.031b	80831b	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.031c	80831c	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+546	.031f	80831f	48		pha			pha
+547	.0320	808320	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+548	.0323	808323	48		pha			pha
+549	.0324	808324	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+550	.0327	808327	48		pha			pha
+551	.0328	808328	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+552	.032b	80832b	48		pha			pha
+553	.032c	80832c	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+554	.032f	80832f	48		pha			pha
+536	.0330	808330	b9 20 a5	lda $81a520,y		lda MapData.col4,y
+537	.0333	808333	29 ff 00	and #$00ff		and #$ff
+538	.0336	808336	85 15		sta $15			sta MapTempWord
+539	.0338	808338	0a		asl a			asl a
+540	.0339	808339	0a		asl a			asl a
+541	.033a	80833a	65 15		adc $15			adc MapTempWord; x5
+542	.033c	80833c	0a		asl a			asl a ; x10
+543	.033d	80833d	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.033e	80833e	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+546	.0341	808341	48		pha			pha
+547	.0342	808342	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+548	.0345	808345	48		pha			pha
+549	.0346	808346	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+550	.0349	808349	48		pha			pha
+551	.034a	80834a	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+552	.034d	80834d	48		pha			pha
+553	.034e	80834e	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+554	.0351	808351	48		pha			pha
+536	.0352	808352	b9 20 a3	lda $81a320,y		lda MapData.col3,y
+537	.0355	808355	29 ff 00	and #$00ff		and #$ff
+538	.0358	808358	85 15		sta $15			sta MapTempWord
+539	.035a	80835a	0a		asl a			asl a
+540	.035b	80835b	0a		asl a			asl a
+541	.035c	80835c	65 15		adc $15			adc MapTempWord; x5
+542	.035e	80835e	0a		asl a			asl a ; x10
+543	.035f	80835f	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0360	808360	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+546	.0363	808363	48		pha			pha
+547	.0364	808364	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+548	.0367	808367	48		pha			pha
+549	.0368	808368	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+550	.036b	80836b	48		pha			pha
+551	.036c	80836c	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+552	.036f	80836f	48		pha			pha
+553	.0370	808370	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+554	.0373	808373	48		pha			pha
+536	.0374	808374	b9 20 a1	lda $81a120,y		lda MapData.col2,y
+537	.0377	808377	29 ff 00	and #$00ff		and #$ff
+538	.037a	80837a	85 15		sta $15			sta MapTempWord
+539	.037c	80837c	0a		asl a			asl a
+540	.037d	80837d	0a		asl a			asl a
+541	.037e	80837e	65 15		adc $15			adc MapTempWord; x5
+542	.0380	808380	0a		asl a			asl a ; x10
+543	.0381	808381	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0382	808382	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+546	.0385	808385	48		pha			pha
+547	.0386	808386	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+548	.0389	808389	48		pha			pha
+549	.038a	80838a	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+550	.038d	80838d	48		pha			pha
+551	.038e	80838e	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+552	.0391	808391	48		pha			pha
+553	.0392	808392	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+554	.0395	808395	48		pha			pha
+536	.0396	808396	b9 20 9f	lda $819f20,y		lda MapData.col1,y
+537	.0399	808399	29 ff 00	and #$00ff		and #$ff
+538	.039c	80839c	85 15		sta $15			sta MapTempWord
+539	.039e	80839e	0a		asl a			asl a
+540	.039f	80839f	0a		asl a			asl a
+541	.03a0	8083a0	65 15		adc $15			adc MapTempWord; x5
+542	.03a2	8083a2	0a		asl a			asl a ; x10
+543	.03a3	8083a3	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.03a4	8083a4	bd 28 af	lda $81af28,x		lda BlockData.row1+8,x
+546	.03a7	8083a7	48		pha			pha
+547	.03a8	8083a8	bd 26 af	lda $81af26,x		lda BlockData.row1+6,x
+548	.03ab	8083ab	48		pha			pha
+549	.03ac	8083ac	bd 24 af	lda $81af24,x		lda BlockData.row1+4,x
+550	.03af	8083af	48		pha			pha
+551	.03b0	8083b0	bd 22 af	lda $81af22,x		lda BlockData.row1+2,x
+552	.03b3	8083b3	48		pha			pha
+553	.03b4	8083b4	bd 20 af	lda $81af20,x		lda BlockData.row1,x
+554	.03b7	8083b7	48		pha			pha
+489	.03b8	8083b8	4c 04 88	jmp $808804		jmp _exit
+490	.03bb	8083bb					_Row2
+536	.03bb	8083bb	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
+537	.03be	8083be	29 ff 00	and #$00ff		and #$ff
+538	.03c1	8083c1	85 15		sta $15			sta MapTempWord
+539	.03c3	8083c3	0a		asl a			asl a
+540	.03c4	8083c4	0a		asl a			asl a
+541	.03c5	8083c5	65 15		adc $15			adc MapTempWord; x5
+542	.03c7	8083c7	0a		asl a			asl a ; x10
+543	.03c8	8083c8	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.03c9	8083c9	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+546	.03cc	8083cc	48		pha			pha
+547	.03cd	8083cd	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+548	.03d0	8083d0	48		pha			pha
+549	.03d1	8083d1	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+550	.03d4	8083d4	48		pha			pha
+551	.03d5	8083d5	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+552	.03d8	8083d8	48		pha			pha
+553	.03d9	8083d9	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+554	.03dc	8083dc	48		pha			pha
+536	.03dd	8083dd	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
+537	.03e0	8083e0	29 ff 00	and #$00ff		and #$ff
+538	.03e3	8083e3	85 15		sta $15			sta MapTempWord
+539	.03e5	8083e5	0a		asl a			asl a
+540	.03e6	8083e6	0a		asl a			asl a
+541	.03e7	8083e7	65 15		adc $15			adc MapTempWord; x5
+542	.03e9	8083e9	0a		asl a			asl a ; x10
+543	.03ea	8083ea	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.03eb	8083eb	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+546	.03ee	8083ee	48		pha			pha
+547	.03ef	8083ef	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+548	.03f2	8083f2	48		pha			pha
+549	.03f3	8083f3	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+550	.03f6	8083f6	48		pha			pha
+551	.03f7	8083f7	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+552	.03fa	8083fa	48		pha			pha
+553	.03fb	8083fb	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+554	.03fe	8083fe	48		pha			pha
+536	.03ff	8083ff	b9 20 a9	lda $81a920,y		lda MapData.col6,y
+537	.0402	808402	29 ff 00	and #$00ff		and #$ff
+538	.0405	808405	85 15		sta $15			sta MapTempWord
+539	.0407	808407	0a		asl a			asl a
+540	.0408	808408	0a		asl a			asl a
+541	.0409	808409	65 15		adc $15			adc MapTempWord; x5
+542	.040b	80840b	0a		asl a			asl a ; x10
+543	.040c	80840c	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.040d	80840d	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+546	.0410	808410	48		pha			pha
+547	.0411	808411	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+548	.0414	808414	48		pha			pha
+549	.0415	808415	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+550	.0418	808418	48		pha			pha
+551	.0419	808419	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+552	.041c	80841c	48		pha			pha
+553	.041d	80841d	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+554	.0420	808420	48		pha			pha
+536	.0421	808421	b9 20 a7	lda $81a720,y		lda MapData.col5,y
+537	.0424	808424	29 ff 00	and #$00ff		and #$ff
+538	.0427	808427	85 15		sta $15			sta MapTempWord
+539	.0429	808429	0a		asl a			asl a
+540	.042a	80842a	0a		asl a			asl a
+541	.042b	80842b	65 15		adc $15			adc MapTempWord; x5
+542	.042d	80842d	0a		asl a			asl a ; x10
+543	.042e	80842e	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.042f	80842f	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+546	.0432	808432	48		pha			pha
+547	.0433	808433	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+548	.0436	808436	48		pha			pha
+549	.0437	808437	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+550	.043a	80843a	48		pha			pha
+551	.043b	80843b	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+552	.043e	80843e	48		pha			pha
+553	.043f	80843f	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+554	.0442	808442	48		pha			pha
+536	.0443	808443	b9 20 a5	lda $81a520,y		lda MapData.col4,y
+537	.0446	808446	29 ff 00	and #$00ff		and #$ff
+538	.0449	808449	85 15		sta $15			sta MapTempWord
+539	.044b	80844b	0a		asl a			asl a
+540	.044c	80844c	0a		asl a			asl a
+541	.044d	80844d	65 15		adc $15			adc MapTempWord; x5
+542	.044f	80844f	0a		asl a			asl a ; x10
+543	.0450	808450	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0451	808451	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+546	.0454	808454	48		pha			pha
+547	.0455	808455	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+548	.0458	808458	48		pha			pha
+549	.0459	808459	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+550	.045c	80845c	48		pha			pha
+551	.045d	80845d	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+552	.0460	808460	48		pha			pha
+553	.0461	808461	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+554	.0464	808464	48		pha			pha
+536	.0465	808465	b9 20 a3	lda $81a320,y		lda MapData.col3,y
+537	.0468	808468	29 ff 00	and #$00ff		and #$ff
+538	.046b	80846b	85 15		sta $15			sta MapTempWord
+539	.046d	80846d	0a		asl a			asl a
+540	.046e	80846e	0a		asl a			asl a
+541	.046f	80846f	65 15		adc $15			adc MapTempWord; x5
+542	.0471	808471	0a		asl a			asl a ; x10
+543	.0472	808472	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0473	808473	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+546	.0476	808476	48		pha			pha
+547	.0477	808477	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+548	.047a	80847a	48		pha			pha
+549	.047b	80847b	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+550	.047e	80847e	48		pha			pha
+551	.047f	80847f	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+552	.0482	808482	48		pha			pha
+553	.0483	808483	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+554	.0486	808486	48		pha			pha
+536	.0487	808487	b9 20 a1	lda $81a120,y		lda MapData.col2,y
+537	.048a	80848a	29 ff 00	and #$00ff		and #$ff
+538	.048d	80848d	85 15		sta $15			sta MapTempWord
+539	.048f	80848f	0a		asl a			asl a
+540	.0490	808490	0a		asl a			asl a
+541	.0491	808491	65 15		adc $15			adc MapTempWord; x5
+542	.0493	808493	0a		asl a			asl a ; x10
+543	.0494	808494	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0495	808495	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+546	.0498	808498	48		pha			pha
+547	.0499	808499	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+548	.049c	80849c	48		pha			pha
+549	.049d	80849d	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+550	.04a0	8084a0	48		pha			pha
+551	.04a1	8084a1	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+552	.04a4	8084a4	48		pha			pha
+553	.04a5	8084a5	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+554	.04a8	8084a8	48		pha			pha
+536	.04a9	8084a9	b9 20 9f	lda $819f20,y		lda MapData.col1,y
+537	.04ac	8084ac	29 ff 00	and #$00ff		and #$ff
+538	.04af	8084af	85 15		sta $15			sta MapTempWord
+539	.04b1	8084b1	0a		asl a			asl a
+540	.04b2	8084b2	0a		asl a			asl a
+541	.04b3	8084b3	65 15		adc $15			adc MapTempWord; x5
+542	.04b5	8084b5	0a		asl a			asl a ; x10
+543	.04b6	8084b6	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.04b7	8084b7	bd d0 b1	lda $81b1d0,x		lda BlockData.row2+8,x
+546	.04ba	8084ba	48		pha			pha
+547	.04bb	8084bb	bd ce b1	lda $81b1ce,x		lda BlockData.row2+6,x
+548	.04be	8084be	48		pha			pha
+549	.04bf	8084bf	bd cc b1	lda $81b1cc,x		lda BlockData.row2+4,x
+550	.04c2	8084c2	48		pha			pha
+551	.04c3	8084c3	bd ca b1	lda $81b1ca,x		lda BlockData.row2+2,x
+552	.04c6	8084c6	48		pha			pha
+553	.04c7	8084c7	bd c8 b1	lda $81b1c8,x		lda BlockData.row2,x
+554	.04ca	8084ca	48		pha			pha
+499	.04cb	8084cb	4c 04 88	jmp $808804		jmp _exit
+500	.04ce	8084ce					_Row3
+536	.04ce	8084ce	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
+537	.04d1	8084d1	29 ff 00	and #$00ff		and #$ff
+538	.04d4	8084d4	85 15		sta $15			sta MapTempWord
+539	.04d6	8084d6	0a		asl a			asl a
+540	.04d7	8084d7	0a		asl a			asl a
+541	.04d8	8084d8	65 15		adc $15			adc MapTempWord; x5
+542	.04da	8084da	0a		asl a			asl a ; x10
+543	.04db	8084db	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.04dc	8084dc	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+546	.04df	8084df	48		pha			pha
+547	.04e0	8084e0	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+548	.04e3	8084e3	48		pha			pha
+549	.04e4	8084e4	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+550	.04e7	8084e7	48		pha			pha
+551	.04e8	8084e8	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+552	.04eb	8084eb	48		pha			pha
+553	.04ec	8084ec	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+554	.04ef	8084ef	48		pha			pha
+536	.04f0	8084f0	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
+537	.04f3	8084f3	29 ff 00	and #$00ff		and #$ff
+538	.04f6	8084f6	85 15		sta $15			sta MapTempWord
+539	.04f8	8084f8	0a		asl a			asl a
+540	.04f9	8084f9	0a		asl a			asl a
+541	.04fa	8084fa	65 15		adc $15			adc MapTempWord; x5
+542	.04fc	8084fc	0a		asl a			asl a ; x10
+543	.04fd	8084fd	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.04fe	8084fe	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+546	.0501	808501	48		pha			pha
+547	.0502	808502	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+548	.0505	808505	48		pha			pha
+549	.0506	808506	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+550	.0509	808509	48		pha			pha
+551	.050a	80850a	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+552	.050d	80850d	48		pha			pha
+553	.050e	80850e	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+554	.0511	808511	48		pha			pha
+536	.0512	808512	b9 20 a9	lda $81a920,y		lda MapData.col6,y
+537	.0515	808515	29 ff 00	and #$00ff		and #$ff
+538	.0518	808518	85 15		sta $15			sta MapTempWord
+539	.051a	80851a	0a		asl a			asl a
+540	.051b	80851b	0a		asl a			asl a
+541	.051c	80851c	65 15		adc $15			adc MapTempWord; x5
+542	.051e	80851e	0a		asl a			asl a ; x10
+543	.051f	80851f	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0520	808520	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+546	.0523	808523	48		pha			pha
+547	.0524	808524	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+548	.0527	808527	48		pha			pha
+549	.0528	808528	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+550	.052b	80852b	48		pha			pha
+551	.052c	80852c	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+552	.052f	80852f	48		pha			pha
+553	.0530	808530	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+554	.0533	808533	48		pha			pha
+536	.0534	808534	b9 20 a7	lda $81a720,y		lda MapData.col5,y
+537	.0537	808537	29 ff 00	and #$00ff		and #$ff
+538	.053a	80853a	85 15		sta $15			sta MapTempWord
+539	.053c	80853c	0a		asl a			asl a
+540	.053d	80853d	0a		asl a			asl a
+541	.053e	80853e	65 15		adc $15			adc MapTempWord; x5
+542	.0540	808540	0a		asl a			asl a ; x10
+543	.0541	808541	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0542	808542	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+546	.0545	808545	48		pha			pha
+547	.0546	808546	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+548	.0549	808549	48		pha			pha
+549	.054a	80854a	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+550	.054d	80854d	48		pha			pha
+551	.054e	80854e	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+552	.0551	808551	48		pha			pha
+553	.0552	808552	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+554	.0555	808555	48		pha			pha
+536	.0556	808556	b9 20 a5	lda $81a520,y		lda MapData.col4,y
+537	.0559	808559	29 ff 00	and #$00ff		and #$ff
+538	.055c	80855c	85 15		sta $15			sta MapTempWord
+539	.055e	80855e	0a		asl a			asl a
+540	.055f	80855f	0a		asl a			asl a
+541	.0560	808560	65 15		adc $15			adc MapTempWord; x5
+542	.0562	808562	0a		asl a			asl a ; x10
+543	.0563	808563	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0564	808564	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+546	.0567	808567	48		pha			pha
+547	.0568	808568	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+548	.056b	80856b	48		pha			pha
+549	.056c	80856c	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+550	.056f	80856f	48		pha			pha
+551	.0570	808570	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+552	.0573	808573	48		pha			pha
+553	.0574	808574	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+554	.0577	808577	48		pha			pha
+536	.0578	808578	b9 20 a3	lda $81a320,y		lda MapData.col3,y
+537	.057b	80857b	29 ff 00	and #$00ff		and #$ff
+538	.057e	80857e	85 15		sta $15			sta MapTempWord
+539	.0580	808580	0a		asl a			asl a
+540	.0581	808581	0a		asl a			asl a
+541	.0582	808582	65 15		adc $15			adc MapTempWord; x5
+542	.0584	808584	0a		asl a			asl a ; x10
+543	.0585	808585	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0586	808586	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+546	.0589	808589	48		pha			pha
+547	.058a	80858a	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+548	.058d	80858d	48		pha			pha
+549	.058e	80858e	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+550	.0591	808591	48		pha			pha
+551	.0592	808592	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+552	.0595	808595	48		pha			pha
+553	.0596	808596	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+554	.0599	808599	48		pha			pha
+536	.059a	80859a	b9 20 a1	lda $81a120,y		lda MapData.col2,y
+537	.059d	80859d	29 ff 00	and #$00ff		and #$ff
+538	.05a0	8085a0	85 15		sta $15			sta MapTempWord
+539	.05a2	8085a2	0a		asl a			asl a
+540	.05a3	8085a3	0a		asl a			asl a
+541	.05a4	8085a4	65 15		adc $15			adc MapTempWord; x5
+542	.05a6	8085a6	0a		asl a			asl a ; x10
+543	.05a7	8085a7	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.05a8	8085a8	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+546	.05ab	8085ab	48		pha			pha
+547	.05ac	8085ac	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+548	.05af	8085af	48		pha			pha
+549	.05b0	8085b0	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+550	.05b3	8085b3	48		pha			pha
+551	.05b4	8085b4	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+552	.05b7	8085b7	48		pha			pha
+553	.05b8	8085b8	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+554	.05bb	8085bb	48		pha			pha
+536	.05bc	8085bc	b9 20 9f	lda $819f20,y		lda MapData.col1,y
+537	.05bf	8085bf	29 ff 00	and #$00ff		and #$ff
+538	.05c2	8085c2	85 15		sta $15			sta MapTempWord
+539	.05c4	8085c4	0a		asl a			asl a
+540	.05c5	8085c5	0a		asl a			asl a
+541	.05c6	8085c6	65 15		adc $15			adc MapTempWord; x5
+542	.05c8	8085c8	0a		asl a			asl a ; x10
+543	.05c9	8085c9	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.05ca	8085ca	bd 78 b4	lda $81b478,x		lda BlockData.row3+8,x
+546	.05cd	8085cd	48		pha			pha
+547	.05ce	8085ce	bd 76 b4	lda $81b476,x		lda BlockData.row3+6,x
+548	.05d1	8085d1	48		pha			pha
+549	.05d2	8085d2	bd 74 b4	lda $81b474,x		lda BlockData.row3+4,x
+550	.05d5	8085d5	48		pha			pha
+551	.05d6	8085d6	bd 72 b4	lda $81b472,x		lda BlockData.row3+2,x
+552	.05d9	8085d9	48		pha			pha
+553	.05da	8085da	bd 70 b4	lda $81b470,x		lda BlockData.row3,x
+554	.05dd	8085dd	48		pha			pha
+509	.05de	8085de	4c 04 88	jmp $808804		jmp _exit
+510	.05e1	8085e1					_Row4
+536	.05e1	8085e1	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
+537	.05e4	8085e4	29 ff 00	and #$00ff		and #$ff
+538	.05e7	8085e7	85 15		sta $15			sta MapTempWord
+539	.05e9	8085e9	0a		asl a			asl a
+540	.05ea	8085ea	0a		asl a			asl a
+541	.05eb	8085eb	65 15		adc $15			adc MapTempWord; x5
+542	.05ed	8085ed	0a		asl a			asl a ; x10
+543	.05ee	8085ee	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.05ef	8085ef	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+546	.05f2	8085f2	48		pha			pha
+547	.05f3	8085f3	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+548	.05f6	8085f6	48		pha			pha
+549	.05f7	8085f7	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+550	.05fa	8085fa	48		pha			pha
+551	.05fb	8085fb	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+552	.05fe	8085fe	48		pha			pha
+553	.05ff	8085ff	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+554	.0602	808602	48		pha			pha
+536	.0603	808603	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
+537	.0606	808606	29 ff 00	and #$00ff		and #$ff
+538	.0609	808609	85 15		sta $15			sta MapTempWord
+539	.060b	80860b	0a		asl a			asl a
+540	.060c	80860c	0a		asl a			asl a
+541	.060d	80860d	65 15		adc $15			adc MapTempWord; x5
+542	.060f	80860f	0a		asl a			asl a ; x10
+543	.0610	808610	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0611	808611	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+546	.0614	808614	48		pha			pha
+547	.0615	808615	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+548	.0618	808618	48		pha			pha
+549	.0619	808619	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+550	.061c	80861c	48		pha			pha
+551	.061d	80861d	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+552	.0620	808620	48		pha			pha
+553	.0621	808621	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+554	.0624	808624	48		pha			pha
+536	.0625	808625	b9 20 a9	lda $81a920,y		lda MapData.col6,y
+537	.0628	808628	29 ff 00	and #$00ff		and #$ff
+538	.062b	80862b	85 15		sta $15			sta MapTempWord
+539	.062d	80862d	0a		asl a			asl a
+540	.062e	80862e	0a		asl a			asl a
+541	.062f	80862f	65 15		adc $15			adc MapTempWord; x5
+542	.0631	808631	0a		asl a			asl a ; x10
+543	.0632	808632	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0633	808633	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+546	.0636	808636	48		pha			pha
+547	.0637	808637	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+548	.063a	80863a	48		pha			pha
+549	.063b	80863b	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+550	.063e	80863e	48		pha			pha
+551	.063f	80863f	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+552	.0642	808642	48		pha			pha
+553	.0643	808643	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+554	.0646	808646	48		pha			pha
+536	.0647	808647	b9 20 a7	lda $81a720,y		lda MapData.col5,y
+537	.064a	80864a	29 ff 00	and #$00ff		and #$ff
+538	.064d	80864d	85 15		sta $15			sta MapTempWord
+539	.064f	80864f	0a		asl a			asl a
+540	.0650	808650	0a		asl a			asl a
+541	.0651	808651	65 15		adc $15			adc MapTempWord; x5
+542	.0653	808653	0a		asl a			asl a ; x10
+543	.0654	808654	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0655	808655	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+546	.0658	808658	48		pha			pha
+547	.0659	808659	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+548	.065c	80865c	48		pha			pha
+549	.065d	80865d	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+550	.0660	808660	48		pha			pha
+551	.0661	808661	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+552	.0664	808664	48		pha			pha
+553	.0665	808665	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+554	.0668	808668	48		pha			pha
+536	.0669	808669	b9 20 a5	lda $81a520,y		lda MapData.col4,y
+537	.066c	80866c	29 ff 00	and #$00ff		and #$ff
+538	.066f	80866f	85 15		sta $15			sta MapTempWord
+539	.0671	808671	0a		asl a			asl a
+540	.0672	808672	0a		asl a			asl a
+541	.0673	808673	65 15		adc $15			adc MapTempWord; x5
+542	.0675	808675	0a		asl a			asl a ; x10
+543	.0676	808676	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0677	808677	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+546	.067a	80867a	48		pha			pha
+547	.067b	80867b	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+548	.067e	80867e	48		pha			pha
+549	.067f	80867f	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+550	.0682	808682	48		pha			pha
+551	.0683	808683	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+552	.0686	808686	48		pha			pha
+553	.0687	808687	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+554	.068a	80868a	48		pha			pha
+536	.068b	80868b	b9 20 a3	lda $81a320,y		lda MapData.col3,y
+537	.068e	80868e	29 ff 00	and #$00ff		and #$ff
+538	.0691	808691	85 15		sta $15			sta MapTempWord
+539	.0693	808693	0a		asl a			asl a
+540	.0694	808694	0a		asl a			asl a
+541	.0695	808695	65 15		adc $15			adc MapTempWord; x5
+542	.0697	808697	0a		asl a			asl a ; x10
+543	.0698	808698	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0699	808699	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+546	.069c	80869c	48		pha			pha
+547	.069d	80869d	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+548	.06a0	8086a0	48		pha			pha
+549	.06a1	8086a1	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+550	.06a4	8086a4	48		pha			pha
+551	.06a5	8086a5	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+552	.06a8	8086a8	48		pha			pha
+553	.06a9	8086a9	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+554	.06ac	8086ac	48		pha			pha
+536	.06ad	8086ad	b9 20 a1	lda $81a120,y		lda MapData.col2,y
+537	.06b0	8086b0	29 ff 00	and #$00ff		and #$ff
+538	.06b3	8086b3	85 15		sta $15			sta MapTempWord
+539	.06b5	8086b5	0a		asl a			asl a
+540	.06b6	8086b6	0a		asl a			asl a
+541	.06b7	8086b7	65 15		adc $15			adc MapTempWord; x5
+542	.06b9	8086b9	0a		asl a			asl a ; x10
+543	.06ba	8086ba	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.06bb	8086bb	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+546	.06be	8086be	48		pha			pha
+547	.06bf	8086bf	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+548	.06c2	8086c2	48		pha			pha
+549	.06c3	8086c3	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+550	.06c6	8086c6	48		pha			pha
+551	.06c7	8086c7	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+552	.06ca	8086ca	48		pha			pha
+553	.06cb	8086cb	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+554	.06ce	8086ce	48		pha			pha
+536	.06cf	8086cf	b9 20 9f	lda $819f20,y		lda MapData.col1,y
+537	.06d2	8086d2	29 ff 00	and #$00ff		and #$ff
+538	.06d5	8086d5	85 15		sta $15			sta MapTempWord
+539	.06d7	8086d7	0a		asl a			asl a
+540	.06d8	8086d8	0a		asl a			asl a
+541	.06d9	8086d9	65 15		adc $15			adc MapTempWord; x5
+542	.06db	8086db	0a		asl a			asl a ; x10
+543	.06dc	8086dc	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.06dd	8086dd	bd 20 b7	lda $81b720,x		lda BlockData.row4+8,x
+546	.06e0	8086e0	48		pha			pha
+547	.06e1	8086e1	bd 1e b7	lda $81b71e,x		lda BlockData.row4+6,x
+548	.06e4	8086e4	48		pha			pha
+549	.06e5	8086e5	bd 1c b7	lda $81b71c,x		lda BlockData.row4+4,x
+550	.06e8	8086e8	48		pha			pha
+551	.06e9	8086e9	bd 1a b7	lda $81b71a,x		lda BlockData.row4+2,x
+552	.06ec	8086ec	48		pha			pha
+553	.06ed	8086ed	bd 18 b7	lda $81b718,x		lda BlockData.row4,x
+554	.06f0	8086f0	48		pha			pha
+519	.06f1	8086f1	4c 04 88	jmp $808804		jmp _exit
+520	.06f4	8086f4					_Row5
+536	.06f4	8086f4	b9 20 ad	lda $81ad20,y		lda MapData.col8,y
+537	.06f7	8086f7	29 ff 00	and #$00ff		and #$ff
+538	.06fa	8086fa	85 15		sta $15			sta MapTempWord
+539	.06fc	8086fc	0a		asl a			asl a
+540	.06fd	8086fd	0a		asl a			asl a
+541	.06fe	8086fe	65 15		adc $15			adc MapTempWord; x5
+542	.0700	808700	0a		asl a			asl a ; x10
+543	.0701	808701	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0702	808702	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+546	.0705	808705	48		pha			pha
+547	.0706	808706	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+548	.0709	808709	48		pha			pha
+549	.070a	80870a	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+550	.070d	80870d	48		pha			pha
+551	.070e	80870e	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+552	.0711	808711	48		pha			pha
+553	.0712	808712	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+554	.0715	808715	48		pha			pha
+536	.0716	808716	b9 20 ab	lda $81ab20,y		lda MapData.col7,y
+537	.0719	808719	29 ff 00	and #$00ff		and #$ff
+538	.071c	80871c	85 15		sta $15			sta MapTempWord
+539	.071e	80871e	0a		asl a			asl a
+540	.071f	80871f	0a		asl a			asl a
+541	.0720	808720	65 15		adc $15			adc MapTempWord; x5
+542	.0722	808722	0a		asl a			asl a ; x10
+543	.0723	808723	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0724	808724	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+546	.0727	808727	48		pha			pha
+547	.0728	808728	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+548	.072b	80872b	48		pha			pha
+549	.072c	80872c	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+550	.072f	80872f	48		pha			pha
+551	.0730	808730	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+552	.0733	808733	48		pha			pha
+553	.0734	808734	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+554	.0737	808737	48		pha			pha
+536	.0738	808738	b9 20 a9	lda $81a920,y		lda MapData.col6,y
+537	.073b	80873b	29 ff 00	and #$00ff		and #$ff
+538	.073e	80873e	85 15		sta $15			sta MapTempWord
+539	.0740	808740	0a		asl a			asl a
+540	.0741	808741	0a		asl a			asl a
+541	.0742	808742	65 15		adc $15			adc MapTempWord; x5
+542	.0744	808744	0a		asl a			asl a ; x10
+543	.0745	808745	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0746	808746	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+546	.0749	808749	48		pha			pha
+547	.074a	80874a	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+548	.074d	80874d	48		pha			pha
+549	.074e	80874e	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+550	.0751	808751	48		pha			pha
+551	.0752	808752	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+552	.0755	808755	48		pha			pha
+553	.0756	808756	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+554	.0759	808759	48		pha			pha
+536	.075a	80875a	b9 20 a7	lda $81a720,y		lda MapData.col5,y
+537	.075d	80875d	29 ff 00	and #$00ff		and #$ff
+538	.0760	808760	85 15		sta $15			sta MapTempWord
+539	.0762	808762	0a		asl a			asl a
+540	.0763	808763	0a		asl a			asl a
+541	.0764	808764	65 15		adc $15			adc MapTempWord; x5
+542	.0766	808766	0a		asl a			asl a ; x10
+543	.0767	808767	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.0768	808768	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+546	.076b	80876b	48		pha			pha
+547	.076c	80876c	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+548	.076f	80876f	48		pha			pha
+549	.0770	808770	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+550	.0773	808773	48		pha			pha
+551	.0774	808774	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+552	.0777	808777	48		pha			pha
+553	.0778	808778	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+554	.077b	80877b	48		pha			pha
+536	.077c	80877c	b9 20 a5	lda $81a520,y		lda MapData.col4,y
+537	.077f	80877f	29 ff 00	and #$00ff		and #$ff
+538	.0782	808782	85 15		sta $15			sta MapTempWord
+539	.0784	808784	0a		asl a			asl a
+540	.0785	808785	0a		asl a			asl a
+541	.0786	808786	65 15		adc $15			adc MapTempWord; x5
+542	.0788	808788	0a		asl a			asl a ; x10
+543	.0789	808789	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.078a	80878a	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+546	.078d	80878d	48		pha			pha
+547	.078e	80878e	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+548	.0791	808791	48		pha			pha
+549	.0792	808792	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+550	.0795	808795	48		pha			pha
+551	.0796	808796	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+552	.0799	808799	48		pha			pha
+553	.079a	80879a	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+554	.079d	80879d	48		pha			pha
+536	.079e	80879e	b9 20 a3	lda $81a320,y		lda MapData.col3,y
+537	.07a1	8087a1	29 ff 00	and #$00ff		and #$ff
+538	.07a4	8087a4	85 15		sta $15			sta MapTempWord
+539	.07a6	8087a6	0a		asl a			asl a
+540	.07a7	8087a7	0a		asl a			asl a
+541	.07a8	8087a8	65 15		adc $15			adc MapTempWord; x5
+542	.07aa	8087aa	0a		asl a			asl a ; x10
+543	.07ab	8087ab	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.07ac	8087ac	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+546	.07af	8087af	48		pha			pha
+547	.07b0	8087b0	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+548	.07b3	8087b3	48		pha			pha
+549	.07b4	8087b4	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+550	.07b7	8087b7	48		pha			pha
+551	.07b8	8087b8	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+552	.07bb	8087bb	48		pha			pha
+553	.07bc	8087bc	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+554	.07bf	8087bf	48		pha			pha
+536	.07c0	8087c0	b9 20 a1	lda $81a120,y		lda MapData.col2,y
+537	.07c3	8087c3	29 ff 00	and #$00ff		and #$ff
+538	.07c6	8087c6	85 15		sta $15			sta MapTempWord
+539	.07c8	8087c8	0a		asl a			asl a
+540	.07c9	8087c9	0a		asl a			asl a
+541	.07ca	8087ca	65 15		adc $15			adc MapTempWord; x5
+542	.07cc	8087cc	0a		asl a			asl a ; x10
+543	.07cd	8087cd	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.07ce	8087ce	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+546	.07d1	8087d1	48		pha			pha
+547	.07d2	8087d2	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+548	.07d5	8087d5	48		pha			pha
+549	.07d6	8087d6	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+550	.07d9	8087d9	48		pha			pha
+551	.07da	8087da	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+552	.07dd	8087dd	48		pha			pha
+553	.07de	8087de	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+554	.07e1	8087e1	48		pha			pha
+536	.07e2	8087e2	b9 20 9f	lda $819f20,y		lda MapData.col1,y
+537	.07e5	8087e5	29 ff 00	and #$00ff		and #$ff
+538	.07e8	8087e8	85 15		sta $15			sta MapTempWord
+539	.07ea	8087ea	0a		asl a			asl a
+540	.07eb	8087eb	0a		asl a			asl a
+541	.07ec	8087ec	65 15		adc $15			adc MapTempWord; x5
+542	.07ee	8087ee	0a		asl a			asl a ; x10
+543	.07ef	8087ef	aa		tax			tax
+544								;ldx #10 ; tile 1
+545	.07f0	8087f0	bd c8 b9	lda $81b9c8,x		lda BlockData.row5+8,x
+546	.07f3	8087f3	48		pha			pha
+547	.07f4	8087f4	bd c6 b9	lda $81b9c6,x		lda BlockData.row5+6,x
+548	.07f7	8087f7	48		pha			pha
+549	.07f8	8087f8	bd c4 b9	lda $81b9c4,x		lda BlockData.row5+4,x
+550	.07fb	8087fb	48		pha			pha
+551	.07fc	8087fc	bd c2 b9	lda $81b9c2,x		lda BlockData.row5+2,x
+552	.07ff	8087ff	48		pha			pha
+553	.0800	808800	bd c0 b9	lda $81b9c0,x		lda BlockData.row5,x
+554	.0803	808803	48		pha			pha
+529	.0804	808804					_exit
+530	.0804	808804	a6 af		ldx $af			ldx <MapStackStore
+531	.0806	808806	9a		txs			txs							; restore stack
+532	.0807	808807	28		plp			plp
+533	.0808	808808	60		rts			rts
 
-532							mColRowPlot .macro col, row
-552							.endm
+535							mColRowPlot .macro col, row
+555							.endm
 
-554	.0801	808801					dmaRow_xx
-555	.0801	808801	08		php			php
-46:4	.0802	808802	e2 20		sep #$20		SEP #$20
-62	.0804	808804	c2 10		rep #$10		REP #$10
-558:3	.0806	808806	a6 19		ldx $19			ldx MapBufferTarget		; set the target VRAM address
-559	.0808	808808	8e 16 21	stx $812116		stx $2116,b
-560	.080b	80880b	a2 ff ff	ldx #$ffff		ldx #$FFFF
-561	.080e	80880e	86 19		stx $19			stx MapBufferTarget		; clear the flag
-562	.0810	808810	a2 67 00	ldx #$0067		ldx #<>MapColumnBuffer+8
-563	.0813	808813	8e 02 43	stx $814302		stx $4302,b					; set the source as the last pos in the buffer
-46:4	.0816	808816	e2 20		sep #$20		SEP #$20
-565:3	.0818	808818	a9 80		lda #$80		lda #`MapColumnBuffer
-566	.081a	80881a	8f 04 43 80	sta $804304		sta $804304
-567	.081e	80881e	a2 40 00	ldx #$0040		ldx #64						; 32 words
-568	.0821	808821	8e 05 43	stx $814305		stx $4305,b
-569	.0824	808824	a2 01 18	ldx #$1801		ldx #%00000001 | $1800	; A->B, Inc, Write WORD, $2118
-570	.0827	808827	8e 00 43	stx $814300		stx $4300,b
-571	.082a	80882a	a9 80		lda #$80		lda #$80
-572	.082c	80882c	8d 15 21	sta $812115		sta $2115,b					; inc VRAM port address by 1
-573	.082f	80882f	a9 01		lda #$01		lda #1
-574	.0831	808831	8d 0b 42	sta $81420b		sta $420B,b
-575	.0834	808834	28		plp			plp
-576	.0835	808835	60		rts			rts
+557	.0809	808809					dmaRow_xx
+558	.0809	808809	08		php			php
+46:4	.080a	80880a	e2 20		sep #$20		SEP #$20
+62	.080c	80880c	c2 10		rep #$10		REP #$10
+561:3	.080e	80880e	a6 19		ldx $19			ldx MapBufferTarget		; set the target VRAM address
+562	.0810	808810	8e 16 21	stx $812116		stx $2116,b
+563	.0813	808813	a2 ff ff	ldx #$ffff		ldx #$FFFF
+564	.0816	808816	86 19		stx $19			stx MapBufferTarget		; clear the flag
+565	.0818	808818	a2 67 00	ldx #$0067		ldx #<>MapColumnBuffer+8
+566	.081b	80881b	8e 02 43	stx $814302		stx $4302,b					; set the source as the last pos in the buffer
+46:4	.081e	80881e	e2 20		sep #$20		SEP #$20
+568:3	.0820	808820	a9 80		lda #$80		lda #`MapColumnBuffer
+569	.0822	808822	8f 04 43 80	sta $804304		sta $804304
+570	.0826	808826	a2 40 00	ldx #$0040		ldx #64						; 32 words
+571	.0829	808829	8e 05 43	stx $814305		stx $4305,b
+572	.082c	80882c	a2 01 18	ldx #$1801		ldx #%00000001 | $1800	; A->B, Inc, Write WORD, $2118
+573	.082f	80882f	8e 00 43	stx $814300		stx $4300,b
+574	.0832	808832	a9 80		lda #$80		lda #$80
+575	.0834	808834	8d 15 21	sta $812115		sta $2115,b					; inc VRAM port address by 1
+576	.0837	808837	a9 01		lda #$01		lda #1
+577	.0839	808839	8d 0b 42	sta $81420b		sta $420B,b
+578	.083c	80883c	28		plp			plp
+579	.083d	80883d	60		rts			rts
 
-578	.0836	808836					map_advancePointersTopEdge_ra16
-579	.0836	808836					_ASSERT_JSR
-46:4	.0836	808836	e2 20		sep #$20		SEP #$20
-581:3	.0838	808838	a5 0f		lda $0f			lda MapSubRowTop					; we shift the char by 2 as it stored as words
-582	.083a	80883a	18		clc			clc
-583	.083b	80883b	69 02		adc #$02		adc #2
-584	.083d	80883d	85 0f		sta $0f			sta MapSubRowTop
-585	.083f	80883f	c9 0a		cmp #$0a		cmp #10								; done a whole block? 5 chars?
-586	.0841	808841	90 06		bcc $808849		bcc _next
-587	.0843	808843	64 0f		stz $0f				stz MapSubRowTop				; first row in it
-50:4	.0845	808845	c2 20		rep #$20		REP #$20
-589:3	.0847	808847	e6 0b		inc $0b				inc MapBlockIndexTop			; move to the next block
-590	.0849	808849						_next
-50:4	.0849	808849	c2 20		rep #$20		REP #$20
-592:3	.084b	80884b	a5 11		lda $11			lda MapVRAMTop						; move the VRAM row down one as well
-593	.084d	80884d	18		clc			clc
-594	.084e	80884e	69 20 00	adc #$0020		adc #32								; move to the next line
-595	.0851	808851	29 ff 07	and #$07ff		and #$7ff							; wrap to the screen
-596	.0854	808854	85 11		sta $11			sta MapVRAMTop
-597	.0856	808856	60		rts			rts
+581	.083e	80883e					map_advancePointersTopEdge_ra16
+582	.083e	80883e					_ASSERT_JSR
+46:4	.083e	80883e	e2 20		sep #$20		SEP #$20
+584:3	.0840	808840	a5 0f		lda $0f			lda MapSubRowTop					; we shift the char by 2 as it stored as words
+585	.0842	808842	18		clc			clc
+586	.0843	808843	69 02		adc #$02		adc #2
+587	.0845	808845	85 0f		sta $0f			sta MapSubRowTop
+588	.0847	808847	c9 0a		cmp #$0a		cmp #10								; done a whole block? 5 chars?
+589	.0849	808849	90 06		bcc $808851		bcc _next
+590	.084b	80884b	64 0f		stz $0f				stz MapSubRowTop				; first row in it
+50:4	.084d	80884d	c2 20		rep #$20		REP #$20
+592:3	.084f	80884f	e6 0b		inc $0b				inc MapBlockIndexTop			; move to the next block
+593	.0851	808851						_next
+50:4	.0851	808851	c2 20		rep #$20		REP #$20
+595:3	.0853	808853	a5 11		lda $11			lda MapVRAMTop						; move the VRAM row down one as well
+596	.0855	808855	18		clc			clc
+597	.0856	808856	69 20 00	adc #$0020		adc #32								; move to the next line
+598	.0859	808859	29 ff 07	and #$07ff		and #$7ff							; wrap to the screen
+599	.085c	80885c	85 11		sta $11			sta MapVRAMTop
+600	.085e	80885e	60		rts			rts
 
-599	.0857	808857					map_advancePointersBotEdge_ra16
-600	.0857	808857					_ASSERT_JSR
-46:4	.0857	808857	e2 20		sep #$20		SEP #$20
-602:3	.0859	808859	a5 10		lda $10			lda MapSubRowBot					; same as above but for the bottom edge
-603	.085b	80885b	18		clc			clc
-604	.085c	80885c	69 02		adc #$02		adc #2
-605	.085e	80885e	85 10		sta $10			sta MapSubRowBot
-606	.0860	808860	c9 0a		cmp #$0a		cmp #10
-607	.0862	808862	90 06		bcc $80886a		bcc _next
-608	.0864	808864	64 10		stz $10				stz MapSubRowBot
-50:4	.0866	808866	c2 20		rep #$20		REP #$20
-610:3	.0868	808868	e6 0d		inc $0d				inc MapBlockIndexBot
-611	.086a	80886a						_next
-50:4	.086a	80886a	c2 20		rep #$20		REP #$20
-613:3	.086c	80886c	a5 13		lda $13			lda MapVRAMBot
-614	.086e	80886e	18		clc			clc
-615	.086f	80886f	69 20 00	adc #$0020		adc #32
-616	.0872	808872	29 ff 07	and #$07ff		and #$7ff
-617	.0875	808875	85 13		sta $13			sta MapVRAMBot
-618	.0877	808877	60		rts			rts
+602	.085f	80885f					map_advancePointersBotEdge_ra16
+603	.085f	80885f					_ASSERT_JSR
+46:4	.085f	80885f	e2 20		sep #$20		SEP #$20
+605:3	.0861	808861	a5 10		lda $10			lda MapSubRowBot					; same as above but for the bottom edge
+606	.0863	808863	18		clc			clc
+607	.0864	808864	69 02		adc #$02		adc #2
+608	.0866	808866	85 10		sta $10			sta MapSubRowBot
+609	.0868	808868	c9 0a		cmp #$0a		cmp #10
+610	.086a	80886a	90 06		bcc $808872		bcc _next
+611	.086c	80886c	64 10		stz $10				stz MapSubRowBot
+50:4	.086e	80886e	c2 20		rep #$20		REP #$20
+613:3	.0870	808870	e6 0d		inc $0d				inc MapBlockIndexBot
+614	.0872	808872						_next
+50:4	.0872	808872	c2 20		rep #$20		REP #$20
+616:3	.0874	808874	a5 13		lda $13			lda MapVRAMBot
+617	.0876	808876	18		clc			clc
+618	.0877	808877	69 20 00	adc #$0020		adc #32
+619	.087a	80887a	29 ff 07	and #$07ff		and #$7ff
+620	.087d	80887d	85 13		sta $13			sta MapVRAMBot
+621	.087f	80887f	60		rts			rts
 
-620	.0878	808878					map_retreatPointersTopEdge_ra16
-621	.0878	808878					_ASSERT_JSR
-46:4	.0878	808878	e2 20		sep #$20		SEP #$20
-623:3	.087a	80887a	a5 0f		lda $0f			lda MapSubRowTop				; sub 2 as we are dealing with words
-624	.087c	80887c	38		sec			sec
-625	.087d	80887d	e9 02		sbc #$02		sbc #2
-626	.087f	80887f	85 0f		sta $0f			sta MapSubRowTop
-627	.0881	808881	b0 08		bcs $80888b		bcs _next						; under flowed?
-628	.0883	808883	a9 08		lda #$08			lda #8
-629	.0885	808885	85 0f		sta $0f				sta MapSubRowTop			; last row of it
-50:4	.0887	808887	c2 20		rep #$20		REP #$20
-631:3	.0889	808889	c6 0b		dec $0b				dec MapBlockIndexTop		; previous block
-632	.088b	80888b						_next
-50:4	.088b	80888b	c2 20		rep #$20		REP #$20
-634:3	.088d	80888d	a5 11		lda $11			lda MapVRAMTop					; move VRAM row back 1
-635	.088f	80888f	38		sec			sec
-636	.0890	808890	e9 20 00	sbc #$0020		sbc #32
-637	.0893	808893	29 ff 07	and #$07ff		and #$7ff						; wrap to VRAM memory
-638	.0896	808896	85 11		sta $11			sta MapVRAMTop
-639	.0898	808898	60		rts			rts
+623	.0880	808880					map_retreatPointersTopEdge_ra16
+624	.0880	808880					_ASSERT_JSR
+46:4	.0880	808880	e2 20		sep #$20		SEP #$20
+626:3	.0882	808882	a5 0f		lda $0f			lda MapSubRowTop				; sub 2 as we are dealing with words
+627	.0884	808884	38		sec			sec
+628	.0885	808885	e9 02		sbc #$02		sbc #2
+629	.0887	808887	85 0f		sta $0f			sta MapSubRowTop
+630	.0889	808889	b0 08		bcs $808893		bcs _next						; under flowed?
+631	.088b	80888b	a9 08		lda #$08			lda #8
+632	.088d	80888d	85 0f		sta $0f				sta MapSubRowTop			; last row of it
+50:4	.088f	80888f	c2 20		rep #$20		REP #$20
+634:3	.0891	808891	c6 0b		dec $0b				dec MapBlockIndexTop		; previous block
+635	.0893	808893						_next
+50:4	.0893	808893	c2 20		rep #$20		REP #$20
+637:3	.0895	808895	a5 11		lda $11			lda MapVRAMTop					; move VRAM row back 1
+638	.0897	808897	38		sec			sec
+639	.0898	808898	e9 20 00	sbc #$0020		sbc #32
+640	.089b	80889b	29 ff 07	and #$07ff		and #$7ff						; wrap to VRAM memory
+641	.089e	80889e	85 11		sta $11			sta MapVRAMTop
+642	.08a0	8088a0	60		rts			rts
 
-641	.0899	808899					map_retreatPointersBotEdge_ra16
-642	.0899	808899					_ASSERT_JSR
-46:4	.0899	808899	e2 20		sep #$20		SEP #$20
-644:3	.089b	80889b	a5 10		lda $10			lda MapSubRowBot				; sub 2 as we are dealing with words
-645	.089d	80889d	38		sec			sec
-646	.089e	80889e	e9 02		sbc #$02		sbc #2
-647	.08a0	8088a0	85 10		sta $10			sta MapSubRowBot
-648	.08a2	8088a2	b0 08		bcs $8088ac		bcs _next						; under flowed?
-649	.08a4	8088a4	a9 08		lda #$08			lda #8
-650	.08a6	8088a6	85 10		sta $10				sta MapSubRowBot			; last row of it
-50:4	.08a8	8088a8	c2 20		rep #$20		REP #$20
-652:3	.08aa	8088aa	c6 0d		dec $0d				dec MapBlockIndexBot		; previous block
-653	.08ac	8088ac						_next
-50:4	.08ac	8088ac	c2 20		rep #$20		REP #$20
-655:3	.08ae	8088ae	a5 13		lda $13			lda MapVRAMBot					; move VRAM row back 1
-656	.08b0	8088b0	38		sec			sec
-657	.08b1	8088b1	e9 20 00	sbc #$0020		sbc #32
-658	.08b4	8088b4	29 ff 07	and #$07ff		and #$7ff						; wrap to VRAM memory
-659	.08b7	8088b7	85 13		sta $13			sta MapVRAMBot
-660	.08b9	8088b9	60		rts			rts
+644	.08a1	8088a1					map_retreatPointersBotEdge_ra16
+645	.08a1	8088a1					_ASSERT_JSR
+46:4	.08a1	8088a1	e2 20		sep #$20		SEP #$20
+647:3	.08a3	8088a3	a5 10		lda $10			lda MapSubRowBot				; sub 2 as we are dealing with words
+648	.08a5	8088a5	38		sec			sec
+649	.08a6	8088a6	e9 02		sbc #$02		sbc #2
+650	.08a8	8088a8	85 10		sta $10			sta MapSubRowBot
+651	.08aa	8088aa	b0 08		bcs $8088b4		bcs _next						; under flowed?
+652	.08ac	8088ac	a9 08		lda #$08			lda #8
+653	.08ae	8088ae	85 10		sta $10				sta MapSubRowBot			; last row of it
+50:4	.08b0	8088b0	c2 20		rep #$20		REP #$20
+655:3	.08b2	8088b2	c6 0d		dec $0d				dec MapBlockIndexBot		; previous block
+656	.08b4	8088b4						_next
+50:4	.08b4	8088b4	c2 20		rep #$20		REP #$20
+658:3	.08b6	8088b6	a5 13		lda $13			lda MapVRAMBot					; move VRAM row back 1
+659	.08b8	8088b8	38		sec			sec
+660	.08b9	8088b9	e9 20 00	sbc #$0020		sbc #32
+661	.08bc	8088bc	29 ff 07	and #$07ff		and #$7ff						; wrap to VRAM memory
+662	.08bf	8088bf	85 13		sta $13			sta MapVRAMBot
+663	.08c1	8088c1	60		rts			rts
 
 
 :1	;******  Return to file: master.asm
