@@ -8,6 +8,7 @@ The data set uses Blocks, or "meta tiles" as the NES community calls them, but I
 Blocks
 ------
 Blocks are grouping smaller chars or blocks to form larger "building blocks" of the background.
+
 The data set I have used is ripped from "Outlaw example game" from the "Shoot'em'up'Construction Kit" on the C64, it uses 5x5 blocks. This sounds like a really odd thing to do, however the C64 is 40x25 so 5x5 is 8 by 5 blocks. On a SNES not so much. To get arround the 32 wide I actually buffer 40 chars and just DMA the middle 32. 
 
 It has 248 8x8 chars which are combined into 68 5x5 blocks on a map that is 8x512 blocks big.
@@ -25,7 +26,7 @@ which is stored `ABCDEFGHIJKLMNOPQRSTUVWXY ABCDEFGHIJKLMNOPQRSTUVWXY ...` until 
 
 The high level of how the map works
 -----------------------------------
-You read the first bytge of the map data, which is 55
+You read the first byte of the map data, which is 55
 
 You then multiple by the size of each block, which is 25 words so 50 bytes, you then add the base address of the block data, this then gets you the start of the block data start.
 
@@ -100,7 +101,7 @@ We still have to do BlockNum*10 though. Lets look at it for second.
 	~~~
 	The second is faster as we don't need to store the temp
 
-If you have word indexs, ie more than 256 blocks, then you can just store the raw pointer to the map and avoid the x10. But it costs twice as much ROM. However this then allows you to just have blocks and not need to make "sets" which spares you from having duplicated blocks in each set. But block optimisation and techniques is another topic.
+If you have word indexs, ie more than 256 blocks, then you can just store the raw pointer to the block in the map and avoid the x10. But it costs twice as much ROM. However this then allows you to just have blocks and not need to make "sets" which spares you from having duplicated blocks in each set. But block optimisation and techniques is another topic.
 
 Keeping track of where we are in the map
 ----------------------------------------
@@ -113,7 +114,7 @@ When it hits 10, we move to the next block and reset it to 0.
 I've used "holds next plot", rather than "current plot". So I plot, and then move them, but this is arbitrary. 
 
 One slight trick I will highlight; Detecting if you go over a "next char trigger"
-
+~~~
 		lda ScreenYOffset	; cache current Screen X offset
 		sta MapTempWord
 		clc
@@ -123,13 +124,13 @@ One slight trick I will highlight; Detecting if you go over a "next char trigger
 		and #$FFF8			; I only want to know if we have crossed over 8 pixels, i.e the 
 		#A8					; upper 13 bits have changed, so mask away the lower 3bits (0-7)
 		beq _noHold			; same, not crossed char boundary
-
+~~~
 so if we have 
 0 + 3 = 3 then
 
 0 eor 3 = 3 
 
-3 & FFF8 = 0 therefor the same value no change. 
+3 & FFF8 = 0 therefore the same value no change. 
 
 if we have
 
