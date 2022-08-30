@@ -1,6 +1,6 @@
 ;AnimCode.asm
 
-.virtual (`*<<16)+gSharedRamStart
+.virtual ((`*)<<16)+gSharedRamStart
 .dsection sSharedWRAM
 .endv
 
