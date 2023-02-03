@@ -198,8 +198,8 @@ jsr DMAScreenToVRAM_ff
 
 assemble and run the sfc as before, but if you are using my Mesen-S you will need to add additional commands as follows `64tass -a -x -X -b master.asm -o master.sfc --dump-label -l master.tass -L master.list --verbose-list` this will give you the tass file that will be auto loaded with asserts and breakpoints once we get to them.
 
-You should be presented with
-!(/master_000.png)
+You should be presented with <br>
+![first test](master_000.png)
 
 The code to here is <details><summary>click to reveal code</summary>
 ~~~
@@ -1214,7 +1214,7 @@ or something like it
 
 And you can make something like this
 
-!master_001.png
+![Apple// paint program?](master_001.png)
 
 We're not here to make an Apple // drawing program however, the previous position should be cleared as we move, however we also need to know all the places in between where we are and the end of where we have been so as we grow we can only remove the last square.
 
