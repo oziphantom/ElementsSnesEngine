@@ -240,7 +240,7 @@ To fill out this header in 64tass we simply define `.byte`, `.word` and `.text` 
 > word is 16bits
 > long is 24bits 
 
-Make a new `BANK80.asm` file and start editing it with
+Make a new `BANK00.asm` file and start editing it with
 ~~~
 * = $ffb0
     .enc "none"
