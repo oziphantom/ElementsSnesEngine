@@ -143,7 +143,7 @@ I'm going to propose and implement here a naming convention based system, and pu
 - a for A 8bit
 - A for A 16bit
 - x for XY 8bit
-- X for XY 8bit
+- X for XY 16bit
 - f for 'don't care'
 
 While on the subject of naming conventions, if using Reluanch64 you may have noted that its auto complete is case-sensitive. While 64tass by default is case agnostic, you can make it case sensitive if you so desire. To this end, I will make routines camelCase (mostly) and then data PascalCase. This way when I want to call a routine, I can type the start of its name with a lower case then (Ctrl+Space) and the list will be filtered to routine names. Likewise when I want data I start with a Capital and get just data filtered.
