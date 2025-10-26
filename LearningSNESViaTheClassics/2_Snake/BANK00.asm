@@ -402,11 +402,6 @@ YDelta .char  0, 0,-1, 0, 1
                 ;          1111111111122222222233
                 ;01234567890123456789012345678901
 StatusRow .word ' ','s','n','a','k','e','s',' ',' ',' ','s','c','o','r','e',':','0','0','0','0',' ',' ','b','e','s','t',':','0','0','0','0',' ' 
-;StatusRow
-_data = ' snakes   score:0000  best:0000 '
-.for s in range(len(_data))
-.word _data[s]
-.next
 GameoverText .word 'g','a','m','e',' ','o','v','e','r'
 
 DMAScreenToVRAM_ff
