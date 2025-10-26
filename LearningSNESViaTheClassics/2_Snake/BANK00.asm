@@ -1,24 +1,24 @@
 kJoypad .block
-	BtnR      = 16
-	BtnL      = 32
-	BtnX      = 64
-	BtnA      = 128
-	DirRight  = 256
-	DirLeft   = 512
-	DirDown   = 1024
-	DirUp     = 2048
-	BtnStart  = 4096
-	BtnSelect = 8192
-	BtnY      = 16384
-	BtnB      = 32768
+   BtnR      = 16
+   BtnL      = 32
+   BtnX      = 64
+   BtnA      = 128
+   DirRight  = 256
+   DirLeft   = 512
+   DirDown   = 1024
+   DirUp     = 2048
+   BtnStart  = 4096
+   BtnSelect = 8192
+   BtnY      = 16384
+   BtnB      = 32768
 .bend
 
 kHead .block
-	none = 0
-	right = 1
-	up = 2
-	left = 3
-	down = 4
+   none = 0
+   right = 1
+   up = 2
+   left = 3
+   down = 4
 .bend
 
 *=$0
@@ -176,15 +176,15 @@ RESET
    sta $420B
    jsr clearGameScreen_aXY
    rep #$20                ; A16
-	; the status row
-	ldx #62
--	lda StatusRow,x
-	sta ScreenMirror,x
-	dex
-	dex
-	bpl -
-	jsr DMAScreenToVRAM_ff
-	sep #$20  ; A8
+   ; the status row
+   ldx #62
+-   lda StatusRow,x
+   sta ScreenMirror,x
+   dex
+   dex
+   bpl -
+   jsr DMAScreenToVRAM_ff
+   sep #$20  ; A8
    ; set up screen addresses
    stz $2107 ; we want the screen at $$0000 and size 32x32
    lda #1
@@ -201,9 +201,9 @@ RESET
    ; enable NMI to get us a game loop
    lda #%10000001 ; enable NMI VBlanks and Gamepad scanning 
    sta $4200
-	; init game state
-initGame_xx
-	sep #$30  ; AXY8
+   ; init game state
+initGame_ff
+   sep #$30  ; AXY8
    lda #10
    sta SpeedCounter   
    stz SpeedValue
@@ -232,83 +232,83 @@ initGame_xx
    jsr pushCurrentToQueue_AX
 
 mainLoop
-	sep #$20      ; A8
+   sep #$20      ; A8
    stz NMIDoneNF ; clear any pending NMI
--	lda NMIDoneNF ; wait for the next one
-	bpl -
-	; NMI is finished so we can update
-	sep #$10 ; XY8
-	; update the heading direction
-	lda $4218+1
-	bit #>kJoypad.DirUp
-	beq _notUp
-		ldx #kHead.up
-		bne _setNew
+-   lda NMIDoneNF ; wait for the next one
+   bpl -
+   ; NMI is finished so we can update
+   sep #$10 ; XY8
+   ; update the heading direction
+   lda $4218+1
+   bit #>kJoypad.DirUp
+   beq _notUp
+      ldx #kHead.up
+      bne _setNew
 _notUp
-	bit #>kJoypad.DirDown
-	beq _notDown
-		ldx #kHead.down
-		bne _setNew
+   bit #>kJoypad.DirDown
+   beq _notDown
+      ldx #kHead.down
+      bne _setNew
 _notDown
-	bit #>kJoypad.DirLeft
-	beq _notLeft
-		ldx #kHead.left
-		bne _setNew
+   bit #>kJoypad.DirLeft
+   beq _notLeft
+      ldx #kHead.left
+      bne _setNew
 _notLeft
-	bit #>kJoypad.DirRight
-	beq _noMoveChange
-		ldx #kHead.right
+   bit #>kJoypad.DirRight
+   beq _noMoveChange
+      ldx #kHead.right
 _setNew
-	stx CurrentHeading
+   stx CurrentHeading
 _noMoveChange
-	dec SpeedValue
-	bpl MainLoop
-	
-	lda SpeedCounter
-	sta SpeedValue
-	ldx CurrentHeading
-	clc
-	lda XDelta,x
-	adc HeadX
-	sta HeadX
-	clc
-	lda YDelta,x
-	adc HeadY
-	sta HeadY
-	lda HeadX
-	cmp TargetX
-	bne _noCollection
-		lda HeadY
-		cmp TargetY
-		bne _noCollection
-			; we are on top of the target
-			lda CollectedCounter+6
-			clc
-			adc #1
-			sta CollectedCounter+6
-			cmp #'0'+10
-			bne _getNextTarget
-				lda #'0'
-				sta CollectedCounter+6
-				lda CollectedCounter+4
-				clc
-				adc #1
-				sta CollectedCounter+4
-				cmp #'0'+10
-				bne _getNextTarget
-					lda #'0'
-					sta CollectedCounter+4
-					lda CollectedCounter+2
-					clc
-					adc #1
-					sta CollectedCounter+2
-					cmp #'0'+10
-					bne _getNextTarget
-						inc CollectedCounter
-	_getNextTarget
-		lda #$ff
-		sta SkipRemoveTaleNF
-	   inc SpeedDecCounter
+   dec SpeedValue
+   bpl MainLoop
+   
+   lda SpeedCounter
+   sta SpeedValue
+   ldx CurrentHeading
+   clc
+   lda XDelta,x
+   adc HeadX
+   sta HeadX
+   clc
+   lda YDelta,x
+   adc HeadY
+   sta HeadY
+   lda HeadX
+   cmp TargetX
+   bne _noCollection
+      lda HeadY
+      cmp TargetY
+      bne _noCollection
+         ; we are on top of the target
+         lda CollectedCounter+6
+         clc
+         adc #1
+         sta CollectedCounter+6
+         cmp #'0'+10
+         bne _getNextTarget
+            lda #'0'
+            sta CollectedCounter+6
+            lda CollectedCounter+4
+            clc
+            adc #1
+            sta CollectedCounter+4
+            cmp #'0'+10
+            bne _getNextTarget
+               lda #'0'
+               sta CollectedCounter+4
+               lda CollectedCounter+2
+               clc
+               adc #1
+               sta CollectedCounter+2
+               cmp #'0'+10
+               bne _getNextTarget
+                  inc CollectedCounter
+   _getNextTarget
+      lda #$ff
+      sta SkipRemoveTaleNF
+      inc SpeedDecCounter
       lda SpeedDecCounter
       cmp #5 ; make this higher for an easier game
       bne +
@@ -318,81 +318,81 @@ _noMoveChange
             dec SpeedCounter  ; start going faster
             stz SpeedDecCounter
    +
-		jsr getRandomTarget_ad		; get the next target
-		rep #$20
-		sep #$10
-		jsr drawTargetToScreen_Ax	; put it on the screen
+      jsr getRandomTarget_ad      ; get the next target
+      rep #$20
+      sep #$10
+      jsr drawTargetToScreen_Ax   ; put it on the screen
 _noCollection
-	sep #$20								; A8
-	bit SkipRemoveTaleNF
-	bmi _noTailUpdate
-	rep #$30                      ; AXY16
-	jsr updateTailFromQueue_AX
-	sep #$10                      ; XY8
-	jsr clearTailOnScreen_Ax
-	sep #$20								; A8
+   sep #$20                        ; A8
+   bit SkipRemoveTaleNF
+   bmi _noTailUpdate
+   rep #$30                      ; AXY16
+   jsr updateTailFromQueue_AX
+   sep #$10                      ; XY8
+   jsr clearTailOnScreen_Ax
+   sep #$20                        ; A8
 _noTailUpdate
-	stz SkipRemoveTaleNF				; clear the flag
-	rep #$20 ; A16
-	jsr readHeadFromScreen_Ax
-	and #$00ff ; make sure we only check the lower 8 bits
-	cmp #' '+128
-	bne _safeToMove
-		jmp gameOver_Ax
+   stz SkipRemoveTaleNF            ; clear the flag
+   rep #$20 ; A16
+   jsr readHeadFromScreen_Ax
+   and #$00ff ; make sure we only check the lower 8 bits
+   cmp #' '+128
+   bne _safeToMove
+      jmp gameOver_Ax
 _safeToMove
-	jsr drawHeadToScreen_Ax
-	rep #$30								; AXY16
-	jsr pushCurrentToQueue_AX
-	sep #$20                      ; A8
-	jmp mainLoop
+   jsr drawHeadToScreen_Ax
+   rep #$30                        ; AXY16
+   jsr pushCurrentToQueue_AX
+   sep #$20                      ; A8
+   jmp mainLoop
 
 .al
 .xs
 gameOver_Ax
-	ldx #(8*2)
--	lda GameoverText,x
-	sta ScreenMirror+(11*64)+(12*2),x
-	dex
-	dex
-	bpl -
-	lda CollectedCounter
-	cmp BestCollectedCounter
-	beq _100s
-	bcs _newBest
-	bcc _noNewBest
+   ldx #(8*2)
+-   lda GameoverText,x
+   sta ScreenMirror+(11*64)+(12*2),x
+   dex
+   dex
+   bpl -
+   lda CollectedCounter
+   cmp BestCollectedCounter
+   beq _100s
+   bcs _newBest
+   bcc _noNewBest
 _100s
-	lda CollectedCounter+2
-	cmp BestCollectedCounter+2
-	beq _10s
-	bcs _newBest
-	bcc _noNewBest
+   lda CollectedCounter+2
+   cmp BestCollectedCounter+2
+   beq _10s
+   bcs _newBest
+   bcc _noNewBest
 _10s
-	lda CollectedCounter+4
-	cmp BestCollectedCounter+4
-	beq _1s
-	bcs _newBest
-	bcc _noNewBest
+   lda CollectedCounter+4
+   cmp BestCollectedCounter+4
+   beq _1s
+   bcs _newBest
+   bcc _noNewBest
 _1s
-	lda CollectedCounter+6
-	cmp BestCollectedCounter+6
-	beq _noNewBest ; its the same score
-	bcc _noNewBest
-_newBest	
-	; new best score so copy the current one to the best
-	ldx #6	
--	lda CollectedCounter,x	
-	sta BestCollectedCounter,x	
-	dex		
-	dex		
-	bpl -		
-_noNewBest	
-	lda $4218
-	and #kJoypad.BtnA|kJoypad.BtnB|kJoypad.BtnX|kJoypad.BtnY|kJoypad.BtnStart|kJoypad.BtnSelect
-	beq _noNewBest ; actually wait for face button
-	sep #$20 ; A8
-	rep #$10 ; XY16
-	jsr clearGameScreen_aXY
-	jmp initGame_xx
+   lda CollectedCounter+6
+   cmp BestCollectedCounter+6
+   beq _noNewBest ; its the same score
+   bcc _noNewBest
+_newBest   
+   ; new best score so copy the current one to the best
+   ldx #6   
+-   lda CollectedCounter,x   
+   sta BestCollectedCounter,x   
+   dex      
+   dex      
+   bpl -      
+_noNewBest   
+   lda $4218
+   and #kJoypad.BtnA|kJoypad.BtnB|kJoypad.BtnX|kJoypad.BtnY|kJoypad.BtnStart|kJoypad.BtnSelect
+   beq _noNewBest ; actually wait for face button
+   sep #$20 ; A8
+   rep #$10 ; XY16
+   jsr clearGameScreen_aXY
+   jmp initGame_ff
 
 
 XDelta .char  0, 1, 0,-1, 0
@@ -405,9 +405,9 @@ StatusRow .word ' ','s','n','a','k','e','s',' ',' ',' ','s','c','o','r','e',':',
 GameoverText .word 'g','a','m','e',' ','o','v','e','r'
 
 DMAScreenToVRAM_ff
-	php
-	rep #$10            ; XY16
-	sep #$20            ; A8
+   php
+   rep #$10            ; XY16
+   sep #$20            ; A8
    ldx #$1801          ; A -> B, copy source, write word | vram
    stx $4300
    ldx #<>ScreenMirror ; this get the low word, you will need to change if not using 64tass
@@ -430,7 +430,7 @@ DMAScreenToVRAM_ff
 clearGameScreen_aXY
 _ASSERT_a8
 _ASSERT_xy16
- 	; fill the screen with ' '
+   ; fill the screen with ' '
    ldx #$8008      ; A -> B, FIXED SOURCE, WRITE BYTE | WRAM
    stx $4300
    ldx #ScreenMirror+64
@@ -451,7 +451,7 @@ _ASSERT_xy16
    .enc 'screen'
    lda #'{space}'+128  ; solid char
    ldx #62
--	sta ScreenMirror+(1*32*2),x
+-   sta ScreenMirror+(1*32*2),x
    sta ScreenMirror+(23*32*2),x
    dex
    dex
@@ -460,235 +460,235 @@ _ASSERT_xy16
    lda #ScreenMirror+(2*32*2)
    sta DPPointer1
    ldx #20
--	lda #'{space}'+128  ; solid char
-	ldy #0
-	sta (DPPointer1),y
-	ldy #31*2
-	sta (DPPointer1),y
-	clc
-	lda DPPointer1
-	adc #32*2
-	sta DPPointer1
-	dex
-	bpl -
-	sep #$20 ; return with A8 as promised
-	rts
-	
+-   lda #'{space}'+128  ; solid char
+   ldy #0
+   sta (DPPointer1),y
+   ldy #31*2
+   sta (DPPointer1),y
+   clc
+   lda DPPointer1
+   adc #32*2
+   sta DPPointer1
+   dex
+   bpl -
+   sep #$20 ; return with A8 as promised
+   rts
+   
 .al   
 .xs              ; tell the assembler this routine expects A16,XY8   
 drawHeadToScreen_Ax
 _ASSERT_a16
 _ASSERT_xy8
-	lda HeadY
-	and #$00ff
-	asl a        ;2x
-	asl a        ;4x
-	asl a        ;8x
-	asl a        ;16x
-	asl a        ;32x
-	asl a			 ;64x
-	clc
-	adc #ScreenMirror
-	sta DPPointer1
-	lda HeadX
-	asl a
-	tay
-	lda #'{space}'+128
-	sta (DPPointer1),y
-	rts
+   lda HeadY
+   and #$00ff
+   asl a        ;2x
+   asl a        ;4x
+   asl a        ;8x
+   asl a        ;16x
+   asl a        ;32x
+   asl a          ;64x
+   clc
+   adc #ScreenMirror
+   sta DPPointer1
+   lda HeadX
+   asl a
+   tay
+   lda #'{space}'+128
+   sta (DPPointer1),y
+   rts
 
 .al   
 .xs              ; tell the assembler this routine expects A16,XY8   
 clearTailOnScreen_Ax
 _ASSERT_a16
 _ASSERT_xy8
-	lda TailY
-	and #$00ff
-	asl a        ;2x
-	asl a        ;4x
-	asl a        ;8x
-	asl a        ;16x
-	asl a        ;32x
-	asl a			 ;64x
-	clc
-	adc #ScreenMirror
-	sta DPPointer1
-	lda TailX
-	asl a
-	tay
-	lda #'{space}'
-	sta (DPPointer1),y
-	rts	
+   lda TailY
+   and #$00ff
+   asl a        ;2x
+   asl a        ;4x
+   asl a        ;8x
+   asl a        ;16x
+   asl a        ;32x
+   asl a          ;64x
+   clc
+   adc #ScreenMirror
+   sta DPPointer1
+   lda TailX
+   asl a
+   tay
+   lda #'{space}'
+   sta (DPPointer1),y
+   rts   
 
 .al   
 .xs              ; tell the assembler this routine expects A16,XY8   
 readTargetFromScreen_Ax
 _ASSERT_a16
 _ASSERT_xy8
-	lda TargetY
-	and #$00ff
-	asl a        ;2x
-	asl a        ;4x
-	asl a        ;8x
-	asl a        ;16x
-	asl a        ;32x
-	asl a			 ;64x
-	clc
-	adc #ScreenMirror
-	sta DPPointer1
-	lda TargetX
-	asl a
-	tay
-	lda (DPPointer1),y
-	rts	
+   lda TargetY
+   and #$00ff
+   asl a        ;2x
+   asl a        ;4x
+   asl a        ;8x
+   asl a        ;16x
+   asl a        ;32x
+   asl a          ;64x
+   clc
+   adc #ScreenMirror
+   sta DPPointer1
+   lda TargetX
+   asl a
+   tay
+   lda (DPPointer1),y
+   rts   
 
 .al   
 .xs              ; tell the assembler this routine expects A16,XY8   
 readHeadFromScreen_Ax
 _ASSERT_a16
 _ASSERT_xy8
-	lda HeadY
-	and #$00ff
-	asl a        ;2x
-	asl a        ;4x
-	asl a        ;8x
-	asl a        ;16x
-	asl a        ;32x
-	asl a			 ;64x
-	clc
-	adc #ScreenMirror
-	sta DPPointer1
-	lda HeadX
-	asl a
-	tay
-	lda (DPPointer1),y
-	rts	
-	
+   lda HeadY
+   and #$00ff
+   asl a        ;2x
+   asl a        ;4x
+   asl a        ;8x
+   asl a        ;16x
+   asl a        ;32x
+   asl a          ;64x
+   clc
+   adc #ScreenMirror
+   sta DPPointer1
+   lda HeadX
+   asl a
+   tay
+   lda (DPPointer1),y
+   rts   
+   
 .al   
 .xs              ; tell the assembler this routine expects A16,XY8   
 drawTargetToScreen_Ax
 _ASSERT_a16
 _ASSERT_xy8
-	lda TargetY
-	and #$00ff
-	asl a        ;2x
-	asl a        ;4x
-	asl a        ;8x
-	asl a        ;16x
-	asl a        ;32x
-	asl a			 ;64x
-	clc
-	adc #ScreenMirror
-	sta DPPointer1
-	lda TargetX
-	asl a
-	tay
-	lda #'{shift-x}'+$400 ; this is a club, we could put a unicode character here but encodings will cause pain, make it red
-	sta (DPPointer1),y
-	rts		
-		
+   lda TargetY
+   and #$00ff
+   asl a        ;2x
+   asl a        ;4x
+   asl a        ;8x
+   asl a        ;16x
+   asl a        ;32x
+   asl a          ;64x
+   clc
+   adc #ScreenMirror
+   sta DPPointer1
+   lda TargetX
+   asl a
+   tay
+   lda #'{shift-x}'+$400 ; this is a club, we could put a unicode character here but encodings will cause pain, make it red
+   sta (DPPointer1),y
+   rts      
+      
 .al
 .xl
 pushCurrentToQueue_AX
 _ASSERT_a16
 _ASSERT_xy16
-	clc
-	lda HeadIndex
-	adc #1			 ; add 1
-	and #1024-1     ; wrap arround size
-	sta HeadIndex
-	tax
-	sep #$20        ; A8
-	lda CurrentHeading
-	sta SnakeArray,x
-	rep #$20        ; A16
-	rts
+   clc
+   lda HeadIndex
+   adc #1          ; add 1
+   and #1024-1     ; wrap arround size
+   sta HeadIndex
+   tax
+   sep #$20        ; A8
+   lda CurrentHeading
+   sta SnakeArray,x
+   rep #$20        ; A16
+   rts
 
 .al
 .xl
-updateTailFromQueue_AX	
+updateTailFromQueue_AX   
 _ASSERT_a16
 _ASSERT_xy16
-	; update tail
-	clc
-	lda TailIndex
-	adc #1			 ; add 1
-	and #1024-1     ; wrap arround size
-	sta TailIndex
-	tax
-	lda SnakeArray,x
-	and #$ff			; don't set A to 8bit or you will get a 16 bit value into X
-	tax
-	sep #$20        ; A8
-	clc
-	lda XDelta,x
-	adc TailX
-	sta TailX
-	clc
-	lda YDelta,x
-	adc TailY
-	sta TailY
-	rep #$20       ; A16
-	rts
+   ; update tail
+   clc
+   lda TailIndex
+   adc #1          ; add 1
+   and #1024-1     ; wrap arround size
+   sta TailIndex
+   tax
+   lda SnakeArray,x
+   and #$ff         ; don't set A to 8bit or you will get a 16 bit value into X
+   tax
+   sep #$20        ; A8
+   clc
+   lda XDelta,x
+   adc TailX
+   sta TailX
+   clc
+   lda YDelta,x
+   adc TailY
+   sta TailY
+   rep #$20       ; A16
+   rts
 
-.as	
-.xs	
+.as   
+.xs   
 getRND_ad
 _ASSERT_a8
-	lda seed
-	beq _doEor
-		asl
-		beq _noEor ;if the input was $80, skip the EOR
-		bcc _noEor
+   lda seed
+   beq _doEor
+      asl
+      beq _noEor ;if the input was $80, skip the EOR
+      bcc _noEor
 _doEor
-	eor #$1d
+   eor #$1d
 _noEor  
-	sta seed
-	rts
+   sta seed
+   rts
 
 .as
 .xs
 getRandomTarget_ad
 _ASSERT_a8
-	php
+   php
 _tryAgain
-	jsr getRND_ad ; 1-31
-	and #31
--	cmp #29
-	bcc +
-		sec
-		sbc #29
-		jmp -	
-+	clc
-	adc #1
-	sta TargetX		
-	jsr getRND_ad ; 2-23
-	and #31
--	cmp #21
-	bcc +
-		sec
-		sbc #21
-		jmp -	
-+	clc
-	adc #1
-	sta TargetY		
-	rep #$20  ; A16	
-	sep #$10  ; X8	
-	jsr readTargetFromScreen_Ax			
-	sep #$20  ; A8			
-	cmp #'{space}'			
-	bne _tryAgain		
-	plp		
-	rts			
-			
+   jsr getRND_ad ; 1-31
+   and #31
+-   cmp #29
+   bcc +
+      sec
+      sbc #29
+      jmp -   
++   clc
+   adc #1
+   sta TargetX      
+   jsr getRND_ad ; 2-23
+   and #31
+-   cmp #21
+   bcc +
+      sec
+      sbc #21
+      jmp -   
++   clc
+   adc #1
+   sta TargetY      
+   rep #$20  ; A16   
+   sep #$10  ; X8   
+   jsr readTargetFromScreen_Ax         
+   sep #$20  ; A8         
+   cmp #'{space}'         
+   bne _tryAgain      
+   plp      
+   rts         
+         
 NMI_ISR
-	rep #$30 ; AXY16
-	pha
-	phx
-	phy
-	phb
-	phk
-	plb
+   rep #$30 ; AXY16
+   pha
+   phx
+   phy
+   phb
+   phk
+   plb
    jsr DMAScreenToVRAM_ff
    sep #$20 ; A8
    lda #$ff
