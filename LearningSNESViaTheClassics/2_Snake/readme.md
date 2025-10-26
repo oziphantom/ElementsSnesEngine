@@ -3,7 +3,7 @@
 
 Continuing on from where we left off in Hello World, the next Classic is Snake. You know the one, where you move around a small area in 4 directions trying to eat something, and every time you do you get 1 longer.
 
-I'm going to just use the tilemap and PETSCII again.
+I'm going to just use the tilemap and PETSCII font again.
 
 So what do we need for snake
 - a playing field
@@ -15,7 +15,7 @@ So what do we need for snake
 
 First lets modify the Hello world to draw the play field. I'm going to go for a simple affair of top line for name, score and high score. Then a solid char border 1 char wide around the rest of the screen. While we are PAL and we could go for the larger screen view, I will make this NTSC sized for compatibility. Although putting things on the outmost edges is "illegal" and not compliant as most CRTs will clip off such areas either partially or fully and for a commercial title we would need to shrink the play area by 2 chars on either side at least. For this small, learn to code example that is going to be run in an emulator, it will do.
 
-Now I want introduce the concept of Mirrors, this time rather than directly update the VRAM via the port directly as we did in Hello World, we are going to make a "clone" or mirror of the screen in WRAM that we update, then in the VBlank we DMA the entire screen to VRAM to update everything all at once. The benefit of this is we are free to make an many changes as we won't while the screen is drawing. Hardly an issue on this game as we could easily fit the entire update loop withing VBlank, even on the lowly NTSC machines, however this is a strong method that you will need to learn eventually so why not now.
+Now I want introduce the concept of Mirrors, this time rather than directly update the VRAM via the port directly as we did in Hello World, we are going to make a "clone" or mirror of the screen in WRAM that we update, then in the VBlank we DMA the entire screen to VRAM to update everything all at once. The benefit of this is we are free to make an many changes as we want while the screen is drawing. Hardly an issue on this game as we could easily fit the entire update loop within VBlank, even on the lowly NTSC machines, however this is a strong method that you will need to learn eventually so why not now.
 
 Firstly, we need to define or "allocate" our Screen Mirror/Buffer. To do this at the top of the file we put
 ~~~
@@ -53,13 +53,13 @@ So remove from `; fill the screen with ' '` down to, but not including the `NMI_
    sta $420B       ; fire dma
 ~~~
 
-now to put in the "walls", for this we will use... just kidding loops. To calculate the memory address of a given X/Y on the screen the formula is `BaseAddress+((Y*32)+X)*2` not the x2 since the mirror is in CPU's memory space we now address things as bytes and not words, also be careful **not** to multiply the base address by 2 as well.
+now to put in the "walls", for this we will use... just kidding loops. To calculate the memory address of a given X/Y on the screen the formula is `BaseAddress+((Y*32)+X)*2` note the *2 since the mirror is in the CPU's memory space, we now address things as bytes and not words, also be careful **not** to multiply the base address by 2 as well.
 
 Also a quick update about the PETSCII font conversion, I made a smaller error last time that was not really noticeable but it will be noticeable in this case. The PETSCII font has duplicates, duplicates that superfamiconv removed for us, we don't want this in this rare case so we have to convert it again using `superfamiconv -p petscii.pal -t petscii.chr -M snes -B 2 -W 8 -H 8 -R -F -D -i petscii.png`, I've added a `-D` option.
 
-While we are speaking of the PETSCII open the png and have a look, you should notice that the bottom half is the upper half "reversed" to get the reversed version you add 128 or $80 to the char number. We want a solid char so that is Space + 128 to get the reversed space or "full block".
+While we are speaking of the PETSCII font open the png and have a look, you should notice that the bottom half is the upper half "reversed" to get the reversed version you add 128 or $80 to the char number. We want a solid char so that is Space + 128 to get the reversed space or "full block".
 
-Thus to draw a line on the 2nd row and the last row, the 24 we simply do
+Thus to draw a line on the 2nd row and the last row, the 24th we simply do
 ~~~
 ; pre fill the Screen mirror with our arena
    ; first the outlines
@@ -100,7 +100,7 @@ then back down at our code
    dex
    bpl -
 ~~~
-here I use the Y to form the effective "X" offset, allowing me to easy to both sides with a single pointer.
+here I use the Y register to form the effective "X" offset, allowing me to easy do both sides with a single pointer.
 
 Then we want a base status bar, of which is just text so we basically do the same as we did for Hello World.
 ~~~
@@ -124,6 +124,7 @@ sadly 64Tass doesn't let us just do .word "string" so we have to do it character
 
 > for those who are curious or don't want to type the above out, the 64tass way is
 > ~~~
+>.enc "screen"
 > StatusRow
 > _data = ' snakes   score:0000  best:0000 '
 > .for s in range(len(_data))
@@ -147,7 +148,7 @@ I'm going to propose and implement here a naming convention based system, and pu
 - f for 'don't care'
 
 While on the subject of naming conventions, if using Reluanch64 you may have noted that its auto complete is case-sensitive. While 64tass by default is case agnostic, you can make it case sensitive if you so desire. To this end, I will make routines camelCase (mostly) and then data PascalCase. This way when I want to call a routine, I can type the start of its name with a lower case then (Ctrl+Space) and the list will be filtered to routine names. Likewise when I want data I start with a Capital and get just data filtered.
-The exception is I don't break Abbreviations, do we will have `DMAScreenToVRAM_ff` because `dmaScreenToVRAM_ff` or `dMAScreenToVRAM_ff` would be wrong ;)
+The exception is I don't break Abbreviations, so we will have `DMAScreenToVRAM_ff` because `dmaScreenToVRAM_ff` or `dMAScreenToVRAM_ff` would be wrong ;)
 
 However, this is just me, you do you, I present this as a _guide_.
 
@@ -1009,7 +1010,7 @@ RESET
    dex
    dex
    bpl -
-   jsr DMAScreenToVRAM_xx
+   jsr DMAScreenToVRAM_ff
    sep #$20  ; A8
    ; set up screen addresses
    stz $2107 ; we want the screen at $$0000 and size 32x32
@@ -1096,7 +1097,7 @@ YDelta .char  0, 0,-1, 0, 1
 StatusRow .word ' ','s','n','a','k','e','s',' ',' ',' ','s','c','o','r','e',':','0','0','0','0',' ',' ','b','e','s','t',':','0','0','0','0',' '
 
 
-DMAScreenToVRAM_xx
+DMAScreenToVRAM_ff
    php
    rep #$10            ; XY16
    sep #$20            ; A8
@@ -1151,7 +1152,7 @@ NMI_ISR
    phb
    phk
    plb
-   jsr DMAScreenToVRAM_xx
+   jsr DMAScreenToVRAM_ff
    sep #$20 ; A8
    lda #$ff
    sta NMIDoneNF
@@ -2409,7 +2410,7 @@ and the patch at the original calling code
 We also need to restore the `CollectedCounter` back to '0000' however as we will also need to reset a lot of the original state, it is best to promote the `; init game state` comment to a label, so we can jump to it, and then reset the `CollectedCounter` there. Which is a simple as writing '0' to it as a word.
 ~~~
    ; init game state
-initGame_xx ; <<< NEW
+initGame_ff ; <<< NEW
    sep #$30  ; AXY8
    lda #10
    sta SpeedCounter
@@ -2442,7 +2443,7 @@ back at the `gameOver` routine we now end with
    sep #$20 ; A8
    rep #$10 ; XY16
    jsr clearGameScreen_aXY
-   jmp initGame_xx
+   jmp initGame_ff
 ~~~
 
 We have the game functionally, but its rather lame. There is no challenge! Let’s add some.
@@ -2721,7 +2722,7 @@ RESET
    lda #%10000001 ; enable NMI VBlanks and Gamepad scanning
    sta $4200
    ; init game state
-initGame_xx
+initGame_ff
    sep #$30  ; AXY8
    lda #10
    sta SpeedCounter
@@ -2911,7 +2912,7 @@ _noNewBest
    sep #$20 ; A8
    rep #$10 ; XY16
    jsr clearGameScreen_aXY
-   jmp initGame_xx
+   jmp initGame_ff
 
 
 XDelta .char  0, 1, 0,-1, 0
