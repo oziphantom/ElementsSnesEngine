@@ -111,7 +111,7 @@ Then we want a base status bar, of which is just text so we basically do the sam
    dex
    dex
    bpl -
-   jsr DMAScreenToVRAM_xx
+   jsr DMAScreenToVRAM_ff
 ~~~
 where `StatusRow` is defined as
 ~~~
